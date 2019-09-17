@@ -3,11 +3,13 @@ using Microsoft.Xna.Framework;
 using FactoryHelper.Entities;
 using Celeste.Mod;
 using Celeste;
+using Monocle;
 
 namespace FactoryHelper
 {
     class FactoryHelperModule : EverestModule
     {
+        public SpriteBank SpriteBank { get; private set; }
 
         public static FactoryHelperModule Instance;
 
