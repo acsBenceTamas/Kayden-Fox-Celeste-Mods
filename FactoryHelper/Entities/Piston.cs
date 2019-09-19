@@ -125,6 +125,8 @@ namespace FactoryHelper.Entities
                     var bodyPos = new Vector2(i * (_basePos.X - (_head.X + GetHeadPositionBonus())) / (_bodyPartCount) + _head.X + GetHeadPositionBonus(), _basePos.Y + 3);
                     _body[i] = new PistonPart(bodyPos, 8, 10, $"objects/FactoryHelper/piston/body0{rnd.Next(_bodyVariantCount)}");
                     _body[i].Depth = -10;
+                    _body[i].AllowStaticMovers = false;
+
                     if (_direction == Direction.Left)
                     {
                         _body[i].Image.Rotation += (float)Math.PI / 2;
@@ -250,7 +252,7 @@ namespace FactoryHelper.Entities
             {
             }
 
-            public PistonPart(Vector2 position, float width, float height, string sprite) : base(position, width, height, true)
+            public PistonPart(Vector2 position, float width, float height, string sprite) : base(position, width, height, false)
             {
                 base.Add(Image = new Image(GFX.Game[sprite]));
                 Image.Active = true;
