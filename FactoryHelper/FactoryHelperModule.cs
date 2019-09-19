@@ -4,6 +4,7 @@ using FactoryHelper.Entities;
 using Celeste.Mod;
 using Celeste;
 using Monocle;
+using FactoryHelper.Triggers;
 
 namespace FactoryHelper
 {
@@ -38,6 +39,9 @@ namespace FactoryHelper
                 {
                     case "FactoryHelper/Piston":
                         level.Add(new Piston(entityData, offset));
+                        return true;
+                    case "FactoryHelper/FactoryActivationTrigger":
+                        level.Add(new FactoryActivationTrigger(entityData, offset));
                         return true;
                     default:
                         return false;

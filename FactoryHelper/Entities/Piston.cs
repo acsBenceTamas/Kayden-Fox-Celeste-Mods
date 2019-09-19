@@ -9,16 +9,20 @@ namespace FactoryHelper.Entities
     class Piston : Entity
     {
         public float MoveTime { get; } = 0.2f;
+
         public float PauseTime { get; } = 0.4f;
+
         public float InitialDelay { get; private set; } = 0f;
+
         public float Percent { get; private set; } = 0f;
+
+        public float PauseTimer { get; private set; }
 
         public bool MovingForward { get; private set; } = false;
         
         public bool Moving { get; private set; } = true;
 
         public bool Activated { get; private set; }
-        public float PauseTimer { get; private set; }
 
         private string _activationId;
         private const int _bodyVariantCount = 4;
@@ -122,13 +126,14 @@ namespace FactoryHelper.Entities
         {
             get
             {
-                if (_activationId != string.Empty)
+                if (_activationId == null)
                 {
-                    return (Scene as Level).Session.GetFlag(_activationId);
+                    return true;
                 }
                 else
                 {
-                    return true;
+                    Console.WriteLine($"Checking {_activationId}. It is {(Scene as Level).Session.GetFlag(_activationId)}");
+                    return (Scene as Level).Session.GetFlag(_activationId);
                 }
             }
         }
@@ -141,7 +146,7 @@ namespace FactoryHelper.Entities
                                                               data.Float("moveTime",0.4f),
                                                               data.Float("pauseTime", 0.2f),
                                                               data.Float("initialDelay", 0f),
-                                                              data.Attr("activationId", string.Empty))
+                                                              data.Attr("activationId", ""))
         {
         }
 
@@ -150,14 +155,18 @@ namespace FactoryHelper.Entities
             MoveTime = moveTime;
             PauseTime = pauseTime;
             InitialDelay = initialDelay;
-            Activated = activationId == string.Empty ? startActive : true;
+            Activated = activationId == string.Empty ? true : startActive;
             double length = 0;
             Enum.TryParse(directionString, out _direction);
 
             _basePos = position;
-            _activationId = activationId == string.Empty ? $"FactoryActivation:{activationId}" : null;
+            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
+            if (_activationId != null)
+            {
+                Console.WriteLine($"ActivationId = {_activationId}");
+            }
 
-            Add(new Coroutine(Sequence(), true));
+            //Add(new Coroutine(Sequence(), true));
 
             if (_direction == Direction.Up || _direction == Direction.Down)
             {
@@ -248,8 +257,12 @@ namespace FactoryHelper.Entities
             for (; ; )
             {
 
-                while (!(Activated && Moving) || !ActivationProtocol)
+                while (!(Activated && Moving))
                 {
+                    if (ActivationProtocol)
+                    {
+                        Activated = true;
+                    }
                     yield return null;
                 }
 
@@ -270,6 +283,33 @@ namespace FactoryHelper.Entities
 
                 Percent = 0f;
                 MovingForward = !MovingForward;
+            }
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (ActivationProtocol && Moving)
+            {
+                if (InitialDelay > 0f)
+                {
+                    InitialDelay -= Engine.DeltaTime;
+                }
+                else if (PauseTimer > 0f)
+                {
+                    PauseTimer -= Engine.DeltaTime;
+                }
+                else if (Percent < 1f)
+                {
+                    Percent = Calc.Approach(Percent, 1f, Engine.DeltaTime / MoveTime);
+                    UpdatePosition();
+                }
+                else
+                {
+                    PauseTimer = PauseTime;
+                    Percent = 0f;
+                    MovingForward = !MovingForward;
+                }
             }
         }
 
