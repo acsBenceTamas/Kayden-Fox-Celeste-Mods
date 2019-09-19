@@ -75,13 +75,13 @@ namespace FactoryHelper.Entities
                 //_body = new PistonPart[_bodyPartCount];
                 _bodyImages = new Image[_bodyPartCount];
 
-                _body2 = new Solid(initialHeadPos + new Vector2(3, 8), 10, Math.Abs(_head.Y - _base.Y) - 8, false);
+                _body2 = new Solid(new Vector2(_basePos.X + 3, Math.Min(initialHeadPos.Y, _basePos.Y) + 8), 10, 0, false);
                 for (int i = 0; i < _bodyPartCount; i++)
                 {
-                    var bodyPos = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount));
+                    var piecePos = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount) + GetBodyPositionBonus());
                     string bodyImage = $"objects/FactoryHelper/piston/body0{rnd.Next(_bodyVariantCount)}";
                     _bodyImages[i] = new Image(GFX.Game[bodyImage]);
-                    _bodyImages[i].Position = bodyPos;
+                    _bodyImages[i].Position = piecePos;
                     _body2.Add(_bodyImages[i]);
                 }
             }
@@ -143,20 +143,6 @@ namespace FactoryHelper.Entities
             _body2.Depth = -10;
         }
 
-        private int GetHeadPositionBonus()
-        {
-            switch (_direction)
-            {
-                case Direction.Up:
-                case Direction.Left:
-                    return 8;
-                case Direction.Right:
-                case Direction.Down:
-                    return -8;
-            }
-            return 0;
-        }
-
         private IEnumerator Sequence()
         {
             for (; ; )
@@ -189,16 +175,28 @@ namespace FactoryHelper.Entities
 
             switch (_direction)
             {
+                default:
                 case Direction.Up:
                 case Direction.Down:
-                default:
-                    _body2.MoveTo(new Vector2(_head.X + 3, _head.Y + GetHeadPositionBonus()));
-                    _body2.Collider.Height = _head.Y - _base.Y - 8;
+                    float heightBefore = _body2.Collider.Height;
+                    float heightAfter = Math.Abs(_base.Y - _head.Y) - 8;
+                    
+                    _body2.Y = Math.Min(_head.Y, _base.Y) + 8;
+                    _body2.Collider.Height = heightAfter;
+
+                    if (_body2.HasPlayerClimbing())
+                    {
+                        Player player = _body2.GetPlayerRider();
+                        float newY = _base.Y + GetGrabPositionBonus() + (player.Y - (_base.Y + GetGrabPositionBonus())) * heightAfter / heightBefore;
+                        player.LiftSpeed = new Vector2(player.LiftSpeed.X, (newY - player.Y) / Engine.DeltaTime);
+                        player.MoveV(newY - player.Y);
+                    }
+
                     for (int i = 0; i < _bodyPartCount; i++)
                     {
-                        _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount));
+                        _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount) + GetBodyPositionBonus());
                     }
-                        break;
+                    break;
                 case Direction.Left:
                 case Direction.Right:
                     for (int i = 0; i < _bodyPartCount; i++)
@@ -209,26 +207,61 @@ namespace FactoryHelper.Entities
             }
         }
 
+        private int GetHeadPositionBonus()
+        {
+            switch (_direction)
+            {
+                case Direction.Up:
+                case Direction.Left:
+                    return 0;
+                case Direction.Right:
+                case Direction.Down:
+                    return -8;
+                default:
+                    return 0;
+            }
+        }
+        
+        private int GetGrabPositionBonus()
+        {
+            switch (_direction)
+            {
+                default:
+                case Direction.Up:
+                case Direction.Left:
+                    return 16;
+                case Direction.Right:
+                case Direction.Down:
+                    return 8;
+            }
+        }
+
+        private int GetBodyPositionBonus()
+        {
+            switch (_direction)
+            {
+                case Direction.Down:
+                    return (int)Math.Abs(_basePos.Y - _head.Y) - 16;
+                case Direction.Up:
+                    return -8;
+                default:
+                    return 0;
+            }
+        }
+
         public override void Added(Scene scene)
         {
             base.Added(scene);
             scene.Add(_head);
             scene.Add(_base);
             scene.Add(_body2);
-            //foreach (var bodyPart in _body)
-            //{
-            //    scene.Add(bodyPart);
-            //}
         }
 
         public override void Removed(Scene scene)
         {
             scene.Remove(_head);
             scene.Remove(_base);
-            foreach (var bodyPart in _body)
-            {
-                scene.Remove(bodyPart);
-            }
+            scene.Remove(_body2);
             base.Removed(scene);
         }
 
