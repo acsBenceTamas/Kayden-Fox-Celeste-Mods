@@ -10,7 +10,7 @@ namespace FactoryHelper.Entities
     {
         public float MoveTime { get; } = 0.2f;
         public float PauseTime { get; } = 0.4f;
-
+        public float InitialDelay { get; private set; } = 0f;
         public float Percent { get; private set; } = 0f;
 
         public bool MovingForward { get; private set; } = false;
@@ -20,9 +20,9 @@ namespace FactoryHelper.Entities
         public bool Activated { get; private set; }
         public float PauseTimer { get; private set; }
 
+        private string _activationId;
         private const int _bodyVariantCount = 4;
         private PistonPart _head;
-        private PistonPart[] _body;
         private PistonPart _base;
         private Solid _body2;
         private Image[] _bodyImages;
@@ -31,125 +31,232 @@ namespace FactoryHelper.Entities
         private Vector2 _basePos;
         private int _bodyPartCount;
         private Direction _direction = Direction.Up;
+        private static readonly Random _rnd = new Random();
 
-        public Piston(Vector2 position, Vector2 start, Vector2 end, string directionString)
+        private float RotationModifier {
+            get
+            {
+                switch (_direction)
+                {
+                    default:
+                        return 0f;
+                    case Direction.Down:
+                        return (float)Math.PI;
+                    case Direction.Left:
+                        return (float)Math.PI / -2;
+                    case Direction.Right:
+                        return (float)Math.PI / 2;
+                }
+            }
+        }
+
+        private int HeadMinimumPositionModifier
         {
-            Activated = true;
-            Random rnd = new Random();
-            double length;
-            Enum.TryParse<Direction>(directionString, out _direction);
+            get
+            {
+                switch (_direction)
+                {
+                    default:
+                    case Direction.Up:
+                    case Direction.Left:
+                        return -8;
+                    case Direction.Right:
+                    case Direction.Down:
+                        return 8;
+                }
+            }
+        }
+
+        private int HeadPositionModifier
+        {
+            get
+            {
+                switch (_direction)
+                {
+                    default:
+                    case Direction.Left:
+                    case Direction.Up:
+                        return 8;
+                    case Direction.Right:
+                    case Direction.Down:
+                        return -8;
+                }
+            }
+        }
+
+        private int GrabPositionModifier
+        {
+            get
+            {
+                switch (_direction)
+                {
+                    default:
+                    case Direction.Up:
+                    case Direction.Left:
+                        return 16;
+                    case Direction.Right:
+                    case Direction.Down:
+                        return 8;
+                }
+            }
+        }
+
+        private int BodyPositionModifier
+        {
+            get
+            {
+                switch (_direction)
+                {
+                    default:
+                    case Direction.Up:
+                    case Direction.Left:
+                        return 0;
+                    case Direction.Down:
+                        return (int)Math.Abs(_basePos.Y - _head.Y) - 16;
+                    case Direction.Right:
+                        return (int)Math.Abs(_basePos.X - _head.X) - 16;
+                }
+            }
+        }
+        private bool ActivationProtocol
+        {
+            get
+            {
+                if (_activationId != string.Empty)
+                {
+                    return (Scene as Level).Session.GetFlag(_activationId);
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        public Piston(EntityData data, Vector2 offset) : this(data.Position + offset, 
+                                                              data.Nodes[0] + offset, 
+                                                              data.Nodes[1] + offset, 
+                                                              data.Attr("direction", "Up"),
+                                                              data.Bool("startActive", true),
+                                                              data.Float("moveTime",0.4f),
+                                                              data.Float("pauseTime", 0.2f),
+                                                              data.Float("initialDelay", 0f),
+                                                              data.Attr("activationId", string.Empty))
+        {
+        }
+
+        public Piston(Vector2 position, Vector2 start, Vector2 end, string directionString, bool startActive, float moveTime, float pauseTime, float initialDelay, string activationId)
+        {
+            MoveTime = moveTime;
+            PauseTime = pauseTime;
+            InitialDelay = initialDelay;
+            Activated = activationId == string.Empty ? startActive : true;
+            double length = 0;
+            Enum.TryParse(directionString, out _direction);
 
             _basePos = position;
+            _activationId = activationId == string.Empty ? $"FactoryActivation:{activationId}" : null;
 
-            base.Add(new Coroutine(Sequence(), true));
+            Add(new Coroutine(Sequence(), true));
 
             if (_direction == Direction.Up || _direction == Direction.Down)
             {
                 _startPos.X = _basePos.X;
                 _endPos.X = _basePos.X;
 
-                switch (_direction)
+                if (_direction == Direction.Up)
                 {
-                    case Direction.Up:
-                        _startPos.Y = Math.Min(start.Y, _basePos.Y - 8);
-                        _endPos.Y = Math.Min(end.Y, _basePos.Y - 8);
-                        break;
-                    case Direction.Down:
-                        _startPos.Y = Math.Max(start.Y, _basePos.Y + 8);
-                        _endPos.Y = Math.Max(end.Y, _basePos.Y + 8);
-                        break;
-                }
-
-                var initialHeadPos = !MovingForward ? _startPos : _endPos;
-                _base = new PistonPart(_basePos + new Vector2(2, 0), 12, 8, "objects/FactoryHelper/piston/base00");
-                _head = new PistonPart(initialHeadPos, 16, 8, "objects/FactoryHelper/piston/head00");
-
-                if (_direction == Direction.Down)
+                    _startPos.Y = Math.Min(start.Y, _basePos.Y + HeadMinimumPositionModifier);
+                    _endPos.Y = Math.Min(end.Y, _basePos.Y + HeadMinimumPositionModifier);
+                } else
                 {
-                    _base.Image.Rotation += (float)Math.PI;
-                    _head.Image.Rotation += (float)Math.PI;
+                    _startPos.Y = Math.Max(start.Y, _basePos.Y + HeadMinimumPositionModifier);
+                    _endPos.Y = Math.Max(end.Y, _basePos.Y + HeadMinimumPositionModifier);
                 }
 
                 length = Math.Max(Math.Abs(_basePos.Y - _endPos.Y), Math.Abs(_basePos.Y - _startPos.Y));
-                _bodyPartCount = (int)Math.Ceiling(length / 8);
-                //_body = new PistonPart[_bodyPartCount];
-                _bodyImages = new Image[_bodyPartCount];
 
-                _body2 = new Solid(new Vector2(_basePos.X + 3, Math.Min(initialHeadPos.Y, _basePos.Y) + 8), 10, 0, false);
-                for (int i = 0; i < _bodyPartCount; i++)
-                {
-                    var piecePos = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount) + GetBodyPositionBonus());
-                    string bodyImage = $"objects/FactoryHelper/piston/body0{rnd.Next(_bodyVariantCount)}";
-                    _bodyImages[i] = new Image(GFX.Game[bodyImage]);
-                    _bodyImages[i].Position = piecePos;
-                    _body2.Add(_bodyImages[i]);
-                }
+                _base = new PistonPart(_basePos + new Vector2(2, 0), 12, 8, "objects/FactoryHelper/piston/base00");
+                _head = new PistonPart(_startPos, 16, 8, "objects/FactoryHelper/piston/head00");
+                _body2 = new Solid(new Vector2(_basePos.X + 3, Math.Min(_startPos.Y, _basePos.Y) + 8), 10, 0, false);
             }
             else if (_direction == Direction.Left || _direction == Direction.Right)
             {
                 _startPos.Y = _basePos.Y;
                 _endPos.Y = _basePos.Y;
 
-                switch (_direction)
-                {
-                    case Direction.Left:
-                        _startPos.X = Math.Min(start.X, _basePos.X - 8);
-                        _endPos.X = Math.Min(end.X, _basePos.X - 8);
-                        break;
-                    case Direction.Right:
-                        _startPos.X = Math.Max(start.X, _basePos.X + 8);
-                        _endPos.X = Math.Max(end.X, _basePos.X + 8);
-                        break;
-                }
-
-                var initialHeadPos = !MovingForward ? _startPos : _endPos;
-                _base = new PistonPart(_basePos + new Vector2(0, 2), 8, 12, "objects/FactoryHelper/piston/base00");
-                _head = new PistonPart(initialHeadPos, 8, 16, "objects/FactoryHelper/piston/head00");
-
                 if (_direction == Direction.Left)
                 {
-                    _base.Image.Rotation -= (float)Math.PI / 2;
-                    _head.Image.Rotation -= (float)Math.PI / 2;
-                } else
+                    _startPos.X = Math.Min(start.X, _basePos.X + HeadMinimumPositionModifier);
+                    _endPos.X = Math.Min(end.X, _basePos.X + HeadMinimumPositionModifier);
+                }
+                else
                 {
-                    _base.Image.Rotation += (float)Math.PI / 2;
-                    _head.Image.Rotation += (float)Math.PI / 2;
+                    _startPos.X = Math.Max(start.X, _basePos.X + HeadMinimumPositionModifier);
+                    _endPos.X = Math.Max(end.X, _basePos.X + HeadMinimumPositionModifier);
                 }
 
                 length = Math.Max(Math.Abs(_basePos.X - _endPos.X), Math.Abs(_basePos.X - _startPos.X));
-                _bodyPartCount = (int)Math.Ceiling(length / 8);
-                _body = new PistonPart[_bodyPartCount];
 
-                for (int i = 0; i < _bodyPartCount; i++)
+                _base = new PistonPart(_basePos + new Vector2(0, 2), 8, 12, "objects/FactoryHelper/piston/base00");
+                _head = new PistonPart(_startPos, 8, 16, "objects/FactoryHelper/piston/head00");
+                _body2 = new Solid(new Vector2(Math.Min(_startPos.X, _basePos.X) + 8, _basePos.Y + 3), Math.Abs(_base.X - _head.X) - 8, 10, false);
+            }
+
+            _base.Image.Rotation += RotationModifier;
+            _head.Image.Rotation += RotationModifier;
+            _bodyPartCount = (int)Math.Ceiling(length / 8);
+            _bodyImages = new Image[_bodyPartCount];
+
+            for (int i = 0; i < _bodyPartCount; i++)
+            {
+                Vector2 piecePos;
+                if (_direction == Direction.Up || _direction == Direction.Down)
                 {
-                    var bodyPos = new Vector2(i * (_basePos.X - (_head.X + GetHeadPositionBonus())) / (_bodyPartCount) + _head.X + GetHeadPositionBonus(), _basePos.Y + 3);
-                    _body[i] = new PistonPart(bodyPos, 8, 10, $"objects/FactoryHelper/piston/body0{rnd.Next(_bodyVariantCount)}");
-                    _body[i].Depth = -10;
-                    _body[i].AllowStaticMovers = false;
-
-                    if (_direction == Direction.Left)
-                    {
-                        _body[i].Image.Rotation += (float)Math.PI / 2;
-                    }
-                    else
-                    {
-                        _body[i].Image.Rotation -= (float)Math.PI / 2;
-                    }
+                    piecePos = new Vector2(-3, i * (_basePos.Y - (_head.Y + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier);
                 }
+                else
+                {
+                    piecePos = new Vector2(i * (_basePos.X - (_head.X + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier, -3);
+                }
+
+                string bodyImage = $"objects/FactoryHelper/piston/body0{_rnd.Next(_bodyVariantCount)}";
+
+                _body2.Add(_bodyImages[i] = new Image(GFX.Game[bodyImage])
+                {
+                    Position = piecePos
+                });
+                _bodyImages[i].CenterOrigin();
+                _bodyImages[i].Rotation += RotationModifier;
+                _bodyImages[i].Position = _direction == Direction.Down || _direction == Direction.Up ? new Vector2(8, 4) : new Vector2(4, 8);
             }
 
             _base.Depth = -20;
             _head.Depth = -20;
             _body2.Depth = -10;
+            _body2.AllowStaticMovers = false;
+        }
+
+        public override void Awake(Scene scene)
+        {
+            base.Awake(scene);
+            UpdatePosition();
         }
 
         private IEnumerator Sequence()
         {
             for (; ; )
             {
-                while (!(Activated && Moving))
+
+                while (!(Activated && Moving) || !ActivationProtocol)
                 {
                     yield return null;
+                }
+
+                if (InitialDelay > 0f)
+                {
+                    yield return InitialDelay;
+                    InitialDelay = 0f;
                 }
 
                 yield return PauseTime;
@@ -161,7 +268,6 @@ namespace FactoryHelper.Entities
                     UpdatePosition();
                 }
 
-                PauseTimer = PauseTime;
                 Percent = 0f;
                 MovingForward = !MovingForward;
             }
@@ -169,15 +275,16 @@ namespace FactoryHelper.Entities
 
         private void UpdatePosition()
         {
+            Vector2 posDisplacement;
             var start = MovingForward ? _startPos : _endPos;
             var end = MovingForward ? _endPos : _startPos;
             _head.MoveTo(Vector2.Lerp(end, start, Ease.SineIn(Percent)));
-
             switch (_direction)
             {
                 default:
                 case Direction.Up:
                 case Direction.Down:
+                    posDisplacement = new Vector2(8, 4);
                     float heightBefore = _body2.Collider.Height;
                     float heightAfter = Math.Abs(_base.Y - _head.Y) - 8;
                     
@@ -187,65 +294,38 @@ namespace FactoryHelper.Entities
                     if (_body2.HasPlayerClimbing())
                     {
                         Player player = _body2.GetPlayerRider();
-                        float newY = _base.Y + GetGrabPositionBonus() + (player.Y - (_base.Y + GetGrabPositionBonus())) * heightAfter / heightBefore;
+                        float newY = _base.Y + GrabPositionModifier + (player.Y - (_base.Y + GrabPositionModifier)) * heightAfter / heightBefore;
                         player.LiftSpeed = new Vector2(player.LiftSpeed.X, (newY - player.Y) / Engine.DeltaTime);
                         player.MoveV(newY - player.Y);
                     }
 
                     for (int i = 0; i < _bodyPartCount; i++)
                     {
-                        _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount) + GetBodyPositionBonus());
+                        _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier) + posDisplacement;
                     }
                     break;
                 case Direction.Left:
                 case Direction.Right:
+                    posDisplacement = new Vector2(4, 8);
+                    float widthBefore = _body2.Collider.Width;
+                    float widthAfter = Math.Abs(_base.X - _head.X) - 8;
+
+                    _body2.X = Math.Min(_head.X, _base.X) + 8;
+                    _body2.Collider.Width = widthAfter;
+
+                    if (_body2.HasPlayerOnTop())
+                    {
+                        Player player = _body2.GetPlayerRider();
+                        float newX = _base.X + GrabPositionModifier + (player.X - (_base.X + GrabPositionModifier)) * widthAfter / widthBefore;
+                        player.LiftSpeed = new Vector2((newX - player.X) / Engine.DeltaTime, player.LiftSpeed.Y);
+                        player.MoveH(newX - player.X);
+                    }
+
                     for (int i = 0; i < _bodyPartCount; i++)
                     {
-                        _body[i].MoveTo(new Vector2(i * (_basePos.X - (_head.X + GetHeadPositionBonus())) / (_bodyPartCount) + _head.X + GetHeadPositionBonus(), _basePos.Y + 3));
+                        _bodyImages[i].Position = new Vector2(i * (_basePos.X - (_head.X + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier, -3) + posDisplacement;
                     }
                     break;
-            }
-        }
-
-        private int GetHeadPositionBonus()
-        {
-            switch (_direction)
-            {
-                case Direction.Up:
-                case Direction.Left:
-                    return 0;
-                case Direction.Right:
-                case Direction.Down:
-                    return -8;
-                default:
-                    return 0;
-            }
-        }
-        
-        private int GetGrabPositionBonus()
-        {
-            switch (_direction)
-            {
-                default:
-                case Direction.Up:
-                case Direction.Left:
-                    return 16;
-                case Direction.Right:
-                case Direction.Down:
-                    return 8;
-            }
-        }
-
-        private int GetBodyPositionBonus()
-        {
-            switch (_direction)
-            {
-                case Direction.Down:
-                    return (int)Math.Abs(_basePos.Y - _head.Y) - 16;
-                case Direction.Up:
-                    return -8;
-                default:
-                    return 0;
             }
         }
 
@@ -263,10 +343,6 @@ namespace FactoryHelper.Entities
             scene.Remove(_base);
             scene.Remove(_body2);
             base.Removed(scene);
-        }
-
-        public Piston(EntityData data, Vector2 offset) : this(data.Position + offset, data.Nodes[0] + offset, data.Nodes[1] + offset, data.Attr("direction", "Up"))
-        {
         }
 
         public enum Direction
@@ -291,16 +367,6 @@ namespace FactoryHelper.Entities
                 Image.Active = true;
                 Image.CenterOrigin();
                 Image.Position = new Vector2(Width / 2, Height / 2);
-            }
-
-            public override void Added(Scene scene)
-            {
-                base.Added(scene);
-            }
-
-            public override void Removed(Scene scene)
-            {
-                base.Removed(scene);
             }
         }
     }
