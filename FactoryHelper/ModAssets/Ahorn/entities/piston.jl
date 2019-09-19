@@ -2,8 +2,7 @@ module FactoryHelperPiston
 
 using ..Ahorn, Maple
 
-@mapdef Entity "FactoryHelper/Piston" Piston(x::Integer, y::Integer, moveTime::Real=0.4, pauseTime::Real=0.2)
-#@pardef Piston(x::Integer, y::Integer, moveTime::Real=0.4, pauseTime::Real=0.2) = Entity("FactoryHelper/Piston", x=x, y=y, moveTime=moveTime, pauseTime=pauseTime))
+@mapdef Entity "FactoryHelper/Piston" Piston(x::Integer, y::Integer, moveTime::Real=0.4, pauseTime::Real=0.2, initialDelay::Real=0.0, startActive::Bool=true, activationId::String="")
 
 const placements = Ahorn.PlacementDict(
     "Piston (Up) (FactoryHelper)" => Ahorn.EntityPlacement(
@@ -31,6 +30,7 @@ const placements = Ahorn.PlacementDict(
         function(entity)
             entity.data["nodes"] = [(Int(entity.data["x"]) - 16, Int(entity.data["y"])), (Int(entity.data["x"]) - 32, Int(entity.data["y"]))]
 			entity.data["direction"] = "Left"
+			entity.data["initialDelay"] = 0.0
         end
     ),
     "Piston (Right) (FactoryHelper)" => Ahorn.EntityPlacement(
