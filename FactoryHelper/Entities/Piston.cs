@@ -24,6 +24,8 @@ namespace FactoryHelper.Entities
         private PistonPart _head;
         private PistonPart[] _body;
         private PistonPart _base;
+        private Solid _body2;
+        private Image[] _bodyImages;
         private Vector2 _startPos;
         private Vector2 _endPos;
         private Vector2 _basePos;
@@ -70,13 +72,17 @@ namespace FactoryHelper.Entities
 
                 length = Math.Max(Math.Abs(_basePos.Y - _endPos.Y), Math.Abs(_basePos.Y - _startPos.Y));
                 _bodyPartCount = (int)Math.Ceiling(length / 8);
-                _body = new PistonPart[_bodyPartCount];
+                //_body = new PistonPart[_bodyPartCount];
+                _bodyImages = new Image[_bodyPartCount];
 
+                _body2 = new Solid(initialHeadPos + new Vector2(3, 8), 10, Math.Abs(_head.Y - _base.Y) - 8, false);
                 for (int i = 0; i < _bodyPartCount; i++)
                 {
-                    var bodyPos = new Vector2(_basePos.X + 3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount) + _head.Y + GetHeadPositionBonus());
-                    _body[i] = new PistonPart(bodyPos, 10, 8, $"objects/FactoryHelper/piston/body0{rnd.Next(_bodyVariantCount)}");
-                    _body[i].Depth = -10;
+                    var bodyPos = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount));
+                    string bodyImage = $"objects/FactoryHelper/piston/body0{rnd.Next(_bodyVariantCount)}";
+                    _bodyImages[i] = new Image(GFX.Game[bodyImage]);
+                    _bodyImages[i].Position = bodyPos;
+                    _body2.Add(_bodyImages[i]);
                 }
             }
             else if (_direction == Direction.Left || _direction == Direction.Right)
@@ -132,6 +138,7 @@ namespace FactoryHelper.Entities
 
             _base.Depth = -20;
             _head.Depth = -20;
+            _body2.Depth = -10;
         }
 
         private int GetHeadPositionBonus()
@@ -178,20 +185,25 @@ namespace FactoryHelper.Entities
             var end = MovingForward ? _endPos : _startPos;
             _head.MoveTo(Vector2.Lerp(end, start, Ease.SineIn(Percent)));
 
-            for (int i = 0; i < _bodyPartCount; i++)
+            switch (_direction)
             {
-                switch (_direction)
-                {
-                    case Direction.Up:
-                    case Direction.Down:
-                    default:
-                        _body[i].MoveTo(new Vector2(_basePos.X + 3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount) + _head.Y + GetHeadPositionBonus()));
+                case Direction.Up:
+                case Direction.Down:
+                default:
+                    _body2.MoveTo(new Vector2(_head.X + 3, _head.Y + GetHeadPositionBonus()));
+                    _body2.Collider.Height = _head.Y - _base.Y - 8;
+                    for (int i = 0; i < _bodyPartCount; i++)
+                    {
+                        _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + GetHeadPositionBonus())) / (_bodyPartCount));
+                    }
                         break;
-                    case Direction.Left:
-                    case Direction.Right:
+                case Direction.Left:
+                case Direction.Right:
+                    for (int i = 0; i < _bodyPartCount; i++)
+                    {
                         _body[i].MoveTo(new Vector2(i * (_basePos.X - (_head.X + GetHeadPositionBonus())) / (_bodyPartCount) + _head.X + GetHeadPositionBonus(), _basePos.Y + 3));
-                        break;
-                }
+                    }
+                    break;
             }
         }
 
@@ -200,10 +212,11 @@ namespace FactoryHelper.Entities
             base.Added(scene);
             scene.Add(_head);
             scene.Add(_base);
-            foreach (var bodyPart in _body)
-            {
-                scene.Add(bodyPart);
-            }
+            scene.Add(_body2);
+            //foreach (var bodyPart in _body)
+            //{
+            //    scene.Add(bodyPart);
+            //}
         }
 
         public override void Removed(Scene scene)
