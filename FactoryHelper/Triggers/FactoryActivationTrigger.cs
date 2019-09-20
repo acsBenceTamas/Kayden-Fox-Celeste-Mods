@@ -1,30 +1,51 @@
 ﻿using Celeste;
 using Microsoft.Xna.Framework;
 using System;
+using Monocle;
+using System.Collections.Generic;
 
 namespace FactoryHelper.Triggers
 {
     class FactoryActivationTrigger : Trigger
     {
         private bool _resetOnLeave;
-        private string _activationId;
+        private bool _persistent;
+        private HashSet<string> _activationIds = new HashSet<string>();
+
         public FactoryActivationTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
-            _resetOnLeave = data.Bool("resetOnLeave", false);
-            string activationId = data.Attr("activationId", "");
+            string[] activationIds = data.Attr("activationIds", "").Split(',');
 
-            if (activationId != "")
+            _persistent = data.Bool("persistent", false);
+            _resetOnLeave = _persistent ? false : data.Bool("resetOnLeave", false);
+
+            foreach (string activationId in activationIds)
             {
-                _activationId = $"FactoryActivation:{activationId}";
-                Console.WriteLine($"Trigger ID: {_activationId}");
+                if (activationId != "")
+                {
+                    object persistenceString = _persistent ? "Persistent" : string.Empty;
+                    _activationIds.Add($"{persistenceString}FactoryActivation:{activationId}");
+                }
             }
+        }
+
+        private void Activate(string activationId)
+        {
+            (Scene as Level).Session.SetFlag(activationId, true);
+        }
+
+        private void Deactivate(string activationId)
+        {
+            (Scene as Level).Session.SetFlag(activationId, false);
         }
 
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            (Scene as Level).Session.SetFlag(_activationId, true);
-            Console.WriteLine($"Activating ID: {_activationId}");
+            foreach (string activationId in _activationIds)
+            {
+                Activate(activationId);
+            }
         }
 
         public override void OnLeave(Player player)
@@ -32,9 +53,34 @@ namespace FactoryHelper.Triggers
             base.OnLeave(player);
             if (_resetOnLeave)
             {
-                (Scene as Level).Session.SetFlag(_activationId, false);
-                Console.WriteLine($"Deactivating ID: {_activationId}");
+                foreach (string activationId in _activationIds)
+                {
+                    Deactivate(activationId);
+                }
             }
+        }
+
+        private void HandleRest()
+        {
+            if (!_persistent)
+            {
+                foreach (string activationId in _activationIds)
+                {
+                    Deactivate(activationId);
+                }
+            }
+        }
+
+        public override void SceneEnd(Scene scene)
+        {
+            HandleRest();
+            base.SceneEnd(scene);
+        }
+
+        public override void Removed(Scene scene)
+        {
+            HandleRest();
+            base.Removed(scene);
         }
     }
 }
