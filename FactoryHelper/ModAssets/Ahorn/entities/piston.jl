@@ -30,7 +30,6 @@ const placements = Ahorn.PlacementDict(
         function(entity)
             entity.data["nodes"] = [(Int(entity.data["x"]) - 16, Int(entity.data["y"])), (Int(entity.data["x"]) - 32, Int(entity.data["y"]))]
 			entity.data["direction"] = "Left"
-			entity.data["initialDelay"] = 0.0
         end
     ),
     "Piston (Right) (FactoryHelper)" => Ahorn.EntityPlacement(
