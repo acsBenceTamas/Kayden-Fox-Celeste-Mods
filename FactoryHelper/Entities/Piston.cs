@@ -123,6 +123,7 @@ namespace FactoryHelper.Entities
                 }
             }
         }
+
         private bool ActivationProtocol
         {
             get

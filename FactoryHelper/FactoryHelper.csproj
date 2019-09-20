@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\DashFuseBox.cs" />
     <Compile Include="FactoryHelperModule.cs" />
     <Compile Include="Entities\Piston.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

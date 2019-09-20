@@ -43,6 +43,10 @@ namespace FactoryHelper
                     case "FactoryHelper/FactoryActivationTrigger":
                         level.Add(new FactoryActivationTrigger(entityData, offset));
                         return true;
+                    case "FactoryHelper/DashFuseBox":
+                        Console.WriteLine("FuseBox Added");
+                        level.Add(new DashFuseBox(entityData, offset, new EntityID(entityData.Level.Name, entityData.ID)));
+                        return true;
                     default:
                         return false;
                 }
