@@ -35,17 +35,27 @@ namespace FactoryHelper
         {
             if (entityData.Name.StartsWith("FactoryHelper"))
             {
+                Console.WriteLine(entityData.Name);
                 switch (entityData.Name)
                 {
-                    case "FactoryHelper/Piston":
-                        level.Add(new Piston(entityData, offset));
+                    case "FactoryHelper/PistonUp":
+                        level.Add(new Piston(entityData, offset, "Up"));
+                        return true;
+                    case "FactoryHelper/PistonDown":
+                        level.Add(new Piston(entityData, offset, "Down"));
+                        return true;
+                    case "FactoryHelper/PistonLeft":
+                        level.Add(new Piston(entityData, offset, "Left"));
+                        return true;
+                    case "FactoryHelper/PistonRight":
+                        level.Add(new Piston(entityData, offset, "Right"));
                         return true;
                     case "FactoryHelper/FactoryActivationTrigger":
                         level.Add(new FactoryActivationTrigger(entityData, offset));
                         return true;
                     case "FactoryHelper/DashFuseBox":
                         Console.WriteLine("FuseBox Added");
-                        level.Add(new DashFuseBox(entityData, offset, new EntityID(entityData.Level.Name, entityData.ID)));
+                        level.Add(new DashFuseBox(entityData, offset));
                         return true;
                     default:
                         return false;

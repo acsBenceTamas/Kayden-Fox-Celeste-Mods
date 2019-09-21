@@ -24,6 +24,8 @@ namespace FactoryHelper.Entities
 
         public bool Activated { get; private set; }
 
+        public bool Heated { get; private set; }
+
         private string _activationId;
         private const int _bodyVariantCount = 4;
         private PistonPart _head;
@@ -140,20 +142,23 @@ namespace FactoryHelper.Entities
             }
         }
 
-        public Piston(EntityData data, Vector2 offset) : this(data.Position + offset, 
-                                                              data.Nodes[0] + offset, 
-                                                              data.Nodes[1] + offset, 
-                                                              data.Attr("direction", "Up"),
-                                                              data.Bool("startActive", true),
-                                                              data.Float("moveTime",0.4f),
-                                                              data.Float("pauseTime", 0.2f),
-                                                              data.Float("initialDelay", 0f),
-                                                              data.Attr("activationId", ""))
+        public Piston(EntityData data, Vector2 offset, string direction) 
+            : this(data.Position + offset,
+                   data.Nodes[0] + offset,
+                   data.Nodes[1] + offset,
+                   direction,
+                   data.Attr("activationId", ""),
+                   data.Float("moveTime", 0.4f),
+                   data.Float("pauseTime", 0.2f),
+                   data.Float("initialDelay", 0f),
+                   data.Bool("startActive", true),
+                   data.Bool("heated", false))
         {
         }
 
-        public Piston(Vector2 position, Vector2 start, Vector2 end, string directionString, bool startActive, float moveTime, float pauseTime, float initialDelay, string activationId)
+        public Piston(Vector2 position, Vector2 start, Vector2 end, string directionString, string activationId, float moveTime, float pauseTime, float initialDelay, bool startActive, bool heated)
         {
+            Heated = heated;
             MoveTime = moveTime;
             PauseTime = pauseTime;
             InitialDelay = initialDelay;
@@ -164,8 +169,6 @@ namespace FactoryHelper.Entities
 
             _basePos = position;
             _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
-
-            //Add(new Coroutine(Sequence(), true));
 
             if (_direction == Direction.Up || _direction == Direction.Down)
             {
@@ -213,6 +216,13 @@ namespace FactoryHelper.Entities
 
             _base.Image.Rotation += RotationModifier;
             _head.Image.Rotation += RotationModifier;
+
+            if (Heated)
+            {
+                _base.Image.Color = new Color(1.0f, 0.8f, 0.8f);
+                _head.Image.Color = new Color(1.0f, 0.8f, 0.8f);
+            }
+
             _bodyPartCount = (int)Math.Ceiling(length / 8);
             _bodyImages = new Image[_bodyPartCount];
 
@@ -236,6 +246,10 @@ namespace FactoryHelper.Entities
                 _bodyImages[i].CenterOrigin();
                 _bodyImages[i].Rotation += RotationModifier;
                 _bodyImages[i].Position = _direction == Direction.Down || _direction == Direction.Up ? new Vector2(8, 4) : new Vector2(4, 8);
+                if (Heated)
+                {
+                    _bodyImages[i].Color = new Color(1.0f, 0.5f, 0.5f);
+                }
             }
 
             _base.Depth = -20;
@@ -284,6 +298,41 @@ namespace FactoryHelper.Entities
             {
                 _sfx.Stop();
             }
+            if (Heated)
+            {
+                if (_body.HasPlayerRider())
+                {
+                    _body.GetPlayerRider().Die(Vector2.Zero);
+                }
+            }
+            if (_direction == Direction.Down)
+            {
+                DisplacePlayerOnElement(_head);
+            }
+            if (_direction == Direction.Down || _direction == Direction.Up)
+            {
+                DisplacePlayerOnElement(_base);
+            }
+        }
+
+        private void DisplacePlayerOnElement(Solid element)
+        {
+            if (element.HasPlayerOnTop())
+            {
+                Player player = element.GetPlayerOnTop();
+                if (player != null)
+                {
+                    if (player.Right - element.Left < element.Right - player.Left)
+                    {
+                        player.Right = element.Left;
+                    }
+                    else
+                    {
+                        player.Left = element.Right;
+                    }
+                    player.Y += 0.5f;
+                }
+            }
         }
 
         private void UpdatePosition()
@@ -306,10 +355,13 @@ namespace FactoryHelper.Entities
 
                     if (_body.HasPlayerClimbing())
                     {
-                        Player player = _body.GetPlayerRider();
-                        float newY = _base.Y + GrabPositionModifier + (player.Y - (_base.Y + GrabPositionModifier)) * heightAfter / heightBefore;
-                        player.LiftSpeed = new Vector2(player.LiftSpeed.X, (newY - player.Y) / Engine.DeltaTime);
-                        player.MoveV(newY - player.Y);
+                        Player player = _body.GetPlayerClimbing();
+                        if (player != null)
+                        {
+                            float newY = _base.Y + GrabPositionModifier + (player.Y - (_base.Y + GrabPositionModifier)) * heightAfter / heightBefore;
+                            player.LiftSpeed = new Vector2(player.LiftSpeed.X, (newY - player.Y) / Engine.DeltaTime);
+                            player.MoveV(newY - player.Y);
+                        }
                     }
 
                     for (int i = 0; i < _bodyPartCount; i++)
@@ -328,10 +380,13 @@ namespace FactoryHelper.Entities
 
                     if (_body.HasPlayerOnTop())
                     {
-                        Player player = _body.GetPlayerRider();
-                        float newX = _base.X + GrabPositionModifier + (player.X - (_base.X + GrabPositionModifier)) * widthAfter / widthBefore;
-                        player.LiftSpeed = new Vector2((newX - player.X) / Engine.DeltaTime, player.LiftSpeed.Y);
-                        player.MoveH(newX - player.X);
+                        Player player = _body.GetPlayerOnTop();
+                        if (player != null)
+                        {
+                            float newX = _base.X + GrabPositionModifier + (player.X - (_base.X + GrabPositionModifier)) * widthAfter / widthBefore;
+                            player.LiftSpeed = new Vector2((newX - player.X) / Engine.DeltaTime, player.LiftSpeed.Y);
+                            player.MoveH(newX - player.X);
+                        }
                     }
 
                     for (int i = 0; i < _bodyPartCount; i++)
