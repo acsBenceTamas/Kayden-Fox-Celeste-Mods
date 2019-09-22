@@ -58,6 +58,9 @@ namespace FactoryHelper
                     case "FactoryHelper/DashFuseBox":
                         level.Add(new DashFuseBox(entityData, offset));
                         return true;
+                    case "FactoryHelper/PowerLine":
+                        level.Add(new PowerLine(entityData, offset));
+                        return true;
                     default:
                         return false;
                 }
