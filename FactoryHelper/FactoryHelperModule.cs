@@ -35,7 +35,6 @@ namespace FactoryHelper
         {
             if (entityData.Name.StartsWith("FactoryHelper"))
             {
-                Console.WriteLine(entityData.Name);
                 switch (entityData.Name)
                 {
                     case "FactoryHelper/PistonUp":
@@ -53,8 +52,10 @@ namespace FactoryHelper
                     case "FactoryHelper/FactoryActivationTrigger":
                         level.Add(new FactoryActivationTrigger(entityData, offset));
                         return true;
+                    case "FactoryHelper/WindTunnel":
+                        level.Add(new WindTunnel(entityData, offset));
+                        return true;
                     case "FactoryHelper/DashFuseBox":
-                        Console.WriteLine("FuseBox Added");
                         level.Add(new DashFuseBox(entityData, offset));
                         return true;
                     default:

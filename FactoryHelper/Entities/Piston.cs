@@ -22,7 +22,7 @@ namespace FactoryHelper.Entities
         
         public bool Moving { get; private set; } = true;
 
-        public bool Activated { get; private set; }
+        public bool StartActive { get; private set; }
 
         public bool Heated { get; private set; }
 
@@ -40,7 +40,7 @@ namespace FactoryHelper.Entities
         private Direction _direction = Direction.Up;
         private static readonly Random _rnd = new Random();
 
-        private float RotationModifier {
+        private float _rotationModifier {
             get
             {
                 switch (_direction)
@@ -57,7 +57,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private int HeadMinimumPositionModifier
+        private int _headMinimumPositionModifier
         {
             get
             {
@@ -74,7 +74,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private int HeadPositionModifier
+        private int _headPositionModifier
         {
             get
             {
@@ -91,7 +91,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private int GrabPositionModifier
+        private int _grabPositionModifier
         {
             get
             {
@@ -108,7 +108,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private int BodyPositionModifier
+        private int _bodyPositionModifier
         {
             get
             {
@@ -126,7 +126,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private bool ActivationProtocol
+        private bool _activated
         {
             get
             {
@@ -162,7 +162,7 @@ namespace FactoryHelper.Entities
             MoveTime = moveTime;
             PauseTime = pauseTime;
             InitialDelay = initialDelay;
-            Activated = activationId == string.Empty ? true : startActive;
+            StartActive = startActive;
             double length = 0;
             Enum.TryParse(directionString, out _direction);
 
@@ -177,12 +177,12 @@ namespace FactoryHelper.Entities
 
                 if (_direction == Direction.Up)
                 {
-                    _startPos.Y = Math.Min(start.Y, _basePos.Y + HeadMinimumPositionModifier);
-                    _endPos.Y = Math.Min(end.Y, _basePos.Y + HeadMinimumPositionModifier);
+                    _startPos.Y = Math.Min(start.Y, _basePos.Y + _headMinimumPositionModifier);
+                    _endPos.Y = Math.Min(end.Y, _basePos.Y + _headMinimumPositionModifier);
                 } else
                 {
-                    _startPos.Y = Math.Max(start.Y, _basePos.Y + HeadMinimumPositionModifier);
-                    _endPos.Y = Math.Max(end.Y, _basePos.Y + HeadMinimumPositionModifier);
+                    _startPos.Y = Math.Max(start.Y, _basePos.Y + _headMinimumPositionModifier);
+                    _endPos.Y = Math.Max(end.Y, _basePos.Y + _headMinimumPositionModifier);
                 }
 
                 length = Math.Max(Math.Abs(_basePos.Y - _endPos.Y), Math.Abs(_basePos.Y - _startPos.Y));
@@ -198,13 +198,13 @@ namespace FactoryHelper.Entities
 
                 if (_direction == Direction.Left)
                 {
-                    _startPos.X = Math.Min(start.X, _basePos.X + HeadMinimumPositionModifier);
-                    _endPos.X = Math.Min(end.X, _basePos.X + HeadMinimumPositionModifier);
+                    _startPos.X = Math.Min(start.X, _basePos.X + _headMinimumPositionModifier);
+                    _endPos.X = Math.Min(end.X, _basePos.X + _headMinimumPositionModifier);
                 }
                 else
                 {
-                    _startPos.X = Math.Max(start.X, _basePos.X + HeadMinimumPositionModifier);
-                    _endPos.X = Math.Max(end.X, _basePos.X + HeadMinimumPositionModifier);
+                    _startPos.X = Math.Max(start.X, _basePos.X + _headMinimumPositionModifier);
+                    _endPos.X = Math.Max(end.X, _basePos.X + _headMinimumPositionModifier);
                 }
 
                 length = Math.Max(Math.Abs(_basePos.X - _endPos.X), Math.Abs(_basePos.X - _startPos.X));
@@ -214,8 +214,8 @@ namespace FactoryHelper.Entities
                 _body = new Solid(new Vector2(Math.Min(_startPos.X, _basePos.X) + 8, _basePos.Y + 3), Math.Abs(_base.X - _head.X) - 8, 10, false);
             }
 
-            _base.Image.Rotation += RotationModifier;
-            _head.Image.Rotation += RotationModifier;
+            _base.Image.Rotation += _rotationModifier;
+            _head.Image.Rotation += _rotationModifier;
 
             if (Heated)
             {
@@ -231,11 +231,11 @@ namespace FactoryHelper.Entities
                 Vector2 bodyPosition;
                 if (_direction == Direction.Up || _direction == Direction.Down)
                 {
-                    bodyPosition = new Vector2(-3, i * (_basePos.Y - (_head.Y + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier);
+                    bodyPosition = new Vector2(-3, i * (_basePos.Y - (_head.Y + _headPositionModifier)) / (_bodyPartCount) + _bodyPositionModifier);
                 }
                 else
                 {
-                    bodyPosition = new Vector2(i * (_basePos.X - (_head.X + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier, -3);
+                    bodyPosition = new Vector2(i * (_basePos.X - (_head.X + _headPositionModifier)) / (_bodyPartCount) + _bodyPositionModifier, -3);
                 }
                 string bodyImage = $"objects/FactoryHelper/piston/body0{_rnd.Next(_bodyVariantCount)}";
 
@@ -244,7 +244,7 @@ namespace FactoryHelper.Entities
                     Position = bodyPosition
                 });
                 _bodyImages[i].CenterOrigin();
-                _bodyImages[i].Rotation += RotationModifier;
+                _bodyImages[i].Rotation += _rotationModifier;
                 _bodyImages[i].Position = _direction == Direction.Down || _direction == Direction.Up ? new Vector2(8, 4) : new Vector2(4, 8);
                 if (Heated)
                 {
@@ -268,7 +268,7 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (ActivationProtocol && Moving)
+            if (_activated != StartActive)
             {
                 if (!_sfx.Playing)
                 {
@@ -358,7 +358,7 @@ namespace FactoryHelper.Entities
                         Player player = _body.GetPlayerClimbing();
                         if (player != null)
                         {
-                            float newY = _base.Y + GrabPositionModifier + (player.Y - (_base.Y + GrabPositionModifier)) * heightAfter / heightBefore;
+                            float newY = _base.Y + _grabPositionModifier + (player.Y - (_base.Y + _grabPositionModifier)) * heightAfter / heightBefore;
                             player.LiftSpeed = new Vector2(player.LiftSpeed.X, (newY - player.Y) / Engine.DeltaTime);
                             player.MoveV(newY - player.Y);
                         }
@@ -366,7 +366,7 @@ namespace FactoryHelper.Entities
 
                     for (int i = 0; i < _bodyPartCount; i++)
                     {
-                        _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier) + posDisplacement;
+                        _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + _headPositionModifier)) / (_bodyPartCount) + _bodyPositionModifier) + posDisplacement;
                     }
                     break;
                 case Direction.Left:
@@ -383,7 +383,7 @@ namespace FactoryHelper.Entities
                         Player player = _body.GetPlayerOnTop();
                         if (player != null)
                         {
-                            float newX = _base.X + GrabPositionModifier + (player.X - (_base.X + GrabPositionModifier)) * widthAfter / widthBefore;
+                            float newX = _base.X + _grabPositionModifier + (player.X - (_base.X + _grabPositionModifier)) * widthAfter / widthBefore;
                             player.LiftSpeed = new Vector2((newX - player.X) / Engine.DeltaTime, player.LiftSpeed.Y);
                             player.MoveH(newX - player.X);
                         }
@@ -391,7 +391,7 @@ namespace FactoryHelper.Entities
 
                     for (int i = 0; i < _bodyPartCount; i++)
                     {
-                        _bodyImages[i].Position = new Vector2(i * (_basePos.X - (_head.X + HeadPositionModifier)) / (_bodyPartCount) + BodyPositionModifier, -3) + posDisplacement;
+                        _bodyImages[i].Position = new Vector2(i * (_basePos.X - (_head.X + _headPositionModifier)) / (_bodyPartCount) + _bodyPositionModifier, -3) + posDisplacement;
                     }
                     break;
             }
