@@ -1,4 +1,4 @@
-module FactoryHelperDashFuseBox
+module FactoryHelperWindTunnel
 
 using ..Ahorn, Maple
 
@@ -11,13 +11,13 @@ const placements = Ahorn.PlacementDict(
         WindTunnel,
         "rectangle",
         Dict{String, Any}(
-			"direction" => direction,
-		)
+            "direction" => direction,
+        )
     ) for direction in directions
 )
 
 function Ahorn.minimumSize(entity::WindTunnel)
-	return (16, 16)
+    return (16, 16)
 end
 
 Ahorn.nodeLimits(entity::WindTunnel) = 0, 0
@@ -28,37 +28,37 @@ Ahorn.editingOptions(entity::WindTunnel) = Dict{String, Any}(
 Ahorn.resizable(entity::WindTunnel) = true, true
 
 function Ahorn.renderAbs(ctx::Ahorn.Cairo.CairoContext, entity::WindTunnel, room::Maple.Room)
-	x, y = Ahorn.position(entity)
-	width = get(entity.data, "width", 16)
-	height = get(entity.data, "height", 16)
-	
-	Ahorn.drawRectangle(ctx, x, y, width, height, (0.7, 0.7, 0.7, 0.4), (0.7, 0.7, 0.7, 1.0))
-	
-	xf = xt = x
-	yf = yt = y
-	
-	direction = get(entity.data, "direction", "Up")
-	
-	if direction == "Up" || direction == "Down"
-		xf = xt = x + width/2
-	elseif direction == "Left" || direction == "Right"
-		yf = yt = y + height/2
-	end
-	if direction == "Up"
-		yf = y + height
-		yt = y
-	elseif direction == "Down"
-		yf = y
-		yt = y + height
-	elseif direction == "Left"
-		xf = x + width
-		xt = x
-	elseif direction == "Right"
-		xf = x
-		xt = x + width
-	end
-	
-	Ahorn.drawArrow(ctx, xf, yf, xt, yt, (0.0, 0.0, 0.7, 1.0), headLength=4)
+    x, y = Ahorn.position(entity)
+    width = get(entity.data, "width", 16)
+    height = get(entity.data, "height", 16)
+    
+    Ahorn.drawRectangle(ctx, x, y, width, height, (0.7, 0.7, 0.7, 0.4), (0.7, 0.7, 0.7, 1.0))
+    
+    xf = xt = x
+    yf = yt = y
+    
+    direction = get(entity.data, "direction", "Up")
+    
+    if direction == "Up" || direction == "Down"
+        xf = xt = x + width/2
+    elseif direction == "Left" || direction == "Right"
+        yf = yt = y + height/2
+    end
+    if direction == "Up"
+        yf = y + height
+        yt = y
+    elseif direction == "Down"
+        yf = y
+        yt = y + height
+    elseif direction == "Left"
+        xf = x + width
+        xt = x
+    elseif direction == "Right"
+        xf = x
+        xt = x + width
+    end
+    
+    Ahorn.drawArrow(ctx, xf, yf, xt, yt, (0.0, 0.0, 0.7, 1.0), headLength=4)
 end
 
 function Ahorn.renderSelectedAbs(ctx::Ahorn.Cairo.CairoContext, entity::WindTunnel)
@@ -66,9 +66,9 @@ end
 
 function Ahorn.selection(entity::WindTunnel)
     x, y = Ahorn.position(entity)
-	width = get(entity.data, "width", 16)
-	height = get(entity.data, "height", 16)
-	
+    width = get(entity.data, "width", 16)
+    height = get(entity.data, "height", 16)
+    
     return Ahorn.Rectangle[Ahorn.Rectangle(x,y,width,height)]
 end
 
