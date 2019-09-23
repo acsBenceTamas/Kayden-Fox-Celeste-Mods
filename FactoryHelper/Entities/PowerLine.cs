@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -9,47 +10,6 @@ namespace FactoryHelper.Entities
     [Tracked]
     class PowerLine : Entity
     {
-        private class Node
-        {
-            public Vector2 Position;
-            public Node Next;
-            public Node Previous;
-            public bool Rendered = true;
-            public readonly HashSet<Direction> ExitDirections;
-            public float X { get { return Position.X; } set { Position.X = value; } }
-            public float Y { get { return Position.Y; } set { Position.Y = value; } }
-
-            public Node(Vector2 position)
-            {
-                Position = position;
-                ExitDirections = new HashSet<Direction>();
-            }
-
-            public void CheckConnections()
-            {
-                Console.WriteLine("Node has:");
-                if (Previous != null && Previous.Position.X < Position.X || Next != null && Next.Position.X > Position.X)
-                {
-                    ExitDirections.Add(Direction.Left);
-                    Console.WriteLine("Left");
-                }
-                if (Previous != null && Previous.Position.X > Position.X || Next != null && Next?.Position.X < Position.X)
-                {
-                    ExitDirections.Add(Direction.Right);
-                    Console.WriteLine("Right");
-                }
-                if (Previous != null && Previous.Position.Y < Position.Y || Next != null && Next?.Position.Y > Position.Y)
-                {
-                    ExitDirections.Add(Direction.Up);
-                    Console.WriteLine("Up");
-                }
-                if (Previous != null && Previous.Position.Y > Position.Y || Next != null && Next?.Position.Y < Position.Y)
-                {
-                    ExitDirections.Add(Direction.Down);
-                    Console.WriteLine("Down");
-                }
-            }
-        }
 
         private enum Direction
         {
@@ -62,6 +22,25 @@ namespace FactoryHelper.Entities
         private Node[] _cornerPoints;
         private List<Sprite> _sprites = new List<Sprite>();
         private bool _startActive;
+        private FactoryActivationComponent _activator;
+        private string _activationId;
+
+        public bool Activated
+        {
+            get
+            {
+                return Components.Get<FactoryActivationComponent>().Active;
+            }
+            set
+            {
+                int i = _startActive == value ? 1 : 0;
+                foreach (var sprite in _sprites)
+                {
+                    sprite.SetAnimationFrame(i);
+                }
+                Components.Get<FactoryActivationComponent>().Active = value;
+            }
+        }
 
         public PowerLine(EntityData entityData, Vector2 offset) : 
             this(entityData.Position,
@@ -74,20 +53,26 @@ namespace FactoryHelper.Entities
 
         public PowerLine(Vector2 position, Vector2 offset, Vector2[] nodes, string activationId, bool startActive)
         {
-            Position = position + offset;
+            Position = offset;
+            _startActive = startActive;
+            _activationId = activationId;
+
+            string activationString = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
+            Add(_activator = new FactoryActivationComponent(activationString));
+
             _cornerPoints = new Node[nodes.Length + 1];
-            _cornerPoints[0] = new Node(Vector2.Zero);
+            _cornerPoints[0] = new Node(position);
             for (int i=1; i < _cornerPoints.Length; i++)
             {
                 _cornerPoints[i] = new Node(nodes[i - 1]);
                 _cornerPoints[i - 1].Next = _cornerPoints[i];
                 _cornerPoints[i].Previous = _cornerPoints[i - 1];
             }
-            //NormalizeCornerPoints();
+            NormalizeCornerPoints();
 
             foreach (Node node in _cornerPoints)
             {
-                node.CheckConnections();
+                node.CheckNeighbors();
             }
 
             Depth = 50;
@@ -98,60 +83,78 @@ namespace FactoryHelper.Entities
             base.Awake(scene);
             CheckConnections();
             PlaceLineSegments();
+            if (_activationId != null)
+            {
+                string activationString = $"FactoryActivation:{_activationId}";
+                Level level = SceneAs<Level>();
+                if (level.Session.GetFlag(activationString) || level.Session.GetFlag("Persistent" + activationString))
+                {
+                    Activated = true;
+                }
+            }
         }
 
         private void PlaceLineSegments()
         {
             Node node = _cornerPoints[0];
-            while (node.Next != null)
+
+            while (true)
             {
+                Console.WriteLine($"Placing node at {node.Position}");
                 string type;
                 if (node.Rendered)
                 {
                     type = GetTypeString(node);
-                    Sprite sprite = GetSpriteWithType(type);
-                    _sprites.Add(sprite);
-                    Add(sprite);
-                    sprite.Position = node.Position;  
+                    Sprite sprite = AddSpriteWithType(type);
+                    sprite.Position = node.Position;
                 }
-                Vector2 step;
-                if (node.Next.X == node.X)
+                if (node.Next != null)
                 {
-                    type = "v";
-                    if (node.Y < node.Next.Y)
+                    Vector2 step;
+
+                    if (node.Next.X == node.X)
                     {
-                        step = Vector2.UnitY * 8;
+                        type = "v";
+                        if (node.Y < node.Next.Y)
+                        {
+                            step = Vector2.UnitY * 8;
+                        }
+                        else
+                        {
+                            step = -Vector2.UnitY * 8;
+                        }
                     }
                     else
                     {
-                        step = -Vector2.UnitY * 8;
+                        type = "h";
+                        if (node.X < node.Next.X)
+                        {
+                            step = Vector2.UnitX * 8;
+                        }
+                        else
+                        {
+                            step = -Vector2.UnitX * 8;
+                        }
                     }
+
+                    int stepCount = (int)(Math.Round(Math.Max(Math.Abs(node.Y - node.Next.Y), Math.Abs(node.X - node.Next.X))) / 8) - 1;
+
+                    for (int i = 0; i < stepCount; i++)
+                    {
+                        Sprite sprite = AddSpriteWithType(type);
+                        sprite.Position = node.Position + step * (i + 1);
+                    }
+
+                    node = node.Next;
                 }
                 else
                 {
-                    type = "h";
-                    if (node.X < node.Next.X)
-                    {
-                        step = Vector2.UnitX * 8;
-                    }
-                    else
-                    {
-                        step = -Vector2.UnitX * 8;
-                    }
+                    break;
                 }
-                int stepCount = (int)(Math.Round(Math.Max(Math.Abs(node.Y - node.Next.Y), Math.Abs(node.X - node.Next.X)))/ 16) - 1;
-                for(int i = 0; i < stepCount; i++)
-                {
-                    Sprite sprite = GetSpriteWithType(type);
-                    _sprites.Add(sprite);
-                    Add(sprite);
-                    sprite.Position = node.Position + step * (i+1);
-                }
-                node = node.Next;
             }
         }
 
-        private Sprite GetSpriteWithType(string type)
+        private Sprite AddSpriteWithType(string type)
         {
             string path = $"/powerLine_{type}";
             Sprite sprite = new Sprite(GFX.Game, "objects/FactoryHelper/powerLine");
@@ -162,6 +165,8 @@ namespace FactoryHelper.Entities
             {
                 sprite.SetAnimationFrame(1);
             }
+            _sprites.Add(sprite);
+            Add(sprite);
             return sprite;
         }
 
@@ -169,7 +174,7 @@ namespace FactoryHelper.Entities
         {
             foreach(PowerLine otherLine in Scene.Entities.FindAll<PowerLine>())
             {
-                if (otherLine != this)
+                if (otherLine != this && _startActive == otherLine._startActive && _activationId == otherLine._activationId)
                 {
                     foreach (Node thisNode in _cornerPoints)
                     {
@@ -276,6 +281,71 @@ namespace FactoryHelper.Entities
             else
             {
                 return "c";
+            }
+        }
+
+        private class Node
+        {
+            public Vector2 Position;
+            public Node Next;
+            public Node Previous;
+            public bool Rendered = true;
+            public readonly HashSet<Direction> ExitDirections;
+            public float X { get { return Position.X; } set { Position.X = value; } }
+            public float Y { get { return Position.Y; } set { Position.Y = value; } }
+
+            public Node(Vector2 position)
+            {
+                Position = position;
+                ExitDirections = new HashSet<Direction>();
+            }
+
+            public void CheckNeighbors()
+            {
+                if (HasLeftNeighbor())
+                {
+                    ExitDirections.Add(Direction.Left);
+                }
+                if (HasRightNeighbor())
+                {
+                    ExitDirections.Add(Direction.Right);
+                }
+                if (HasUpNeighbor())
+                {
+                    ExitDirections.Add(Direction.Up);
+                }
+                if (HasDownNeighbor())
+                {
+                    ExitDirections.Add(Direction.Down);
+                }
+            }
+
+            private bool HasLeftNeighbor()
+            {
+                bool hasPrevious = (Previous != null && Previous.Position.X < Position.X);
+                bool hasNext = (Next != null && Next.Position.X < Position.X);
+                return hasPrevious || hasNext;
+            }
+
+            private bool HasRightNeighbor()
+            {
+                bool hasPrevious = (Previous != null && Previous.Position.X > Position.X);
+                bool hasNext = (Next != null && Next.Position.X > Position.X);
+                return hasPrevious || hasNext;
+            }
+
+            private bool HasUpNeighbor()
+            {
+                bool hasPrevious = (Previous != null && Previous.Position.Y < Position.Y);
+                bool hasNext = (Next != null && Next.Position.Y < Position.Y);
+                return hasPrevious || hasNext;
+            }
+
+            private bool HasDownNeighbor()
+            {
+                bool hasPrevious = (Previous != null && Previous.Position.Y > Position.Y);
+                bool hasNext = (Next != null && Next.Position.Y > Position.Y);
+                return hasPrevious || hasNext;
             }
         }
     }

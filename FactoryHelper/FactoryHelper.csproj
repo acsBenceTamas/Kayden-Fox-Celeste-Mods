@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\FactoryActivationComponent.cs" />
     <Compile Include="Entities\DashFuseBox.cs" />
     <Compile Include="Entities\PowerLine.cs" />
     <Compile Include="Entities\WindTunnel.cs" />

@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -25,8 +26,19 @@ namespace FactoryHelper.Entities
         public bool StartActive { get; private set; }
 
         public bool Heated { get; private set; }
+        public bool Activated
+        {
+            get
+            {
+                return Components.Get<FactoryActivationComponent>().Active;
+            }
+            set
+            {
+                Components.Get<FactoryActivationComponent>().Active = value;
+            }
+        }
 
-        private string _activationId;
+        private static readonly Random _rnd = new Random();
         private const int _bodyVariantCount = 4;
         private PistonPart _head;
         private PistonPart _base;
@@ -38,7 +50,8 @@ namespace FactoryHelper.Entities
         private Vector2 _basePos;
         private int _bodyPartCount;
         private Direction _direction = Direction.Up;
-        private static readonly Random _rnd = new Random();
+        private FactoryActivationComponent _activator;
+        private string _activationId;
 
         private float _rotationModifier {
             get
@@ -126,22 +139,6 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private bool _activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
-        }
-
         public Piston(EntityData data, Vector2 offset, string direction) 
             : this(data.Position + offset,
                    data.Nodes[0] + offset,
@@ -166,9 +163,11 @@ namespace FactoryHelper.Entities
             double length = 0;
             Enum.TryParse(directionString, out _direction);
 
-
+            _activationId = activationId;
             _basePos = position;
-            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
+
+            string activationString = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
+            Add(_activator = new FactoryActivationComponent(activationString));
 
             if (_direction == Direction.Up || _direction == Direction.Down)
             {
@@ -263,12 +262,21 @@ namespace FactoryHelper.Entities
         {
             base.Awake(scene);
             UpdatePosition();
+            if (_activationId != null)
+            {
+                string activationString = $"FactoryActivation:{_activationId}";
+                Level level = SceneAs<Level>();
+                if (level.Session.GetFlag(activationString) || level.Session.GetFlag("Persistent" + activationString))
+                {
+                    Activated = true;
+                }
+            }
         }
 
         public override void Update()
         {
             base.Update();
-            if (_activated != StartActive)
+            if (Activated != StartActive)
             {
                 if (!_sfx.Playing)
                 {

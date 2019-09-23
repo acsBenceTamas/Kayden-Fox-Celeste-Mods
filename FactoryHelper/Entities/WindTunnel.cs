@@ -149,14 +149,15 @@ namespace FactoryHelper.Entities
             Vector2 zero = Vector2.Zero;
             if (flag)
             {
-                _scale.X = Math.Max(1f, Math.Abs(_actualWindSpeed.X) / 100f);
+                _scale.X = Math.Max(1f, Math.Abs(_actualWindSpeed.X) / 40f);
                 _scale.Y = 1f;
                 zero = new Vector2(_actualWindSpeed.X, 0f);
             }
             else
             {
+                float divisor = _direction == Direction.Down ? 10f : 100f;
                 _scale.X = 1f;
-                _scale.Y = Math.Max(1f, Math.Abs(_actualWindSpeed.Y) / 40f);
+                _scale.Y = Math.Max(1f, Math.Abs(_actualWindSpeed.Y) / divisor);
                 zero = new Vector2(0f, _actualWindSpeed.Y * 2f);
             }
             for (int i = 0; i < _particles.Length; i++)
@@ -165,8 +166,21 @@ namespace FactoryHelper.Entities
                 {
                     Reset(i, 0f);
                 }
+                float divisor;
+                switch (_direction)
+                {
+                    case Direction.Up:
+                        divisor = 4f;
+                        break;
+                    case Direction.Down:
+                        divisor = 0.7f;
+                        break;
+                    default:
+                        divisor = 1f;
+                        break;
+                }
                 _particles[i].Percent += Engine.DeltaTime / _particles[i].Duration;
-                _particles[i].Position += (_particles[i].Direction * _particles[i].Speed + zero) * Engine.DeltaTime;
+                _particles[i].Position += (_particles[i].Direction * _particles[i].Speed + zero / divisor) * Engine.DeltaTime;
                 _particles[i].Direction.Rotate(_particles[i].Spin * Engine.DeltaTime);
             }
             foreach (WindMover component in Scene.Tracker.GetComponents<WindMover>())
@@ -182,13 +196,13 @@ namespace FactoryHelper.Entities
         {
             for (int i = 0; i < _particles.Length; i++)
             {
-                Vector2 position = default(Vector2);
-                position.X = mod(_particles[i].Position.X, _loopWidth);
-                position.Y = mod(_particles[i].Position.Y, _loopHeight);
+                Vector2 particlePosition = default(Vector2);
+                particlePosition.X = mod(_particles[i].Position.X, _loopWidth);
+                particlePosition.Y = mod(_particles[i].Position.Y, _loopHeight);
                 float percent = _particles[i].Percent;
                 float num = 0f;
                 num = ((!(percent < 0.7f)) ? Calc.ClampedMap(percent, 0.7f, 1f, 1f, 0f) : Calc.ClampedMap(percent, 0f, 0.3f));
-                Draw.Rect(position + Position, _scale.X, _scale.Y, _colors[_particles[i].Color] * num);
+                Draw.Rect(particlePosition + this.Position, _scale.X, _scale.Y, _colors[_particles[i].Color] * num);
             }
         }
 
