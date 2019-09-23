@@ -111,7 +111,6 @@ namespace FactoryHelper.Entities
 
         public DashCollisionResults OnDashed(Player player, Vector2 direction)
         {
-            Console.WriteLine($"Dash direction: {direction} | Press direction: {_pressDirection}");
             if (!Activated && direction == _pressDirection)
             {
                 Activated = true;
@@ -152,7 +151,6 @@ namespace FactoryHelper.Entities
 
         private void HandleRest()
         {
-            Console.WriteLine("Handling Reset");
             if (!_persistent)
             {
                 Activated = false;

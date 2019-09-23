@@ -24,6 +24,10 @@ namespace FactoryHelper.Components
             {
                 (Entity as PowerLine).Activated = state;
             }
+            else if (Entity is RustyLamp)
+            {
+                (Entity as RustyLamp).Activated = state;
+            }
         }
     }
 }

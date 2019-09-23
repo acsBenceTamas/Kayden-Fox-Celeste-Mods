@@ -61,6 +61,9 @@ namespace FactoryHelper
                     case "FactoryHelper/PowerLine":
                         level.Add(new PowerLine(entityData, offset));
                         return true;
+                    case "FactoryHelper/RustyLamp":
+                        level.Add(new RustyLamp(entityData, offset));
+                        return true;
                     default:
                         return false;
                 }

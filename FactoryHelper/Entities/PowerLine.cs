@@ -29,7 +29,7 @@ namespace FactoryHelper.Entities
         {
             get
             {
-                return Components.Get<FactoryActivationComponent>().Active;
+                return _activator.Active;
             }
             set
             {
@@ -38,7 +38,7 @@ namespace FactoryHelper.Entities
                 {
                     sprite.SetAnimationFrame(i);
                 }
-                Components.Get<FactoryActivationComponent>().Active = value;
+                _activator.Active = value;
             }
         }
 
@@ -100,7 +100,6 @@ namespace FactoryHelper.Entities
 
             while (true)
             {
-                Console.WriteLine($"Placing node at {node.Position}");
                 string type;
                 if (node.Rendered)
                 {
