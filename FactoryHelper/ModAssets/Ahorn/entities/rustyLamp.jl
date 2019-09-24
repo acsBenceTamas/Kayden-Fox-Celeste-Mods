@@ -2,7 +2,7 @@ module FactoryHelperRustyLamp
 
 using ..Ahorn, Maple
 
-@mapdef Entity "FactoryHelper/RustyLamp" RustyLamp(x::Integer, y::Integer, activationIds::String="", strobePattern::String="None", initialDelay::Real=0.0, startActive::Bool=false)
+@mapdef Entity "FactoryHelper/RustyLamp" RustyLamp(x::Integer, y::Integer, activationId::String="", strobePattern::String="None", initialDelay::Real=0.0, startActive::Bool=false)
 
 const placements = Ahorn.PlacementDict(
     "RustyLamp (FactoryHelper)" => Ahorn.EntityPlacement(
@@ -11,7 +11,7 @@ const placements = Ahorn.PlacementDict(
     ),
 )
 
-patterns = ["None", "LightFlicker"]
+patterns = ["None", "FlickerOn", "LightFlicker", "TurnOffFlickerOn"]
 
 Ahorn.editingOptions(entity::RustyLamp) = Dict{String, Any}(
     "strobePattern" => patterns
