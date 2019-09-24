@@ -33,6 +33,9 @@ namespace FactoryHelper.Entities
             };
 
         private Vector2 _scale = Vector2.One;
+        private float _percent;
+        private bool _speedingUp;
+        private bool _activatedEarlier = false;
         private float _loopWidth;
         private float _loopHeight;
         private bool _startActive;
@@ -45,14 +48,7 @@ namespace FactoryHelper.Entities
         {
             get
             {
-                if (_activated != _startActive)
-                {
-                    return _defaultWindSpeed;
-                }
-                else
-                {
-                    return Vector2.Zero;
-                }
+                return _defaultWindSpeed * _percent;
             }
         }
 
@@ -97,11 +93,19 @@ namespace FactoryHelper.Entities
             _loopWidth = width;
             _loopHeight = height;
             _startActive = startActive;
-            Collider = new ColliderList(new Collider[]
+
+            if (_startActive)
             {
-                new Hitbox(width, height),
-                new Circle(6f, 0f, 0f),
-            });
+                _speedingUp = false;
+                _percent = 1f;
+            }
+            else
+            {
+                _speedingUp = true;
+                _percent = 0f;
+            }
+
+            Collider = new Hitbox(width, height);
             _strength = strength;
             Enum.TryParse(direction, out _direction);
             _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
@@ -131,20 +135,67 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void Reset(int i, float p)
+        public override void Awake(Scene scene)
         {
-            _particles[i].Percent = p;
-            _particles[i].Position = new Vector2(Calc.Random.Range(0, _loopWidth), Calc.Random.Range(0, _loopHeight));
-            _particles[i].Speed = Calc.Random.Range(4, 14);
-            _particles[i].Spin = Calc.Random.Range(0.25f, (float)Math.PI * 6f);
-            _particles[i].Duration = Calc.Random.Range(1f, 4f);
-            _particles[i].Direction = Calc.AngleToVector(Calc.Random.NextFloat((float)Math.PI * 2f), 1f);
-            _particles[i].Color = Calc.Random.Next(_colors.Length);
+            base.Awake(scene);
+            _activatedEarlier = _activated;
+            if (_activated != _startActive)
+            {
+                _percent = 1f;
+            }
+            else
+            {
+                _percent = 0f;
+            }
+            PositionParticles();
         }
 
         public override void Update()
         {
             base.Update();
+            if (!_activatedEarlier == _activated)
+            {
+                Console.WriteLine($"Relevant condition = {!_speedingUp && (_percent > 0f)}");
+                if (_speedingUp && (_percent < 1f))
+                {
+                    _percent = Calc.Approach(_percent, 1f, Engine.DeltaTime / 1f);
+                }
+                else if (!_speedingUp && (_percent > 0f))
+                {
+                    Console.WriteLine($"Percent: {_percent}");
+                    _percent = Calc.Approach(_percent, 0f, Engine.DeltaTime / 2f);
+                }
+                else
+                {
+                    _activatedEarlier = _activated;
+                }
+            }
+            PositionParticles();
+            foreach (WindMover component in Scene.Tracker.GetComponents<WindMover>())
+            {
+                if (component.Entity.CollideCheck(this))
+                {
+                    component.Move(_actualWindSpeed * 0.1f * Engine.DeltaTime);
+                }
+            }
+        }
+
+        public override void Render()
+        {
+            for (int i = 0; i < _particles.Length; i++)
+            {
+                Vector2 particlePosition = default(Vector2);
+                particlePosition.X = mod(_particles[i].Position.X, _loopWidth);
+                particlePosition.Y = mod(_particles[i].Position.Y, _loopHeight);
+                float percent = _particles[i].Percent;
+                float num = 0f;
+                num = ((!(percent < 0.7f)) ? Calc.ClampedMap(percent, 0.7f, 1f, 1f, 0f) : Calc.ClampedMap(percent, 0f, 0.3f));
+                Draw.Rect(particlePosition + this.Position, _scale.X, _scale.Y, _colors[_particles[i].Color] * num);
+            }
+        }
+
+        private void PositionParticles()
+        {
             bool flag = _actualWindSpeed.Y == 0f;
             Vector2 zero = Vector2.Zero;
             if (flag)
@@ -183,32 +234,22 @@ namespace FactoryHelper.Entities
                 _particles[i].Position += (_particles[i].Direction * _particles[i].Speed + zero / divisor) * Engine.DeltaTime;
                 _particles[i].Direction.Rotate(_particles[i].Spin * Engine.DeltaTime);
             }
-            foreach (WindMover component in Scene.Tracker.GetComponents<WindMover>())
-            {
-                if (component.Entity.CollideCheck(this))
-                {
-                    component.Move(_actualWindSpeed * 0.1f * Engine.DeltaTime);
-                }
-            }
-        }
-
-        public override void Render()
-        {
-            for (int i = 0; i < _particles.Length; i++)
-            {
-                Vector2 particlePosition = default(Vector2);
-                particlePosition.X = mod(_particles[i].Position.X, _loopWidth);
-                particlePosition.Y = mod(_particles[i].Position.Y, _loopHeight);
-                float percent = _particles[i].Percent;
-                float num = 0f;
-                num = ((!(percent < 0.7f)) ? Calc.ClampedMap(percent, 0.7f, 1f, 1f, 0f) : Calc.ClampedMap(percent, 0f, 0.3f));
-                Draw.Rect(particlePosition + this.Position, _scale.X, _scale.Y, _colors[_particles[i].Color] * num);
-            }
         }
 
         private float mod(float x, float m)
         {
             return (x % m + m) % m;
+        }
+
+        private void Reset(int i, float p)
+        {
+            _particles[i].Percent = p;
+            _particles[i].Position = new Vector2(Calc.Random.Range(0, _loopWidth), Calc.Random.Range(0, _loopHeight));
+            _particles[i].Speed = Calc.Random.Range(4, 14);
+            _particles[i].Spin = Calc.Random.Range(0.25f, (float)Math.PI * 6f);
+            _particles[i].Duration = Calc.Random.Range(1f, 4f);
+            _particles[i].Direction = Calc.AngleToVector(Calc.Random.NextFloat((float)Math.PI * 2f), 1f);
+            _particles[i].Color = Calc.Random.Next(_colors.Length);
         }
     }
 }
