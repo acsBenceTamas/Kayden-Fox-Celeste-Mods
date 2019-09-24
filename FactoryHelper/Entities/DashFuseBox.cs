@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Monocle;
-using FactoryHelper.Components;
 
 namespace FactoryHelper.Entities
 {
@@ -209,26 +208,11 @@ namespace FactoryHelper.Entities
         private void Activate(string activationId)
         {
             (Scene as Level).Session.SetFlag(activationId, true);
-            var components = Scene.Tracker.GetComponents<FactoryActivationComponent>()
-                .Where(component => (component as FactoryActivationComponent).ActivationId == activationId);
-            foreach (var component in components)
-            {
-                (component as FactoryActivationComponent).SetActivationState(true);
-            }
         }
 
-        private void Deactivate(string activationId, bool sceneEnding = true)
+        private void Deactivate(string activationId)
         {
             (Scene as Level).Session.SetFlag(activationId, false);
-            if (!sceneEnding)
-            {
-                var components = Scene.Tracker.GetComponents<FactoryActivationComponent>()
-                    .Where(component => (component as FactoryActivationComponent).ActivationId == activationId);
-                foreach (var component in components)
-                {
-                    (component as FactoryActivationComponent).SetActivationState(false);
-                }
-            }
         }
     }
 }

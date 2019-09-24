@@ -1,5 +1,4 @@
 ﻿using Celeste;
-using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -22,23 +21,22 @@ namespace FactoryHelper.Entities
         private Node[] _cornerPoints;
         private List<Sprite> _sprites = new List<Sprite>();
         private bool _startActive;
-        private FactoryActivationComponent _activator;
         private string _activationId;
+        private bool _stateFlipped = false;
 
         public bool Activated
         {
             get
             {
-                return _activator.Active;
-            }
-            set
-            {
-                int i = _startActive == value ? 1 : 0;
-                foreach (var sprite in _sprites)
+                if (_activationId == null)
                 {
-                    sprite.SetAnimationFrame(i);
+                    return true;
                 }
-                _activator.Active = value;
+                else
+                {
+                    Level level = Scene as Level;
+                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
+                }
             }
         }
 
@@ -55,10 +53,7 @@ namespace FactoryHelper.Entities
         {
             Position = offset;
             _startActive = startActive;
-            _activationId = activationId;
-
-            string activationString = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
-            Add(_activator = new FactoryActivationComponent(activationString));
+            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
 
             _cornerPoints = new Node[nodes.Length + 1];
             _cornerPoints[0] = new Node(position);
@@ -75,7 +70,16 @@ namespace FactoryHelper.Entities
                 node.CheckNeighbors();
             }
 
-            Depth = 50;
+            Depth = 10000;
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (!_stateFlipped && Activated)
+            {
+                FlipState();
+            }
         }
 
         public override void Awake(Scene scene)
@@ -83,14 +87,14 @@ namespace FactoryHelper.Entities
             base.Awake(scene);
             CheckConnections();
             PlaceLineSegments();
-            if (_activationId != null)
+        }
+
+        private void FlipState()
+        {
+            int i = _startActive == Activated ? 1 : 0;
+            foreach (var sprite in _sprites)
             {
-                string activationString = $"FactoryActivation:{_activationId}";
-                Level level = SceneAs<Level>();
-                if (level.Session.GetFlag(activationString) || level.Session.GetFlag("Persistent" + activationString))
-                {
-                    Activated = true;
-                }
+                sprite.SetAnimationFrame(i);
             }
         }
 

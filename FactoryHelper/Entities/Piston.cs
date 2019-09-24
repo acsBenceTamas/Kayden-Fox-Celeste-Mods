@@ -1,5 +1,4 @@
 ﻿using Celeste;
-using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -20,21 +19,24 @@ namespace FactoryHelper.Entities
         public float PauseTimer { get; private set; }
 
         public bool MovingForward { get; private set; } = false;
-        
-        public bool Moving { get; private set; } = true;
 
         public bool StartActive { get; private set; }
 
         public bool Heated { get; private set; }
+
         public bool Activated
         {
             get
             {
-                return Components.Get<FactoryActivationComponent>().Active;
-            }
-            set
-            {
-                Components.Get<FactoryActivationComponent>().Active = value;
+                if (_activationId == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    Level level = Scene as Level;
+                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
+                }
             }
         }
 
@@ -50,7 +52,6 @@ namespace FactoryHelper.Entities
         private Vector2 _basePos;
         private int _bodyPartCount;
         private Direction _direction = Direction.Up;
-        private FactoryActivationComponent _activator;
         private string _activationId;
 
         private float _rotationModifier {
@@ -113,7 +114,7 @@ namespace FactoryHelper.Entities
                     default:
                     case Direction.Up:
                     case Direction.Left:
-                        return 16;
+                        return 8;
                     case Direction.Right:
                     case Direction.Down:
                         return 8;
@@ -163,11 +164,8 @@ namespace FactoryHelper.Entities
             double length = 0;
             Enum.TryParse(directionString, out _direction);
 
-            _activationId = activationId;
+            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
             _basePos = position;
-
-            string activationString = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
-            Add(_activator = new FactoryActivationComponent(activationString));
 
             if (_direction == Direction.Up || _direction == Direction.Down)
             {
@@ -255,6 +253,9 @@ namespace FactoryHelper.Entities
             _head.Depth = -20;
             _body.Depth = -10;
             _body.AllowStaticMovers = false;
+            _head.DisableLightsInside = false;
+            _body.DisableLightsInside = false;
+            _base.DisableLightsInside = false;
             _base.Add(_sfx = new SoundSource());
         }
 
@@ -262,15 +263,6 @@ namespace FactoryHelper.Entities
         {
             base.Awake(scene);
             UpdatePosition();
-            if (_activationId != null)
-            {
-                string activationString = $"FactoryActivation:{_activationId}";
-                Level level = SceneAs<Level>();
-                if (level.Session.GetFlag(activationString) || level.Session.GetFlag("Persistent" + activationString))
-                {
-                    Activated = true;
-                }
-            }
         }
 
         public override void Update()
@@ -278,10 +270,6 @@ namespace FactoryHelper.Entities
             base.Update();
             if (Activated != StartActive)
             {
-                if (!_sfx.Playing)
-                {
-                    _sfx.Play("event:/env/local/09_core/conveyor_idle");
-                }
 
                 if (InitialDelay > 0f)
                 {
@@ -295,6 +283,10 @@ namespace FactoryHelper.Entities
                 {
                     Percent = Calc.Approach(Percent, 1f, Engine.DeltaTime / MoveTime);
                     UpdatePosition();
+                    if (!_sfx.Playing)
+                    {
+                        _sfx.Play("event:/env/local/09_core/conveyor_idle");
+                    }
                 }
                 else
                 {
