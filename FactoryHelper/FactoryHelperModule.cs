@@ -64,6 +64,9 @@ namespace FactoryHelper
                     case "FactoryHelper/RustyLamp":
                         level.Add(new RustyLamp(entityData, offset));
                         return true;
+                    case "FactoryHelper/BoomBox":
+                        level.Add(new BoomBox(entityData, offset));
+                        return true;
                     default:
                         return false;
                 }

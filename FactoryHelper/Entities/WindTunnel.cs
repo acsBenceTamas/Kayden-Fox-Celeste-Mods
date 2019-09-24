@@ -23,6 +23,21 @@ namespace FactoryHelper.Entities
 
             public int Color;
         }
+        public bool Activated
+        {
+            get
+            {
+                if (_activationId == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    Level level = Scene as Level;
+                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
+                }
+            }
+        }
 
         private static readonly float _baseAlpha = 0.7f;
         private static readonly Color[] _colors = new Color[3]
@@ -58,21 +73,6 @@ namespace FactoryHelper.Entities
             Down,
             Left,
             Right
-        }
-        private bool _activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
         }
 
         public WindTunnel(EntityData data, Vector2 offset) : 
@@ -138,8 +138,8 @@ namespace FactoryHelper.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            _activatedEarlier = _activated;
-            if (_activated != _startActive)
+            _activatedEarlier = Activated;
+            if (Activated != _startActive)
             {
                 _percent = 1f;
             }
@@ -153,21 +153,19 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (!_activatedEarlier == _activated)
+            if (!_activatedEarlier == Activated)
             {
-                Console.WriteLine($"Relevant condition = {!_speedingUp && (_percent > 0f)}");
                 if (_speedingUp && (_percent < 1f))
                 {
                     _percent = Calc.Approach(_percent, 1f, Engine.DeltaTime / 1f);
                 }
                 else if (!_speedingUp && (_percent > 0f))
                 {
-                    Console.WriteLine($"Percent: {_percent}");
-                    _percent = Calc.Approach(_percent, 0f, Engine.DeltaTime / 2f);
+                    _percent = Calc.Approach(_percent, 0f, Engine.DeltaTime / 1.5f);
                 }
                 else
                 {
-                    _activatedEarlier = _activated;
+                    _activatedEarlier = Activated;
                 }
             }
             PositionParticles();
