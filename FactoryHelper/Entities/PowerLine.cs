@@ -87,6 +87,10 @@ namespace FactoryHelper.Entities
             base.Awake(scene);
             CheckConnections();
             PlaceLineSegments();
+            if (!_stateFlipped && Activated)
+            {
+                FlipState();
+            }
         }
 
         private void FlipState()

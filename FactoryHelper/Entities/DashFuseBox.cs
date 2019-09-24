@@ -80,8 +80,7 @@ namespace FactoryHelper.Entities
             {
                 if (activationId != "")
                 {
-                    object persistenceString = _persistent ? "Persistent" : string.Empty;
-                    _activationIds.Add($"{persistenceString}FactoryActivation:{activationId}");
+                    _activationIds.Add(activationId);
                 }
             }
             OnDashCollide = OnDashed;
@@ -95,10 +94,23 @@ namespace FactoryHelper.Entities
         {
             base.Added(scene);
             scene.Add(_door);
-            if (Activated)
+            if (Activated || AllCircuitsActive())
             {
                 StartBusted();
             }
+        }
+
+        private bool AllCircuitsActive()
+        {
+            Session session = (Scene as Level).Session;
+            foreach (string activationId in _activationIds)
+            {
+                if ((session.GetFlag($"FactoryActivation:{activationId}") == false) && (session.GetFlag($"PersistentFactoryActivation:{activationId}") == false))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public override void Removed(Scene scene)
@@ -207,12 +219,14 @@ namespace FactoryHelper.Entities
 
         private void Activate(string activationId)
         {
-            (Scene as Level).Session.SetFlag(activationId, true);
+            string persistence = _persistent ? "Persistent" : "";
+            (Scene as Level).Session.SetFlag($"{persistence}FactoryActivation:{activationId}", true);
         }
 
         private void Deactivate(string activationId)
         {
-            (Scene as Level).Session.SetFlag(activationId, false);
+            string persistence = _persistent ? "Persistent" : "";
+            (Scene as Level).Session.SetFlag($"{persistence}FactoryActivation:{activationId}", false);
         }
     }
 }
