@@ -55,11 +55,10 @@ namespace FactoryHelper.Entities
             Depth = 10000 - 1;
             Position = position + offset;
             _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
+            _startActive = startActive;
             _initialDelay = initialDelay;
             _hasDelay = initialDelay > 0f;
             _startsWithDelay = _hasDelay;
-            Console.WriteLine($"Starts with delay: {_hasDelay}");
-            _startActive = startActive;
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/rustyLamp/rustyLamp"));
             _sprite.Add("frames", "");
             _sprite.Play("frames");

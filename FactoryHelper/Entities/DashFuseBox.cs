@@ -184,7 +184,7 @@ namespace FactoryHelper.Entities
                         if (player.Left >= Left)
                         {
                             player.Left = Right;
-                            player.Y += 0.5f;
+                            player.Y += 0.05f;
                         }
                     }
                     else
@@ -192,7 +192,7 @@ namespace FactoryHelper.Entities
                         if (player.Right <= Right)
                         {
                             player.Right = Left;
-                            player.Y += 0.5f;
+                            player.Y += 0.05f;
                         }
                     }
                 }
