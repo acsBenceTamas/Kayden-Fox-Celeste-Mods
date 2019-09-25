@@ -51,6 +51,7 @@ namespace FactoryHelper.Entities
         private bool _angryModeResetting = false;
         private Sprite _boomSprite;
         private BoomCollider _boomCollider;
+        private SoundSource _sfx;
 
         public BoomBox(EntityData data, Vector2 offest) : this(data.Position + offest, data.Attr("activationId", ""), data.Float("initialDelay", 0f), data.Bool("startActive", false))
         {
@@ -62,19 +63,22 @@ namespace FactoryHelper.Entities
             _startActive = _activationId == null ? !startActive : startActive;
             _initialDelay = initialDelay;
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/boomBox/"));
-            _sprite.Add("idle", "idle", 0.4f, "idle");
-            _sprite.Add("activating", "activating", _angryResetTime/8, "activating");
-            _sprite.Add("active", "active", 0.25f, "active");
-            _sprite.Add("angry", "active", 0.1f, "angry");
+            _sprite.Add("idle", "idle", 0.2f, "idle");
+            _sprite.Add("activating", "activating", 0.2f, "activating");
+            _sprite.Add("active", "active", 0.15f, "active");
+            _sprite.Add("angry", "angry", 0.05f, "angry");
+            _sprite.Add("resetting", "resetting", 0.15f, "active");
 
             Add(_boomSprite = new Sprite(GFX.Game, "objects/FactoryHelper/boomBox/"));
-            _boomSprite.Add("boom", "boom", 0.1f);
+            _boomSprite.Add("boom", "boom", 0.05f);
             _boomSprite.Color = new Color(Color.White, 0.5f);
             _boomSprite.Visible = false;
             _boomSprite.CenterOrigin();
             _boomSprite.Position = new Vector2(Width / 2, Height / 2);
 
             _boomCollider = new BoomCollider(position + new Vector2(Width / 2, Height / 2));
+            Add(_sfx = new SoundSource());
+            _sfx.Position = new Vector2(Width / 2, Height / 2);
         }
 
         public override void Awake(Scene scene)
@@ -100,6 +104,10 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
+            if (!_sfx.Playing)
+            {
+                _sfx.Play("event:/env/local/09_core/conveyor_idle");
+            }
             if ((!_activatedEarlier == Activated) && !_startupFinished)
             {
                 if (!_startupStarted)
@@ -119,7 +127,7 @@ namespace FactoryHelper.Entities
                 else if (!_startActive)
                 {
                     Console.WriteLine("Startup Sequence Finished");
-                    _sprite.Play("active", true);
+                    _sprite.Play("resetting", true);
                     _startupFinished = true;
                 }
                 else
@@ -142,7 +150,7 @@ namespace FactoryHelper.Entities
                     else
                     {
                         _angryModeResetting = false;
-                        _sprite.Play("active", true);
+                        _sprite.Play("resetting", true);
                     }
                 }
                 if (!_angryModeResetting && !_angryMode && HasPlayerRider())
