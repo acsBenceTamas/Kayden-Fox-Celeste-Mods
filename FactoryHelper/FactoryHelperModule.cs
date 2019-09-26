@@ -67,6 +67,18 @@ namespace FactoryHelper
                     case "FactoryHelper/BoomBox":
                         level.Add(new BoomBox(entityData, offset));
                         return true;
+                    case "FactoryHelper/RustySpikeUp":
+                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Up));
+                        return true;
+                    case "FactoryHelper/RustySpikeDown":
+                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Down));
+                        return true;
+                    case "FactoryHelper/RustySpikeLeft":
+                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Left));
+                        return true;
+                    case "FactoryHelper/RustySpikeRight":
+                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Right));
+                        return true;
                     default:
                         return false;
                 }

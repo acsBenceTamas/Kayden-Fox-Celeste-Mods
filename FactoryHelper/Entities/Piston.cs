@@ -257,6 +257,10 @@ namespace FactoryHelper.Entities
             _body.DisableLightsInside = false;
             _base.DisableLightsInside = false;
             _base.Add(_sfx = new SoundSource());
+
+            _base.Add(new LightOcclude(0.2f));
+            _head.Add(new LightOcclude(0.2f));
+            _body.Add(new LightOcclude(0.2f));
         }
 
         public override void Awake(Scene scene)

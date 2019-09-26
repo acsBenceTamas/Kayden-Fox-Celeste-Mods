@@ -57,6 +57,7 @@
     <Compile Include="Entities\DashFuseBox.cs" />
     <Compile Include="Entities\PowerLine.cs" />
     <Compile Include="Entities\RustyLamp.cs" />
+    <Compile Include="Entities\RustySpike.cs" />
     <Compile Include="Entities\WindTunnel.cs" />
     <Compile Include="FactoryHelperModule.cs" />
     <Compile Include="Entities\Piston.cs" />

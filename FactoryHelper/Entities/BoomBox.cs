@@ -79,6 +79,7 @@ namespace FactoryHelper.Entities
             _boomCollider = new BoomCollider(position + new Vector2(Width / 2, Height / 2));
             Add(_sfx = new SoundSource());
             _sfx.Position = new Vector2(Width / 2, Height / 2);
+            Add(new LightOcclude(0.2f));
         }
 
         public override void Awake(Scene scene)
