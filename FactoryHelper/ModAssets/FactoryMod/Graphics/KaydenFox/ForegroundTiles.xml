@@ -219,5 +219,5 @@
   </Tileset>
 
   <Tileset id="n" copy="z" path="scifi"/>
-  <Tileset id="q" copy="z" path="factoryRusted" sound="8"/>
+  <Tileset id="q" copy="z" path="factoryRusted" sound="7"/>
 </Data>
