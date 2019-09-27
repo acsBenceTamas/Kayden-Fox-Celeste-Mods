@@ -63,9 +63,6 @@ resizeDirections = Dict{String, Tuple{Bool, Bool}}(
     "right" => (false, true),
 )
 
-idleSprite = "objects/FactoryHelper/RustySpike/idle00"
-activeSprite = "objects/FactoryHelper/RustySpike/active00"
-
 function Ahorn.renderSelectedAbs(ctx::Ahorn.Cairo.CairoContext, entity::rustySpikes)
     direction = get(directions, entity.name, "up")
     theta = rotations[direction] - pi / 2
