@@ -79,6 +79,18 @@ namespace FactoryHelper
                     case "FactoryHelper/RustySpikeRight":
                         level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Right));
                         return true;
+                    case "FactoryHelper/ElectrifiedWallUp":
+                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Up));
+                        return true;
+                    case "FactoryHelper/ElectrifiedWallDown":
+                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Down));
+                        return true;
+                    case "FactoryHelper/ElectrifiedWallLeft":
+                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Left));
+                        return true;
+                    case "FactoryHelper/ElectrifiedWallRight":
+                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Right));
+                        return true;
                     default:
                         return false;
                 }
