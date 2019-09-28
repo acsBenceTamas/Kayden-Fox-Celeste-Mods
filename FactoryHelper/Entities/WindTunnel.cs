@@ -132,21 +132,8 @@ namespace FactoryHelper.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            if (Activator.IsOn)
-            {
-                _percent = 1f;
-            }
-            else
-            {
-                _percent = 0f;
-            }
+            Activator.Added(scene);
             PositionParticles();
-        }
-
-        public override void SceneBegin(Scene scene)
-        {
-            base.SceneBegin(scene);
-            Activator.StartScene(scene);
         }
 
         public override void Update()

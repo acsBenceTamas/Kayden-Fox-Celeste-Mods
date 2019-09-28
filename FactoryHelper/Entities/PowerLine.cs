@@ -64,12 +64,12 @@ namespace FactoryHelper.Entities
             base.Awake(scene);
             CheckConnections();
             PlaceLineSegments();
+            Activator.Added(scene);
         }
 
-        public override void SceneBegin(Scene scene)
+        public override void Added(Scene scene)
         {
-            base.SceneBegin(scene);
-            Activator.StartScene(scene);
+            base.Added(scene);
         }
 
         private void PowerUp()

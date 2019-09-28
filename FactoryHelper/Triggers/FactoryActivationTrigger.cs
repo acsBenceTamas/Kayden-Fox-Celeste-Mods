@@ -38,12 +38,18 @@ namespace FactoryHelper.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (_resetOnLeave || !_hasFired)
+            if (Activator.IsOn && (_resetOnLeave || !_hasFired))
             {
                 SetSessionTags(true);
                 SendOutSignals(true);
                 _hasFired = true;
             }
+        }
+
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            Activator.Added(scene);
         }
 
         private void SendOutSignals(bool activating = true)
@@ -79,7 +85,7 @@ namespace FactoryHelper.Triggers
         public override void OnLeave(Player player)
         {
             base.OnLeave(player);
-            if (_resetOnLeave)
+            if (Activator.IsOn && _resetOnLeave)
             {
                 SetSessionTags(false);
                 SendOutSignals(false);

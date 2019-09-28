@@ -113,12 +113,7 @@ namespace FactoryHelper.Entities
         {
             base.Added(scene);
             scene.Add(_boomCollider);
-        }
-
-        public override void SceneBegin(Scene scene)
-        {
-            base.SceneBegin(scene);
-            Activator.StartScene(scene);
+            Activator.Added(scene);
         }
 
         public override void Update()

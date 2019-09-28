@@ -134,12 +134,7 @@ namespace FactoryHelper.Entities
                 }
                 Add(image);
             }
-        }
-
-        public override void SceneBegin(Scene scene)
-        {
-            base.SceneBegin(scene);
-            Activator.StartScene(scene);
+            Activator.Added(scene);
         }
 
         public override void Update()

@@ -38,14 +38,20 @@ namespace FactoryHelper.Components
 
         public void Activate()
         {
-            Activated = true;
-            HandleOnOff();
+            if (!Activated)
+            {
+                Activated = true;
+                HandleOnOff();
+            }
         }
 
         public void Deactivate()
         {
-            Activated = false;
-            HandleOnOff();
+            if (Activated)
+            {
+                Activated = false;
+                HandleOnOff();
+            }
         }
 
         private void HandleOnOff()
@@ -60,7 +66,7 @@ namespace FactoryHelper.Components
             }
         }
 
-        public void StartScene(Scene scene)
+        public void Added(Scene scene)
         {
             if (ActivationId == null)
             {

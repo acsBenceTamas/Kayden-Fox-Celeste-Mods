@@ -417,6 +417,7 @@ namespace FactoryHelper.Entities
             scene.Add(_head);
             scene.Add(_base);
             scene.Add(_body);
+            Activator.Added(scene);
         }
 
         public override void Removed(Scene scene)

@@ -70,10 +70,10 @@ namespace FactoryHelper.Entities
             }
         }
 
-        public override void SceneBegin(Scene scene)
+        public override void Added(Scene scene)
         {
-            base.SceneBegin(scene);
-            Activator.StartScene(scene);
+            base.Added(scene);
+            Activator.Added(scene);
         }
 
         private void OnStartOn()
