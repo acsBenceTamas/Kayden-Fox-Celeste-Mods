@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\FactoryActivatorComponent.cs" />
     <Compile Include="Entities\BoomBox.cs" />
     <Compile Include="Entities\DashFuseBox.cs" />
     <Compile Include="Entities\ElectrifiedWall.cs" />
@@ -67,7 +68,6 @@
     <Compile Include="Triggers\FactoryActivationTrigger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\" />
     <Folder Include="ModAssets\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

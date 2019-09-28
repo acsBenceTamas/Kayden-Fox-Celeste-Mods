@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -9,6 +10,7 @@ namespace FactoryHelper.Entities
     [Tracked]
     class PowerLine : Entity
     {
+        public FactoryActivatorComponent Activator;
 
         private enum Direction
         {
@@ -20,25 +22,6 @@ namespace FactoryHelper.Entities
 
         private Node[] _cornerPoints;
         private List<Sprite> _sprites = new List<Sprite>();
-        private bool _startActive;
-        private string _activationId;
-        private bool _stateFlipped = false;
-
-        public bool Activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
-        }
 
         public PowerLine(EntityData entityData, Vector2 offset) : 
             this(entityData.Position,
@@ -52,8 +35,11 @@ namespace FactoryHelper.Entities
         public PowerLine(Vector2 position, Vector2 offset, Vector2[] nodes, string activationId, bool startActive)
         {
             Position = offset;
-            _startActive = startActive;
-            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.ActivationId = activationId == string.Empty ? null : activationId;
+            Activator.StartOn = startActive;
+            Activator.OnStartOn = Activator.OnTurnOn = PowerUp;
+            Activator.OnStartOff = Activator.OnTurnOff = PowerDown;
 
             _cornerPoints = new Node[nodes.Length + 1];
             _cornerPoints[0] = new Node(position);
@@ -73,32 +59,32 @@ namespace FactoryHelper.Entities
             Depth = 10000;
         }
 
-        public override void Update()
-        {
-            base.Update();
-            if (!_stateFlipped && Activated)
-            {
-                FlipState();
-            }
-        }
-
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
             CheckConnections();
             PlaceLineSegments();
-            if (!_stateFlipped && Activated)
+        }
+
+        public override void SceneBegin(Scene scene)
+        {
+            base.SceneBegin(scene);
+            Activator.OnSceneStart(scene);
+        }
+
+        private void PowerUp()
+        {
+            foreach (var sprite in _sprites)
             {
-                FlipState();
+                sprite.SetAnimationFrame(0);
             }
         }
 
-        private void FlipState()
+        private void PowerDown()
         {
-            int i = _startActive == Activated ? 1 : 0;
             foreach (var sprite in _sprites)
             {
-                sprite.SetAnimationFrame(i);
+                sprite.SetAnimationFrame(1);
             }
         }
 
@@ -168,7 +154,7 @@ namespace FactoryHelper.Entities
             sprite.Add("frames", path);
             sprite.Play("frames");
             sprite.Active = false;
-            if (!_startActive)
+            if (Activator.StartOn)
             {
                 sprite.SetAnimationFrame(1);
             }
@@ -181,7 +167,7 @@ namespace FactoryHelper.Entities
         {
             foreach(PowerLine otherLine in Scene.Entities.FindAll<PowerLine>())
             {
-                if (otherLine != this && _startActive == otherLine._startActive && _activationId == otherLine._activationId)
+                if (otherLine != this && Activator.StartOn == otherLine.Activator.StartOn && Activator.ActivationId == otherLine.Activator.ActivationId)
                 {
                     foreach (Node thisNode in _cornerPoints)
                     {

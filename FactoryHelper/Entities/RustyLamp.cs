@@ -1,43 +1,24 @@
 ﻿using Celeste;
+using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FactoryHelper.Entities
 {
     class RustyLamp : Entity
     {
-        public bool Activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
-        }
-
         public static readonly Color Color = Color.Lerp(Color.White, Color.Orange, 0.5f);
-        
-        private string _activationId;
+
+        public FactoryActivatorComponent Activator { get; }
+
         private float _initialDelay;
-        private bool _startActive;
-        private Sprite _sprite;
-        private VertexLight _light;
-        private BloomPoint _bloom;
-        private bool _hasDelay;
-        private bool _startsWithDelay;
+        private readonly Sprite _sprite;
+        private readonly VertexLight _light;
+        private readonly BloomPoint _bloom;
+        private Coroutine _strobePattern;
+        private string _strobePatternString;
+        private bool _startedOn;
 
         public RustyLamp(EntityData data, Vector2 offset) : 
             this (
@@ -54,17 +35,22 @@ namespace FactoryHelper.Entities
         {
             Depth = 10000 - 1;
             Position = position + offset;
-            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
-            _startActive = startActive;
+
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.ActivationId = activationId == string.Empty ? null : activationId;
+            Activator.StartOn = startActive;
+            Activator.OnTurnOff = OnTurnOff;
+            Activator.OnTurnOn = OnTurnOn;
+            Activator.OnStartOff = OnStartOff;
+            Activator.OnStartOn = OnStartOn;
+
             _initialDelay = initialDelay;
-            _hasDelay = initialDelay > 0f;
-            _startsWithDelay = _hasDelay;
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/rustyLamp/rustyLamp"));
             _sprite.Add("frames", "");
             _sprite.Play("frames");
             _sprite.Active = false;
-            
-            SetStrobePattern(strobePattern);
+
+            _strobePatternString = strobePattern;
 
             Add(_light = new VertexLight(Color, 1f, 128, 128));
             Add(_bloom = new BloomPoint(0.5f, 16f));
@@ -72,40 +58,40 @@ namespace FactoryHelper.Entities
             _bloom.Position = new Vector2(8, 8);
         }
 
-        public override void Awake(Scene scene)
-        {
-            base.Awake(scene);
-            SwitchOnOrOff();
-            if (Activated)
-            {
-                _hasDelay = false;
-                _startsWithDelay = false;
-            }
-        }
-
         public override void Update()
         {
             base.Update();
-            if (Activated && _hasDelay)
+            if (Activator.IsOn)
             {
-                _initialDelay -= Engine.DeltaTime;
-                if (_initialDelay <= 0f)
+                if (_initialDelay > 0f)
                 {
-                    _hasDelay = false;
+                    _initialDelay -= Engine.DeltaTime;
                 }
             }
         }
 
-        private void SwitchOnOrOff()
+        private void OnStartOn()
         {
-            if (_startActive != Activated)
-            {
-                TurnOn();
-            }
-            else
-            {
-                TurnOff();
-            }
+            _startedOn = true;
+            SetLightLevel(1f);
+            SetStrobePattern(_strobePatternString);
+        }
+
+        private void OnStartOff()
+        {
+            _startedOn = false;
+            SetLightLevel(0f);
+        }
+
+        private void OnTurnOn()
+        {
+            SetStrobePattern(_strobePatternString);
+        }
+
+        private void OnTurnOff()
+        {
+            Remove(_strobePattern);
+            Add(new Coroutine(FlickerOff()));
         }
 
         private void SetStrobePattern(string strobePattern)
@@ -114,71 +100,53 @@ namespace FactoryHelper.Entities
             {
                 default:
                 case "None":
-                    Add(new Coroutine(PatternNone()));
+                    Add(_strobePattern = new Coroutine(PatternNone()));
                     break;
                 case "FlickerOn":
-                    Add(new Coroutine(PatternFlickerOn()));
+                    Add(_strobePattern = new Coroutine(PatternFlickerOn()));
                     break;
                 case "LightFlicker":
-                    Add(new Coroutine(PatternLightFlicker()));
+                    Add(_strobePattern = new Coroutine(PatternLightFlicker()));
                     break;
                 case "TurnOffFlickerOn":
-                    Add(new Coroutine(PatternTurnOffFlickerOn()));
+                    Add(_strobePattern = new Coroutine(PatternTurnOffFlickerOn()));
                     break;
+            }
+        }
+
+        private IEnumerator WaitForActivation()
+        {
+            while (!Activator.IsOn || (_initialDelay > 0f))
+            {
+                yield return null;
             }
         }
 
         private IEnumerator PatternNone()
         {
-            while ((Activated == _startActive) || _hasDelay)
-            {
-                yield return null;
-            }
+            yield return WaitForActivation();
             TurnOn();
         }
 
         private IEnumerator PatternFlickerOn()
         {
-            bool firstRun = true;
-            while ((Activated == _startActive) || _hasDelay)
+            yield return WaitForActivation();
+            if (!_startedOn)
             {
-                yield return null;
-            }
-            TurnOn();
-            if (firstRun)
-            {
-                if (_startsWithDelay)
-                {
-                    yield return FlickerOn();
-                    firstRun = false;
-                }
-                else
-                {
-                    TurnOn();
-                }
+                yield return FlickerOn();
             }
         }
 
         private IEnumerator PatternLightFlicker()
         {
+            yield return WaitForActivation();
             bool firstRun = true;
             for (; ; )
             {
-                while ((Activated == _startActive) || _hasDelay)
+                if (!_startedOn && firstRun)
                 {
-                    yield return null;
-                }
-                if (firstRun)
-                {
-                    if (_startsWithDelay)
-                    {
-                        yield return FlickerOn();
-                        firstRun = false;
-                    }
-                    else
-                    {
-                        TurnOn();
-                    }
+                    yield return FlickerOn();
+                    firstRun = false;
                 }
                 yield return Calc.Random.NextFloat(10f) + 2f;
                 int flickerCount = Calc.Random.Next(3, 7);
@@ -195,24 +163,14 @@ namespace FactoryHelper.Entities
 
         private IEnumerator PatternTurnOffFlickerOn()
         {
+            yield return WaitForActivation();
             bool firstRun = true;
-            for (;;)
+            for (; ; )
             {
-                while ((Activated == _startActive) || _hasDelay)
+                if (!_startedOn && firstRun)
                 {
-                    yield return null;
-                }
-                if (firstRun)
-                {
-                    if (_startsWithDelay)
-                    {
-                        yield return FlickerOn();
-                        firstRun = false;
-                    }
-                    else
-                    {
-                        TurnOn();
-                    }
+                    yield return FlickerOn();
+                    firstRun = false;
                 }
                 yield return Calc.Random.NextFloat(5f) + 10f;
                 SetLightLevel(0.5f);
@@ -238,6 +196,21 @@ namespace FactoryHelper.Entities
             }
         }
 
+        private IEnumerator FlickerOff()
+        {
+            TurnOn();
+            SetLightLevel(1.0f);
+            int flickerCount = Calc.Random.Next(3, 7);
+            float flickerLength = Calc.Random.NextFloat(0.02f) + 0.01f;
+            for (int i = 0; i < flickerCount; i++)
+            {
+                SetLightLevel(0.5f * (1-(i + 1) / flickerCount));
+                yield return flickerLength;
+                SetLightLevel(1.0f * (1-(i + 1) / flickerCount));
+                yield return flickerLength;
+            }
+        }
+
         private void TurnOn()
         {
             _sprite.SetAnimationFrame(1);
@@ -255,7 +228,7 @@ namespace FactoryHelper.Entities
         private void SetLightLevel(float dimnes)
         {
             _light.Alpha = dimnes;
-            _bloom.Alpha = dimnes;
+            _bloom.Alpha = dimnes/2;
         }
     }
 }

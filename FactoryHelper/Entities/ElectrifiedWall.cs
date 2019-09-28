@@ -5,26 +5,13 @@ using Celeste;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
+using FactoryHelper.Components;
 
 namespace FactoryHelper.Entities
 {
     class ElectrifiedWall : FactorySpike
     {
-        public bool Activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return !_startActive;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
-        }
+        public FactoryActivatorComponent Activator { get; }
 
         public float Fade { get; private set; } = 0f;
         
@@ -53,10 +40,8 @@ namespace FactoryHelper.Entities
         private Color[] _electricityColorsLerped;
         private Vector2 _start;
         private Vector2 _end;
-        private string _activationId;
         private VertexPositionColor[] _edgeVerts = new VertexPositionColor[1024];
         private uint _edgeSeed;
-        private bool _startActive;
         private float _particleEmittionPeriod;
         private float _baseParticleEmittionPeriod;
 
@@ -73,8 +58,9 @@ namespace FactoryHelper.Entities
             _baseParticleEmittionPeriod = size / 8 * 0.2f;
             SetParticleEmittionPeriod();
 
-            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
-            _startActive = startActive;
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.ActivationId = activationId == string.Empty ? null : activationId;
+            Activator.StartOn = startActive;
 
             _start = Vector2.Zero;
             Vector2 offset;
@@ -150,16 +136,21 @@ namespace FactoryHelper.Entities
             }
         }
 
+        public override void SceneBegin(Scene scene)
+        {
+            base.SceneBegin(scene);
+            Activator.OnSceneStart(scene);
+        }
+
         public override void Update()
         {
             base.Update();
-            if (base.Scene.OnInterval(0.05f))
+            if (Scene.OnInterval(0.05f))
             {
                 _edgeSeed = (uint)Calc.Random.Next();
             }
-            if (base.Scene.OnInterval(_particleEmittionPeriod) && (Activated != _startActive))
+            if (Scene.OnInterval(_particleEmittionPeriod) && Activator.IsOn)
             {
-                Console.WriteLine("Particle Emitted");
                 Sparkle();
                 SetParticleEmittionPeriod();
             }
@@ -168,9 +159,9 @@ namespace FactoryHelper.Entities
         public override void Render()
         {
             base.Render();
-            if (Activated != _startActive)
+            if (Activator.IsOn)
             {
-                Camera camera = (base.Scene as Level).Camera;
+                Camera camera = (Scene as Level).Camera;
                 if (camera != null)
                 {
                     for (int i = 0; i < _electricityColorsLerped.Length; i++)
@@ -192,7 +183,7 @@ namespace FactoryHelper.Entities
 
         protected new void OnCollide(Player player)
         {
-            if (Activated != _startActive)
+            if (Activator.IsOn)
             {
                 switch (Direction)
                 {
@@ -213,7 +204,7 @@ namespace FactoryHelper.Entities
         }
         private void Sparkle()
         {
-            if (base.Scene == null)
+            if (Scene == null)
             {
                 return;
             }

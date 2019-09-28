@@ -1,11 +1,9 @@
 ﻿using Celeste;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Monocle;
+using FactoryHelper.Components;
 
 namespace FactoryHelper.Entities
 {
@@ -18,7 +16,7 @@ namespace FactoryHelper.Entities
         }
 
         private bool _persistent;
-        private bool Activated {
+        private bool _activatedPermanently {
             get
             {
                 return (Scene as Level).Session.GetFlag($"DashFuseBox:{_id.Key}");
@@ -28,6 +26,7 @@ namespace FactoryHelper.Entities
                 (Scene as Level).Session.SetFlag($"DashFuseBox:{_id.Key}", value);
             }
         }
+        private bool _activated = false;
 
         private Sprite _mainSprite;
         private Sprite _doorSprite;
@@ -94,10 +93,21 @@ namespace FactoryHelper.Entities
         {
             base.Added(scene);
             scene.Add(_door);
-            if (Activated || AllCircuitsActive())
+            if (_activatedPermanently || AllCircuitsActive())
             {
                 StartBusted();
-                Activated = true;
+                _activated = true;
+            }
+        }
+
+        private void SendOutSignals()
+        {
+            foreach (FactoryActivatorComponent activator in Scene.Tracker.GetComponents<FactoryActivatorComponent>())
+            {
+                if (_activationIds.Contains(activator.ActivationId))
+                {
+                    activator.Activate();
+                }
             }
         }
 
@@ -106,7 +116,7 @@ namespace FactoryHelper.Entities
             Session session = (Scene as Level).Session;
             foreach (string activationId in _activationIds)
             {
-                if ((session.GetFlag($"FactoryActivation:{activationId}") == false) && (session.GetFlag($"PersistentFactoryActivation:{activationId}") == false))
+                if (session.GetFlag($"FactoryActivation:{activationId}") == false)
                 {
                     return false;
                 }
@@ -116,16 +126,15 @@ namespace FactoryHelper.Entities
 
         public override void Removed(Scene scene)
         {
-            HandleRest();
             scene.Remove(_door);
             base.Removed(scene);
         }
 
         public DashCollisionResults OnDashed(Player player, Vector2 direction)
         {
-            if (!Activated && direction == _pressDirection)
+            if (!_activated && (direction == _pressDirection))
             {
-                Activated = true;
+                _activated = true;
 
                 _doorSprite.Active = true;
                 _doorSprite.Visible = true;
@@ -133,11 +142,8 @@ namespace FactoryHelper.Entities
                 SetBustedCollider();
 
                 Audio.Play("event:/new_content/game/10_farewell/fusebox_hit_2", Position);
-
-                foreach (string activationId in _activationIds)
-                {
-                    Activate(activationId);
-                }
+                SetSessionTags();
+                SendOutSignals();
 
                 player.RefillDash();
 
@@ -146,30 +152,24 @@ namespace FactoryHelper.Entities
             return DashCollisionResults.NormalCollision;
         }
 
-        public override void SceneEnd(Scene scene)
+        private void SetSessionTags()
         {
-            HandleRest();
-            base.SceneEnd(scene);
+            if (_persistent)
+            {
+                foreach (string activationId in _activationIds)
+                {
+                    ActivatePermanently(activationId);
+                }
+                _activatedPermanently = true;
+            }
         }
 
         public override void Update()
         {
             base.Update();
-            if (Activated)
+            if (_activatedPermanently)
             {
                 DisplacePlayerOnElement();
-            }
-        }
-
-        private void HandleRest()
-        {
-            if (!_persistent)
-            {
-                Activated = false;
-                foreach (string activationId in _activationIds)
-                {
-                    Deactivate(activationId);
-                }
             }
         }
 
@@ -218,16 +218,14 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void Activate(string activationId)
+        private void ActivatePermanently(string activationId)
         {
-            string persistence = _persistent ? "Persistent" : "";
-            (Scene as Level).Session.SetFlag($"{persistence}FactoryActivation:{activationId}", true);
+            (Scene as Level).Session.SetFlag($"FactoryActivation:{activationId}", true);
         }
 
-        private void Deactivate(string activationId)
+        private void DeactivatePermanently(string activationId)
         {
-            string persistence = _persistent ? "Persistent" : "";
-            (Scene as Level).Session.SetFlag($"{persistence}FactoryActivation:{activationId}", false);
+            (Scene as Level).Session.SetFlag($"FactoryActivation:{activationId}", false);
         }
     }
 }

@@ -1,31 +1,13 @@
 ﻿using Celeste;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Monocle;
+using FactoryHelper.Components;
+using System.Collections;
 
 namespace FactoryHelper.Entities
 {
     class BoomBox : Solid
     {
-        public bool Activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
-        }
         private class BoomCollider : Entity
         {
             public BoomCollider(Vector2 position) : base(position)
@@ -37,21 +19,18 @@ namespace FactoryHelper.Entities
         private const float _angryResetTime = 2f;
         private const float _angryShootTime = 0.5f;
 
-        private string _activationId;
-        private float _initialDelay;
-        private bool _startActive;
-        private bool _activatedEarlier;
-        private float _startupTime = 1.5f;
-        private bool _startupStarted = false;
-        private bool _startupFinished = false;
-        private Sprite _sprite;
-        private float _angryResetTimer = _angryResetTime;
+        private readonly float _initialDelay;
+        private readonly Sprite _sprite;
+        private readonly Sprite _boomSprite;
+        private readonly BoomCollider _boomCollider;
+        private readonly SoundSource _sfx;
+        private readonly float _startupTime = 1.5f;
+        private float _angryResetTimer = 0f;
         private float _angryShootTimer = _angryShootTime;
         private bool _angryMode = false;
-        private bool _angryModeResetting = false;
-        private Sprite _boomSprite;
-        private BoomCollider _boomCollider;
-        private SoundSource _sfx;
+        private bool _canGetAngry;
+
+        public FactoryActivatorComponent Activator { get; }
 
         public BoomBox(EntityData data, Vector2 offest) : this(data.Position + offest, data.Attr("activationId", ""), data.Float("initialDelay", 0f), data.Bool("startActive", false))
         {
@@ -59,9 +38,16 @@ namespace FactoryHelper.Entities
 
         public BoomBox(Vector2 position, string activationId, float initialDelay, bool startActive) : base(position, 24, 24, true)
         {
-            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
-            _startActive = _activationId == null ? !startActive : startActive;
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.StartOn = startActive;
+            Activator.ActivationId = activationId == string.Empty ? null : activationId;
+            Activator.OnStartOn = OnStartOn;
+            Activator.OnStartOff = OnStartOff;
+            Activator.OnTurnOn = OnTurnOn;
+            Activator.OnTurnOff = OnTurnOff;
+
             _initialDelay = initialDelay;
+
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/boomBox/"));
             _sprite.Add("idle", "idle", 0.2f, "idle");
             _sprite.Add("activating", "activating", 0.2f, "activating");
@@ -70,7 +56,7 @@ namespace FactoryHelper.Entities
             _sprite.Add("resetting", "resetting", 0.15f, "active");
 
             Add(_boomSprite = new Sprite(GFX.Game, "objects/FactoryHelper/boomBox/"));
-            _boomSprite.Add("boom", "boom", 0.05f);
+            _boomSprite.Add("boom", "boom", 0.04f);
             _boomSprite.Color = new Color(Color.White, 0.5f);
             _boomSprite.Visible = false;
             _boomSprite.CenterOrigin();
@@ -82,24 +68,57 @@ namespace FactoryHelper.Entities
             Add(new LightOcclude(0.2f));
         }
 
-        public override void Awake(Scene scene)
+        private void OnStartOn()
         {
-            base.Awake(scene);
-            _activatedEarlier = Activated;
-            if (Activated != _startActive)
-            {
-                _sprite.Play("active", true);
-            }
-            else
-            {
-                _sprite.Play("idle", true);
-            }
-            if (_activatedEarlier)
-            {
-                _startupStarted = true;
-                _startupFinished = true;
-            }
+            _sprite.Play("active", true);
+            _canGetAngry = true;
+        }
+
+        private void OnStartOff()
+        {
+            _sprite.Play("idle", true);
+            _canGetAngry = false;
+        }
+
+        private void OnTurnOn()
+        {
+            Add(new Coroutine(StartupSequence()));
+        }
+
+        private void OnTurnOff()
+        {
+            Add(new Coroutine(WindDownSequence()));
+        }
+
+        private IEnumerator StartupSequence()
+        {
+            _canGetAngry = false;
+            _sprite.Play("activating", true);
+            yield return _initialDelay;
+            yield return _startupTime;
+            _sprite.Play("resetting", true);
+            _canGetAngry = true;
+        }
+
+        private IEnumerator WindDownSequence()
+        {
+            yield return _initialDelay;
+            _canGetAngry = false;
+            _sprite.Play("activating", true);
+            yield return _startupTime;
+            _sprite.Play("idle", true);
+        }
+
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
             scene.Add(_boomCollider);
+        }
+
+        public override void SceneBegin(Scene scene)
+        {
+            base.SceneBegin(scene);
+            Activator.OnSceneStart(scene);
         }
 
         public override void Update()
@@ -109,88 +128,80 @@ namespace FactoryHelper.Entities
             {
                 _sfx.Play("event:/env/local/09_core/conveyor_idle");
             }
-            if ((!_activatedEarlier == Activated) && !_startupFinished)
+
+            if(_canGetAngry)
             {
-                if (!_startupStarted)
+                HandleAngryMode();
+            }
+
+            if (_boomSprite.Visible && !_boomSprite.Active)
+            {
+                _boomSprite.Visible = false;
+            }
+        }
+
+        private void HandleAngryMode()
+        {
+            CheckForAngryMode();
+            if (_angryMode)
+            {
+                if (_angryShootTimer > 0)
                 {
-                    Console.WriteLine("Startup Sequence Start");
-                    _sprite.Play("activating", true);
-                    _startupStarted = true;
-                    if (_startActive)
-                    {
-                        _sprite.Rate = -1f;
-                    }
-                }
-                if (_startupTime > 0f)
-                {
-                    _startupTime -= Engine.DeltaTime;
-                }
-                else if (!_startActive)
-                {
-                    Console.WriteLine("Startup Sequence Finished");
-                    _sprite.Play("resetting", true);
-                    _startupFinished = true;
+                    _angryShootTimer -= Engine.DeltaTime;
                 }
                 else
                 {
-                    Console.WriteLine("Startup Sequence Finished");
-                    _sprite.Play("idle", true);
-                    _startupFinished = true;
-                    _sprite.Rate = 1f;
+                    Explode();
+                    ResetAngryMode();
                 }
             }
+            HandleAngryModeResetting();
+        }
 
-            if (Activated != _startActive)
+        private void CheckForAngryMode()
+        {
+            if (_angryResetTimer <= 0f && !_angryMode && HasPlayerRider())
             {
-                if (!_startActive && _angryModeResetting && _startupFinished)
+                _angryMode = true;
+                _sprite.Play("angry", true);
+            }
+        }
+
+        private void HandleAngryModeResetting()
+        {
+            if (_angryResetTimer > 0f)
+            {
+                _angryResetTimer -= Engine.DeltaTime;
+                if (_angryResetTimer <= 0f)
                 {
-                    if (_angryResetTimer > 0)
-                    {
-                        _angryResetTimer -= Engine.DeltaTime;
-                    }
-                    else
-                    {
-                        _angryModeResetting = false;
-                        _sprite.Play("resetting", true);
-                    }
+                    _sprite.Play("resetting", true);
                 }
-                if (!_angryModeResetting && !_angryMode && HasPlayerRider())
+            }
+        }
+
+        private void ResetAngryMode()
+        {
+            _angryMode = false;
+            _angryResetTimer = _angryResetTime;
+            _angryShootTimer = _angryShootTime;
+            _sprite.Play("activating", true);
+        }
+
+        private void Explode()
+        {
+            Audio.Play("event:/new_content/game/10_farewell/puffer_splode", Position);
+            _boomSprite.Play("boom");
+            _boomSprite.Visible = true;
+            Player player = Scene.Tracker.GetEntity<Player>();
+            if (player != null && player.CollideCheck(_boomCollider))
+            {
+                if (player.Bottom < Top && player.Top > Bottom)
                 {
-                    _angryMode = true;
-                    _sprite.Play("angry", true);
+                    player.ExplodeLaunch(Center, false, true);
                 }
-                if (_angryMode)
+                else
                 {
-                    if (_angryShootTimer > 0)
-                    {
-                        _angryShootTimer -= Engine.DeltaTime;
-                    }
-                    else
-                    {
-                        Audio.Play("event:/new_content/game/10_farewell/puffer_splode", Position);
-                        _angryModeResetting = true;
-                        _angryMode = false;
-                        _angryResetTimer = _angryResetTime;
-                        _angryShootTimer = _angryShootTime;
-                        _sprite.Play("activating", true);
-                        _boomSprite.Play("boom");
-                        _boomSprite.Visible = true;
-                        Player player = Scene.Tracker.GetEntity<Player>();
-                        if (player != null && player.CollideCheck(_boomCollider))
-                        {
-                            if (player.Bottom < Top && player.Top > Bottom)
-                            {
-                                player.ExplodeLaunch(Center, false, true);
-                            } else
-                            {
-                                player.ExplodeLaunch(Center, false, false);
-                            }
-                        }
-                    }
-                }
-                if (_boomSprite.Visible && !_boomSprite.Active)
-                {
-                    _boomSprite.Visible = false;
+                    player.ExplodeLaunch(Center, false, false);
                 }
             }
         }

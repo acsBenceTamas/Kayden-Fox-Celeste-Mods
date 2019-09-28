@@ -38,16 +38,16 @@ namespace FactoryHelper
                 switch (entityData.Name)
                 {
                     case "FactoryHelper/PistonUp":
-                        level.Add(new Piston(entityData, offset, "Up"));
+                        level.Add(new Piston(entityData, offset, Piston.Direction.Up));
                         return true;
                     case "FactoryHelper/PistonDown":
-                        level.Add(new Piston(entityData, offset, "Down"));
+                        level.Add(new Piston(entityData, offset, Piston.Direction.Down));
                         return true;
                     case "FactoryHelper/PistonLeft":
-                        level.Add(new Piston(entityData, offset, "Left"));
+                        level.Add(new Piston(entityData, offset, Piston.Direction.Left));
                         return true;
                     case "FactoryHelper/PistonRight":
-                        level.Add(new Piston(entityData, offset, "Right"));
+                        level.Add(new Piston(entityData, offset, Piston.Direction.Right));
                         return true;
                     case "FactoryHelper/FactoryActivationTrigger":
                         level.Add(new FactoryActivationTrigger(entityData, offset));

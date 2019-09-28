@@ -1,13 +1,15 @@
 ﻿using Celeste;
+using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
-using System.Collections;
 
 namespace FactoryHelper.Entities
 {
     class Piston : Entity
     {
+        public FactoryActivatorComponent Activator { get; }
+
         public float MoveTime { get; } = 0.2f;
 
         public float PauseTime { get; } = 0.4f;
@@ -20,25 +22,8 @@ namespace FactoryHelper.Entities
 
         public bool MovingForward { get; private set; } = false;
 
-        public bool StartActive { get; private set; }
-
         public bool Heated { get; private set; }
 
-        public bool Activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
-        }
 
         private static readonly Random _rnd = new Random();
         private const int _bodyVariantCount = 4;
@@ -52,7 +37,6 @@ namespace FactoryHelper.Entities
         private Vector2 _basePos;
         private int _bodyPartCount;
         private Direction _direction = Direction.Up;
-        private string _activationId;
 
         private float _rotationModifier {
             get
@@ -140,7 +124,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        public Piston(EntityData data, Vector2 offset, string direction) 
+        public Piston(EntityData data, Vector2 offset, Direction direction) 
             : this(data.Position + offset,
                    data.Nodes[0] + offset,
                    data.Nodes[1] + offset,
@@ -154,17 +138,21 @@ namespace FactoryHelper.Entities
         {
         }
 
-        public Piston(Vector2 position, Vector2 start, Vector2 end, string directionString, string activationId, float moveTime, float pauseTime, float initialDelay, bool startActive, bool heated)
+        public Piston(Vector2 position, Vector2 start, Vector2 end, Direction direction, string activationId, float moveTime, float pauseTime, float initialDelay, bool startActive, bool heated)
         {
             Heated = heated;
             MoveTime = moveTime;
             PauseTime = pauseTime;
             InitialDelay = initialDelay;
-            StartActive = startActive;
-            double length = 0;
-            Enum.TryParse(directionString, out _direction);
 
-            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.StartOn = startActive;
+            Activator.ActivationId = activationId == string.Empty ? null : activationId;
+
+            _direction = direction;
+            
+            double length = 0;
+
             _basePos = position;
 
             if (_direction == Direction.Up || _direction == Direction.Down)
@@ -272,7 +260,7 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (Activated != StartActive)
+            if (Activator.IsOn)
             {
 
                 if (InitialDelay > 0f)
@@ -306,7 +294,29 @@ namespace FactoryHelper.Entities
             {
                 if (_body.HasPlayerRider())
                 {
-                    _body.GetPlayerRider().Die(Vector2.Zero);
+                    Player player = _body.GetPlayerRider();
+                    if (player != null)
+                    {
+                        Vector2 dir;
+                        if (player.Bottom <= _body.Top)
+                        {
+                            dir = -Vector2.UnitY;
+                        }
+                        else if (player.Right <= _body.Left)
+                        {
+                            dir = -Vector2.UnitX;
+                        }
+                        else if (player.Left >= _body.Right)
+                        {
+                            dir = Vector2.UnitX;
+                        }
+                        else
+                        {
+                            dir = Vector2.Zero;
+                        }
+
+                        _body.GetPlayerRider().Die(dir);
+                    }
                 }
             }
             if (_direction == Direction.Down)

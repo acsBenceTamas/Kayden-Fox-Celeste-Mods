@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -7,6 +8,8 @@ namespace FactoryHelper.Entities
 {
     class WindTunnel : Entity
     {
+        public FactoryActivatorComponent Activator { get; }
+
         private struct Particle
         {
             public Vector2 Position;
@@ -23,21 +26,6 @@ namespace FactoryHelper.Entities
 
             public int Color;
         }
-        public bool Activated
-        {
-            get
-            {
-                if (_activationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_activationId) || level.Session.GetFlag("Persistent" + _activationId);
-                }
-            }
-        }
 
         private static readonly float _baseAlpha = 0.7f;
         private static readonly Color[] _colors = new Color[3]
@@ -50,13 +38,10 @@ namespace FactoryHelper.Entities
         private Vector2 _scale = Vector2.One;
         private float _percent;
         private bool _speedingUp;
-        private bool _activatedEarlier = false;
         private float _loopWidth;
         private float _loopHeight;
-        private bool _startActive;
         private float _strength;
         private Direction _direction;
-        private string _activationId;
         private Particle[] _particles;
         private Vector2 _defaultWindSpeed;
         private Vector2 _actualWindSpeed
@@ -92,23 +77,32 @@ namespace FactoryHelper.Entities
             Position = position;
             _loopWidth = width;
             _loopHeight = height;
-            _startActive = startActive;
 
-            if (_startActive)
-            {
-                _speedingUp = false;
-                _percent = 1f;
-            }
-            else
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.ActivationId = activationId == string.Empty ? null : activationId;
+            Activator.StartOn = startActive;
+            Activator.OnTurnOn = () =>
             {
                 _speedingUp = true;
+            };
+            Activator.OnTurnOff = () =>
+            {
+                _speedingUp = false;
+            };
+            Activator.OnStartOff = () =>
+            {
                 _percent = 0f;
-            }
+                _speedingUp = false;
+            };
+            Activator.OnStartOn = () =>
+            {
+                _percent = 1f;
+                _speedingUp = true;
+            };
 
             Collider = new Hitbox(width, height);
             _strength = strength;
             Enum.TryParse(direction, out _direction);
-            _activationId = activationId == string.Empty ? null : $"FactoryActivation:{activationId}";
 
             switch (_direction)
             {
@@ -126,7 +120,7 @@ namespace FactoryHelper.Entities
                     break;
             }
 
-            int particlecount = width * height / 500;
+            int particlecount = width * height / 300;
 
             _particles = new Particle[particlecount];
             for (int i = 0; i < _particles.Length; i++)
@@ -135,11 +129,10 @@ namespace FactoryHelper.Entities
             }
         }
 
-        public override void Awake(Scene scene)
+        public override void Added(Scene scene)
         {
-            base.Awake(scene);
-            _activatedEarlier = Activated;
-            if (Activated != _startActive)
+            base.Added(scene);
+            if (Activator.IsOn)
             {
                 _percent = 1f;
             }
@@ -150,23 +143,22 @@ namespace FactoryHelper.Entities
             PositionParticles();
         }
 
+        public override void SceneBegin(Scene scene)
+        {
+            base.SceneBegin(scene);
+            Activator.OnSceneStart(scene);
+        }
+
         public override void Update()
         {
             base.Update();
-            if (!_activatedEarlier == Activated)
+            if (_speedingUp && (_percent < 1f))
             {
-                if (_speedingUp && (_percent < 1f))
-                {
-                    _percent = Calc.Approach(_percent, 1f, Engine.DeltaTime / 1f);
-                }
-                else if (!_speedingUp && (_percent > 0f))
-                {
-                    _percent = Calc.Approach(_percent, 0f, Engine.DeltaTime / 1.5f);
-                }
-                else
-                {
-                    _activatedEarlier = Activated;
-                }
+                _percent = Calc.Approach(_percent, 1f, Engine.DeltaTime / 1f);
+            }
+            else if (!_speedingUp && (_percent > 0f))
+            {
+                _percent = Calc.Approach(_percent, 0f, Engine.DeltaTime / 1.5f);
             }
             PositionParticles();
             foreach (WindMover component in Scene.Tracker.GetComponents<WindMover>())
@@ -204,7 +196,7 @@ namespace FactoryHelper.Entities
             }
             else
             {
-                float divisor = _direction == Direction.Down ? 10f : 100f;
+                float divisor = _direction == Direction.Down ? 20f : 100f;
                 _scale.X = 1f;
                 _scale.Y = Math.Max(1f, Math.Abs(_actualWindSpeed.Y) / divisor);
                 zero = new Vector2(0f, _actualWindSpeed.Y * 2f);
@@ -222,7 +214,7 @@ namespace FactoryHelper.Entities
                         divisor = 4f;
                         break;
                     case Direction.Down:
-                        divisor = 0.7f;
+                        divisor = 1.5f;
                         break;
                     default:
                         divisor = 1f;

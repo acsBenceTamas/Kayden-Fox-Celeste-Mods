@@ -3,31 +3,18 @@ using Microsoft.Xna.Framework;
 using System;
 using Monocle;
 using System.Collections.Generic;
+using FactoryHelper.Components;
 
 namespace FactoryHelper.Triggers
 {
     class FactoryActivationTrigger : Trigger
     {
-        public bool Activated
-        {
-            get
-            {
-                if (_ownActivationId == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Level level = Scene as Level;
-                    return level.Session.GetFlag(_ownActivationId) || level.Session.GetFlag("Persistent" + _ownActivationId);
-                }
-            }
-        }
+        public FactoryActivatorComponent Activator { get; }
 
-        private bool _resetOnLeave;
-        private bool _persistent;
-        private HashSet<string> _activationIds = new HashSet<string>();
-        private string _ownActivationId;
+        private readonly bool _resetOnLeave;
+        private readonly bool _persistent;
+        private readonly HashSet<string> _activationIds = new HashSet<string>();
+        private bool _hasFired;
 
         public FactoryActivationTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
@@ -35,40 +22,57 @@ namespace FactoryHelper.Triggers
 
             _persistent = data.Bool("persistent", false);
             _resetOnLeave = _persistent ? false : data.Bool("resetOnLeave", false);
-            _ownActivationId = data.Attr("ownActivationId") == string.Empty ? null : $"FactoryActivation:{data.Attr("ownActivationId")}";
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.ActivationId = data.Attr("ownActivationId") == string.Empty ? null : data.Attr("ownActivationId");
+            Activator.StartOn = false;
 
             foreach (string activationId in activationIds)
             {
                 if (activationId != "")
                 {
-                    object persistenceString = _persistent ? "Persistent" : string.Empty;
-                    _activationIds.Add($"{persistenceString}FactoryActivation:{activationId}");
+                    _activationIds.Add(activationId);
                 }
-            }
-        }
-
-        private void Activate(string activationId)
-        {
-            if (Activated)
-            {
-                (Scene as Level).Session.SetFlag(activationId, true);
-            }
-        }
-
-        private void Deactivate(string activationId)
-        {
-            if (!_persistent)
-            {
-                (Scene as Level).Session.SetFlag(activationId, false);
             }
         }
 
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            foreach (string activationId in _activationIds)
+            if (_resetOnLeave || !_hasFired)
             {
-                Activate(activationId);
+                SetSessionTags(true);
+                SendOutSignals(true);
+                _hasFired = true;
+            }
+        }
+
+        private void SendOutSignals(bool activating = true)
+        {
+            foreach (FactoryActivatorComponent activator in Scene.Tracker.GetComponents<FactoryActivatorComponent>())
+            {
+                if (_activationIds.Contains(activator.ActivationId))
+                {
+                    if (activating)
+                    {
+                        activator.Activate();
+                    }
+                    else
+                    {
+                        activator.Deactivate();
+                    }
+                }
+            }
+        }
+
+        private void SetSessionTags(bool activating = true)
+        {
+            if (_persistent)
+            {
+                Level level = (Scene as Level);
+                foreach (string activationId in _activationIds)
+                {
+                    level.Session.SetFlag($"FactoryActivation:{activationId}", activating);
+                }
             }
         }
 
@@ -77,31 +81,9 @@ namespace FactoryHelper.Triggers
             base.OnLeave(player);
             if (_resetOnLeave)
             {
-                foreach (string activationId in _activationIds)
-                {
-                    Deactivate(activationId);
-                }
+                SetSessionTags(false);
+                SendOutSignals(false);
             }
-        }
-
-        private void HandleRest()
-        {
-            foreach (string activationId in _activationIds)
-            {
-                Deactivate(activationId);
-            }
-        }
-
-        public override void SceneEnd(Scene scene)
-        {
-            HandleRest();
-            base.SceneEnd(scene);
-        }
-
-        public override void Removed(Scene scene)
-        {
-            HandleRest();
-            base.Removed(scene);
         }
     }
 }
