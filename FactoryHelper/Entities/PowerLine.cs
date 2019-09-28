@@ -69,7 +69,7 @@ namespace FactoryHelper.Entities
         public override void SceneBegin(Scene scene)
         {
             base.SceneBegin(scene);
-            Activator.OnSceneStart(scene);
+            Activator.StartScene(scene);
         }
 
         private void PowerUp()

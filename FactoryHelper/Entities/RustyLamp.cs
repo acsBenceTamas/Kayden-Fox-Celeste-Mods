@@ -52,8 +52,8 @@ namespace FactoryHelper.Entities
 
             _strobePatternString = strobePattern;
 
-            Add(_light = new VertexLight(Color, 1f, 128, 128));
-            Add(_bloom = new BloomPoint(0.5f, 16f));
+            Add(_light = new VertexLight(Color, 0f, 128, 128));
+            Add(_bloom = new BloomPoint(0.0f, 16f));
             _light.Position = new Vector2(8, 8);
             _bloom.Position = new Vector2(8, 8);
         }
@@ -70,9 +70,17 @@ namespace FactoryHelper.Entities
             }
         }
 
+        public override void SceneBegin(Scene scene)
+        {
+            base.SceneBegin(scene);
+            Activator.StartScene(scene);
+        }
+
         private void OnStartOn()
         {
             _startedOn = true;
+            _initialDelay = 0f;
+            TurnOn();
             SetLightLevel(1f);
             SetStrobePattern(_strobePatternString);
         }
@@ -209,6 +217,7 @@ namespace FactoryHelper.Entities
                 SetLightLevel(1.0f * (1-(i + 1) / flickerCount));
                 yield return flickerLength;
             }
+            TurnOff();
         }
 
         private void TurnOn()

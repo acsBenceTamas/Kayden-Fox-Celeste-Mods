@@ -60,7 +60,7 @@ namespace FactoryHelper.Components
             }
         }
 
-        public void OnSceneStart(Scene scene)
+        public void StartScene(Scene scene)
         {
             if (ActivationId == null)
             {
