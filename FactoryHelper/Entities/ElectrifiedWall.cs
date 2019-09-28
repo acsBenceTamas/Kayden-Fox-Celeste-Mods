@@ -61,6 +61,7 @@ namespace FactoryHelper.Entities
             Add(Activator = new FactoryActivatorComponent());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
+            Activator.OnTurnOff = Activator.OnTurnOn = SwapState;
 
             _start = Vector2.Zero;
             Vector2 offset;
@@ -96,6 +97,14 @@ namespace FactoryHelper.Entities
                     base.Collider = new Hitbox(6f, size, -3f);
                     Add(new LedgeBlocker());
                     break;
+            }
+        }
+
+        private void SwapState()
+        {
+            for (int i = 0; i < size; i += 4)
+            {
+                Sparkle();
             }
         }
 
