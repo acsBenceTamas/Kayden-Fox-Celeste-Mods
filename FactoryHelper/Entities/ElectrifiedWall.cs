@@ -15,12 +15,12 @@ namespace FactoryHelper.Entities
 
         public float Fade { get; private set; } = 0f;
         
-        private static Color[] _electricityColors = new Color[2]
+        private static readonly Color[] _electricityColors = new Color[2]
         {
             Calc.HexToColor("fcf579"),
             Calc.HexToColor("8cf7e2")
         };
-        private static ParticleType _fizzleParticle = new ParticleType
+        private static readonly ParticleType _fizzleParticle = new ParticleType
         {
             Size = 1f,
             Color = Calc.HexToColor("B9FEFE"),
@@ -206,6 +206,7 @@ namespace FactoryHelper.Entities
                 }
             }
         }
+
         private void Sparkle()
         {
             if (Scene == null)

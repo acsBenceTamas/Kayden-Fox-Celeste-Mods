@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Monocle;
 using FactoryHelper.Components;
+using System.Collections;
 
 namespace FactoryHelper.Entities
 {
@@ -14,6 +15,22 @@ namespace FactoryHelper.Entities
             Left,
             Right
         }
+
+        private ParticleType _sparks = new ParticleType
+        {
+            Size = 1f,
+            Color = Calc.HexToColor("d97b00"),
+            Color2 = Calc.HexToColor("f7be00"),
+            ColorMode = ParticleType.ColorModes.Blink,
+            FadeMode = ParticleType.FadeModes.Late,
+            SpeedMin = 5f,
+            SpeedMax = 30f,
+            Acceleration = Vector2.UnitY * 60f,
+            DirectionRange = (float)Math.PI / 2f,
+            Direction = 0f,
+            LifeMin = 0.5f,
+            LifeMax = 1.0f
+        };
 
         private bool _persistent;
         private bool _activatedPermanently {
@@ -46,29 +63,33 @@ namespace FactoryHelper.Entities
             Enum.TryParse(data.Attr("direction", "Right"), out _direction);
 
             Depth = -20;
-            Add(_mainSprite = new Sprite(GFX.Game, "objects/FactoryHelper/dashFuseBox/idle"));
-            _mainSprite.Add("body", "");
-            _mainSprite.Play("body", false, false);
-            _mainSprite.Active = false;
+            Add(_mainSprite = new Sprite(GFX.Game, "objects/FactoryHelper/dashFuseBox/"));
+            _mainSprite.Add("idle", "idle", 0.1f, "idleBackwards");
+            _mainSprite.Add("chaos", "chaos", 0.08f, "chaos");
+            _mainSprite.Add("idleBackwards", "idle", 0.1f, "idle", 10, 9 ,8 ,7, 6, 5, 4, 3, 2, 1, 0);
+            _mainSprite.Play("idle", false, false);
 
-            _door = new Entity(Position);
-            _door.Depth = 20;
-            _door.Add(_doorSprite = new Sprite(GFX.Game, "objects/FactoryHelper/dashFuseBox/break"));
-            _doorSprite.Add("break", "", 0.05f);
-            _doorSprite.Play("break", false, false);
+            _door = new Entity(Position)
+            {
+                Depth = 10000 - 10
+            };
+            _door.Add(_doorSprite = new Sprite(GFX.Game, "objects/FactoryHelper/dashFuseBox/"));
+            _doorSprite.Add("busted", "busted", 0.05f);
+            _doorSprite.Play("busted", false, false);
             _doorSprite.Active = false;
-            _doorSprite.Visible = true;
+            _doorSprite.Visible = false;
 
 
             if (_direction == Direction.Left)
             {
                 _mainSprite.Scale *= new Vector2(-1f, 1f);
-                _mainSprite.Position.X += 4;
+                //_mainSprite.Position.X += 4;
                 _doorSprite.Scale *= new Vector2(-1f, 1f);
                 _doorSprite.Position.X += 4;
 
-                Position.X -= 4;
+                Collider.Position.X -= 4;
                 _pressDirection = Vector2.UnitX;
+                _sparks.Direction = (float)Math.PI;
             }
             else
             {
@@ -138,7 +159,7 @@ namespace FactoryHelper.Entities
 
                 _doorSprite.Active = true;
                 _doorSprite.Visible = true;
-                _mainSprite.SetAnimationFrame(1);
+                _mainSprite.Play("chaos", true, true);
                 SetBustedCollider();
 
                 Audio.Play("event:/new_content/game/10_farewell/fusebox_hit_2", Position);
@@ -147,9 +168,38 @@ namespace FactoryHelper.Entities
 
                 player.RefillDash();
 
+                for (int i = 0; i < 20; i++)
+                {
+                    Sparkle();
+                }
+
+                Add(new Coroutine(SparkleSequence()));
+
                 return DashCollisionResults.Rebound;
             }
             return DashCollisionResults.NormalCollision;
+        }
+
+        private IEnumerator SparkleSequence()
+        {
+            while (true)
+            {
+                yield return Calc.Random.NextFloat(4f);
+                for (int i = 0; i < 6; i++)
+                {
+                    yield return Calc.Random.NextFloat(0.01f);
+                    Sparkle();
+                }
+            }
+        }
+
+        private void Sparkle()
+        {
+            if (Scene == null)
+            {
+                return;
+            }
+            SceneAs<Level>().ParticlesFG.Emit(_sparks, 1, Position + Collider.CenterRight, new Vector2(0, Collider.Height / 4));
         }
 
         private void SetSessionTags()
@@ -171,6 +221,15 @@ namespace FactoryHelper.Entities
             {
                 DisplacePlayerOnElement();
             }
+        }
+
+        public override void Render()
+        {
+            if (!_activated)
+            {
+                _mainSprite.DrawSimpleOutline();
+            }
+            base.Render();
         }
 
         private void DisplacePlayerOnElement()
@@ -202,8 +261,9 @@ namespace FactoryHelper.Entities
 
         private void StartBusted()
         {
-            _mainSprite.SetAnimationFrame(1);
-            _doorSprite.SetAnimationFrame(6);
+            _mainSprite.Play("chaos",true, true);
+            _doorSprite.SetAnimationFrame(4);
+            _doorSprite.Visible = true;
             SetBustedCollider();
         }
 
