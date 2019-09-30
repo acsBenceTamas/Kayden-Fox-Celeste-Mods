@@ -77,6 +77,13 @@ powerFieldOffsets = Dict{String, Tuple{Integer, Integer}}(
     "right" => (0, 0),
 )
 
+minimumSizes = Dict{String, Tuple{Integer, Integer}}(
+    "up" => (16, 8),
+    "down" => (16, 8),
+    "left" => (8, 16),
+    "right" => (8, 16),
+)
+
 sizeString = Dict{String, String}(
     "up" => "width",
     "down" => "width",
@@ -110,14 +117,16 @@ function Ahorn.selection(entity::ElectrifiedWalls)
 	return Ahorn.Rectangle(x + ox - 4, y + oy - 4, width, height)
 end
 
-function Ahorn.minimumSize(entity::ElectrifiedWalls)
-	return (8, 8)
-end
-
 function Ahorn.resizable(entity::ElectrifiedWalls)
 	direction = get(directions, entity.name, "up")
 
 	return resizeDirections[direction]
+end
+
+function Ahorn.minimumSize(entity::ElectrifiedWalls)
+	direction = get(directions, entity.name, "up")
+
+	return minimumSizes[direction]
 end
 
 function Ahorn.render(ctx::Ahorn.Cairo.CairoContext, entity::ElectrifiedWalls)

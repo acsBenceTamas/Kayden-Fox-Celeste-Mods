@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -53,8 +53,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\ConveyorMoverComponent.cs" />
     <Compile Include="Components\FactoryActivatorComponent.cs" />
     <Compile Include="Entities\BoomBox.cs" />
+    <Compile Include="Entities\Conveyor.cs" />
     <Compile Include="Entities\DashFuseBox.cs" />
     <Compile Include="Entities\ElectrifiedWall.cs" />
     <Compile Include="Entities\FactorySpike.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="Entities\RustyLamp.cs" />
     <Compile Include="Entities\RustySpike.cs" />
     <Compile Include="Entities\WindTunnel.cs" />
+    <Compile Include="FactoryHelperHooks.cs" />
     <Compile Include="FactoryHelperModule.cs" />
     <Compile Include="Entities\Piston.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,4 +74,8 @@
     <Folder Include="ModAssets\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

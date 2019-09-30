@@ -321,15 +321,15 @@ namespace FactoryHelper.Entities
             }
             if (_direction == Direction.Down)
             {
-                DisplacePlayerOnElement(_head);
+                DisplacePlayerOnTop(_head);
             }
             if (_direction == Direction.Down || _direction == Direction.Up)
             {
-                DisplacePlayerOnElement(_base);
+                DisplacePlayerOnTop(_base);
             }
         }
 
-        private void DisplacePlayerOnElement(Solid element)
+        private void DisplacePlayerOnTop(Solid element)
         {
             if (element.HasPlayerOnTop())
             {
@@ -344,7 +344,7 @@ namespace FactoryHelper.Entities
                     {
                         player.Left = element.Right;
                     }
-                    player.Y += 0.5f;
+                    player.Y += 1f;
                 }
             }
         }
