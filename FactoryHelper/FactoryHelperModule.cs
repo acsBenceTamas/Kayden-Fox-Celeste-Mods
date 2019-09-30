@@ -95,6 +95,9 @@ namespace FactoryHelper
                     case "FactoryHelper/Conveyor":
                         level.Add(new Conveyor(entityData, offset));
                         return true;
+                    case "FactoryHelper/ThrowBox":
+                        level.Add(new ThrowBox(entityData, offset));
+                        return true;
                     default:
                         return false;
                 }

@@ -3,6 +3,7 @@ using Monocle;
 using Microsoft.Xna.Framework;
 using FactoryHelper.Components;
 using System;
+using System.Collections;
 
 namespace FactoryHelper.Entities
 {
@@ -13,7 +14,37 @@ namespace FactoryHelper.Entities
         private const string _spriteRoot = "objects/FactoryHelper/conveyor/";
         private const float _beltFrequency = 0.025f;
         private const float _gearFrequency = 0.05f;
-        private const float _conveyorMoveSpeed = 30.0f;
+        private const float _conveyorMoveSpeed = 40.0f;
+        private static readonly ParticleType _grindParticleRight = new ParticleType
+        {
+            Size = 1f,
+            Color = Calc.HexToColor("6b675d"),
+            Color2 = Calc.HexToColor("db8d2e"),
+            ColorMode = ParticleType.ColorModes.Blink,
+            FadeMode = ParticleType.FadeModes.Late,
+            SpeedMin = 15f,
+            SpeedMax = 20f,
+            Acceleration = Vector2.UnitY * 2f,
+            DirectionRange = (float)Math.PI / 2f,
+            Direction = 0,
+            LifeMin = 1.0f,
+            LifeMax = 2.0f
+        };
+        private static readonly ParticleType _grindParticleLeft = new ParticleType
+        {
+            Size = 1f,
+            Color = Calc.HexToColor("6b675d"),
+            Color2 = Calc.HexToColor("db8d2e"),
+            ColorMode = ParticleType.ColorModes.Blink,
+            FadeMode = ParticleType.FadeModes.Late,
+            SpeedMin = 15f,
+            SpeedMax = 20f,
+            Acceleration = Vector2.UnitY * 2f,
+            DirectionRange = (float)Math.PI / 2f,
+            Direction = (float)Math.PI,
+            LifeMin = 1.0f,
+            LifeMax = 2.0f
+        };
 
         private Sprite[] _edgeSprites = new Sprite[2];
         private Sprite[] _gearSprites = new Sprite[2];
@@ -36,9 +67,21 @@ namespace FactoryHelper.Entities
             Add(Activator = new FactoryActivatorComponent());
             Activator.StartOn = startLeft;
             Activator.ActivationId = activationId;
-            Activator.OnTurnOff = ReverseConveyorDirection;
-            Activator.OnStartOff = () => { StartAnimation(); ReverseConveyorDirection(); } ;
-            Activator.OnTurnOn = ReverseConveyorDirection;
+            Activator.OnTurnOff = () =>
+            {
+                Add(new Coroutine(Sparks()));
+                ReverseConveyorDirection();
+            };
+            Activator.OnStartOff = () => 
+            {
+                StartAnimation();
+                ReverseConveyorDirection();
+            };
+            Activator.OnTurnOn = () =>
+            {
+                Add(new Coroutine(Sparks()));
+                ReverseConveyorDirection();
+            };
             Activator.OnStartOn = StartAnimation;
 
             for (int i = 0; i < 2; i++)
@@ -66,6 +109,7 @@ namespace FactoryHelper.Entities
                 _midSprites[i].Add("right", "belt_mid", _beltFrequency, "right", 7, 6, 5, 4, 3, 2, 1, 0);
                 _midSprites[i].Position = new Vector2(16 + 8 * i, 0);
             }
+            Add(new LightOcclude(0.2f));
         }
 
         public override void Added(Scene scene)
@@ -84,27 +128,15 @@ namespace FactoryHelper.Entities
                     component.Move((_isMovingLeft ? -_conveyorMoveSpeed : _conveyorMoveSpeed) * Engine.DeltaTime);
                 }
             }
-            if (HasPlayerClimbing())
+        }
+
+        private IEnumerator Sparks()
+        {
+            for (int i=0; i<10; i++)
             {
-                Player player = GetPlayerClimbing();
-                if (player != null)
-                {
-                    if (((player.CenterX < CenterX) && _isMovingLeft) || ((player.CenterX > CenterX) && !_isMovingLeft))
-                    {
-                        Console.WriteLine("Should move down");
-                        player.Speed.Y = Calc.Approach(player.Speed.Y, 160f, 600f * Engine.DeltaTime);
-                        player.LiftSpeed = Vector2.UnitY * Math.Min(player.Speed.Y, 80f);
-                        Console.WriteLine($"Speed: {player.Speed.Y} | LiftSpeed: {player.LiftSpeed}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Should move up");
-                        player.Speed.Y = Calc.Approach(player.Speed.Y, -160f, 600f * Engine.DeltaTime);
-                        player.LiftSpeed = Vector2.UnitY * Math.Max(player.Speed.Y, -80f);
-                        Console.WriteLine($"Speed: {player.Speed.Y} | LiftSpeed: {player.LiftSpeed}");
-                    }
-                    player.NaiveMove(player.Speed * Engine.DeltaTime);
-                }
+                SceneAs<Level>().ParticlesFG.Emit(_grindParticleLeft, 1, Position + new Vector2(8, 8), new Vector2(4, 4));
+                SceneAs<Level>().ParticlesFG.Emit(_grindParticleRight, 1, Position + new Vector2(Width - 8, 8), new Vector2(4, 4));
+                yield return 0.05f;
             }
         }
 

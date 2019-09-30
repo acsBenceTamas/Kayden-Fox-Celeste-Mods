@@ -102,10 +102,7 @@ namespace FactoryHelper.Entities
 
         private void SwapState()
         {
-            for (int i = 0; i < size; i += 4)
-            {
-                Sparkle();
-            }
+            Sparkle(size/4);
         }
 
         private void SetParticleEmittionPeriod()
@@ -155,7 +152,7 @@ namespace FactoryHelper.Entities
             }
             if (Scene.OnInterval(_particleEmittionPeriod) && Activator.IsOn)
             {
-                Sparkle();
+                Sparkle(1);
                 SetParticleEmittionPeriod();
             }
         }
@@ -207,13 +204,13 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void Sparkle()
+        private void Sparkle(int count)
         {
             if (Scene == null)
             {
                 return;
             }
-            SceneAs<Level>().ParticlesFG.Emit(_fizzleParticle, 1, Position + Collider.Center, new Vector2(Collider.Width/2, Collider.Height / 2));
+            SceneAs<Level>().ParticlesFG.Emit(_fizzleParticle, count, Position + Collider.Center, new Vector2(Collider.Width/2, Collider.Height / 2));
         }
 
         private static void DrawSimpleLightning(ref int index, ref VertexPositionColor[] verts, uint seed, Vector2 pos, Vector2 a, Vector2 b, Color color, float thickness = 1f)

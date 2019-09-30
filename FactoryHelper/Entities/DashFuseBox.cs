@@ -168,10 +168,7 @@ namespace FactoryHelper.Entities
 
                 player.RefillDash();
 
-                for (int i = 0; i < 20; i++)
-                {
-                    Sparkle();
-                }
+                Sparkle(20);
 
                 Add(new Coroutine(SparkleSequence()));
 
@@ -187,19 +184,19 @@ namespace FactoryHelper.Entities
                 yield return Calc.Random.NextFloat(4f);
                 for (int i = 0; i < 6; i++)
                 {
-                    yield return Calc.Random.NextFloat(0.01f);
-                    Sparkle();
+                    yield return Calc.Random.NextFloat(0.03f);
+                    Sparkle(1);
                 }
             }
         }
 
-        private void Sparkle()
+        private void Sparkle(int count)
         {
             if (Scene == null)
             {
                 return;
             }
-            SceneAs<Level>().ParticlesFG.Emit(_sparks, 1, Position + Collider.CenterRight, new Vector2(0, Collider.Height / 4));
+            SceneAs<Level>().ParticlesFG.Emit(_sparks, count, Position + Collider.CenterRight, new Vector2(0, Collider.Height / 4));
         }
 
         private void SetSessionTags()
