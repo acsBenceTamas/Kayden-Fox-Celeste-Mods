@@ -10,6 +10,32 @@ namespace FactoryHelper.Entities
     {
         public FactoryActivatorComponent Activator { get; }
 
+        private class AmbienceTrigger : Trigger
+        {
+            private const int _hearingDistance = 64;
+            private WindTunnel _parent;
+
+            public AmbienceTrigger(EntityData data, Vector2 offset, WindTunnel parent) : base(data, offset)
+            {
+                _parent = parent;
+                Collider.Width += _hearingDistance;
+                Collider.Height += _hearingDistance;
+                Position -= new Vector2(_hearingDistance/2, _hearingDistance/2);
+            }
+
+            public override void OnStay(Player player)
+            {
+                base.OnEnter(player);
+                _parent.SetAmbience();
+            }
+
+            public override void OnLeave(Player player)
+            {
+                base.OnLeave(player);
+                _parent.SetAmbience(false);
+            }
+        }
+
         private struct Particle
         {
             public Vector2 Position;
@@ -51,6 +77,7 @@ namespace FactoryHelper.Entities
                 return _defaultWindSpeed * _percent;
             }
         }
+        private AmbienceTrigger _ambienceTrigger;
 
         private enum Direction
         {
@@ -69,6 +96,7 @@ namespace FactoryHelper.Entities
                 data.Attr("activationId", ""),
                 data.Bool("startActive", false))
         {
+            _ambienceTrigger = new AmbienceTrigger(data, offset, this);
         }
 
         public WindTunnel(Vector2 position, int width, int height, float strength, string direction, string activationId, bool startActive)
@@ -134,6 +162,7 @@ namespace FactoryHelper.Entities
             base.Added(scene);
             Activator.Added(scene);
             PositionParticles();
+            Scene.Add(_ambienceTrigger);
         }
 
         public override void Update()
@@ -155,6 +184,22 @@ namespace FactoryHelper.Entities
                     component.Move(_actualWindSpeed * 0.1f * Engine.DeltaTime);
                 }
             }
+        }
+
+        private void SetAmbience(bool turnOn = true)
+        {
+            Vector2 considered = turnOn ? _actualWindSpeed : Vector2.Zero;
+            int direction = 0;
+            if (considered.X != 0f)
+            {
+                direction = Math.Sign(considered.X);
+            }
+            else if (considered.Y != 0f)
+            {
+                direction = Math.Sign(considered.Y);
+            }
+            Audio.SetParameter(Audio.CurrentAmbienceEventInstance, "wind_direction", direction);
+            Audio.SetParameter(Audio.CurrentAmbienceEventInstance, "strong_wind", 0);
         }
 
         public override void Render()
