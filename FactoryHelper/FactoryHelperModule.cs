@@ -24,6 +24,7 @@ namespace FactoryHelper
         public override void Load()
         {
             Everest.Events.Level.OnLoadEntity += LevelOnLoadEntity;
+            FactoryHelperHooks.Load();
         }
 
         public override void Unload()
@@ -90,6 +91,9 @@ namespace FactoryHelper
                         return true;
                     case "FactoryHelper/ElectrifiedWallRight":
                         level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Right));
+                        return true;
+                    case "FactoryHelper/Conveyor":
+                        level.Add(new Conveyor(entityData, offset));
                         return true;
                     default:
                         return false;

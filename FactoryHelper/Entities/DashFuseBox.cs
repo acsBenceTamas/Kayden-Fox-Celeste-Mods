@@ -217,9 +217,9 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (_activatedPermanently)
+            if (_activated)
             {
-                DisplacePlayerOnElement();
+                DisplacePlayerOnTop();
             }
         }
 
@@ -232,7 +232,7 @@ namespace FactoryHelper.Entities
             base.Render();
         }
 
-        private void DisplacePlayerOnElement()
+        private void DisplacePlayerOnTop()
         {
             if (HasPlayerOnTop())
             {
