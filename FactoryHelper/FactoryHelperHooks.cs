@@ -18,7 +18,7 @@ namespace FactoryHelper
         {
             orig(self, position, spriteMode);
             var conveyorMover = new ConveyorMoverComponent();
-            conveyorMover.Move = (amount) => self.MoveH(amount);
+            conveyorMover.OnMove = (amount) => self.MoveH(amount * Engine.DeltaTime);
             self.Add(conveyorMover);
         }
     }

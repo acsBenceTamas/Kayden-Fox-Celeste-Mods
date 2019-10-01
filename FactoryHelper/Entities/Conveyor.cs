@@ -7,14 +7,17 @@ using System.Collections;
 
 namespace FactoryHelper.Entities
 {
+    [Tracked]
     class Conveyor : Solid
     {
+        public const float ConveyorMoveSpeed = 40.0f;
+
         public FactoryActivatorComponent Activator { get; }
-        
+        public bool IsMovingLeft { get { return Activator.IsOn; } }
+
         private const string _spriteRoot = "objects/FactoryHelper/conveyor/";
         private const float _beltFrequency = 0.025f;
         private const float _gearFrequency = 0.05f;
-        private const float _conveyorMoveSpeed = 40.0f;
         private static readonly ParticleType _grindParticleRight = new ParticleType
         {
             Size = 1f,
@@ -50,7 +53,6 @@ namespace FactoryHelper.Entities
         private Sprite[] _gearSprites = new Sprite[2];
         private Sprite[] _midSprites;
 
-        private bool _isMovingLeft { get { return Activator.IsOn; } }
 
         public Conveyor(EntityData data, Vector2 offset) 
             : this (
@@ -88,12 +90,10 @@ namespace FactoryHelper.Entities
             {
                 Add(_edgeSprites[i] = new Sprite(GFX.Game, _spriteRoot));
                 _edgeSprites[i].Add("left", "belt_edge", _beltFrequency, "left");
-                _edgeSprites[i].Add("right", "belt_edge", _beltFrequency, "right", 7, 6, 5, 4, 3, 2, 1, 0);
                 _edgeSprites[i].Position = new Vector2((width - 16) * i, 0);
 
                 Add(_gearSprites[i] = new Sprite(GFX.Game, _spriteRoot));
                 _gearSprites[i].Add("left", "gear", _gearFrequency, "left");
-                _gearSprites[i].Add("right", "gear", _gearFrequency, "right", 3, 2, 1, 0);
                 _gearSprites[i].Position = new Vector2((width - 16) * i, 0);
             }
             
@@ -106,7 +106,6 @@ namespace FactoryHelper.Entities
             {
                 Add(_midSprites[i] = new Sprite(GFX.Game, _spriteRoot));
                 _midSprites[i].Add("left", "belt_mid", _beltFrequency, "left");
-                _midSprites[i].Add("right", "belt_mid", _beltFrequency, "right", 7, 6, 5, 4, 3, 2, 1, 0);
                 _midSprites[i].Position = new Vector2(16 + 8 * i, 0);
             }
             Add(new LightOcclude(0.2f));
@@ -116,18 +115,6 @@ namespace FactoryHelper.Entities
         {
             base.Added(scene);
             Activator.Added(scene);
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            foreach (ConveyorMoverComponent component in Scene.Tracker.GetComponents<ConveyorMoverComponent>())
-            {
-                if (Collide.Check(this, component.Entity, Position - Vector2.UnitY))
-                {
-                    component.Move((_isMovingLeft ? -_conveyorMoveSpeed : _conveyorMoveSpeed) * Engine.DeltaTime);
-                }
-            }
         }
 
         private IEnumerator Sparks()

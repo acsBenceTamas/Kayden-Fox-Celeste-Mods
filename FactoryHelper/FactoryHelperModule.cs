@@ -98,6 +98,9 @@ namespace FactoryHelper
                     case "FactoryHelper/ThrowBox":
                         level.Add(new ThrowBox(entityData, offset));
                         return true;
+                    case "FactoryHelper/ThrowBoxSpawner":
+                        level.Add(new ThrowBoxSpawner(entityData, offset));
+                        return true;
                     default:
                         return false;
                 }
