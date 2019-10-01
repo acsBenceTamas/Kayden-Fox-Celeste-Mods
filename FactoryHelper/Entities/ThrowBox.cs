@@ -16,6 +16,8 @@ namespace FactoryHelper.Entities
         private const float HORIZONTAL_BREAK_SPEED = 180f;
         private const float VERTICAL_BREAK_SPEED = 300f;
         private const float CONVEYOR_ACCELERATION = 200f;
+        private const float SOUND_RELOAD_TIME = 0.2f;
+        private static readonly Vector2 DISPLACEMENT = new Vector2(-8f, -16f);
 
         private Sprite _sprite;
         private float _noGravityTimer;
@@ -25,6 +27,21 @@ namespace FactoryHelper.Entities
         private Level _level;
         private bool _shattered;
         private bool _isMetal;
+        private float _soundTimerX = 0f;
+        private float _soundTimerY = 0f;
+
+        public static ParticleType P_Impact { get; } = new ParticleType
+        {
+            Color = Calc.HexToColor("9c8d7b"),
+            Size = 1f,
+            FadeMode = ParticleType.FadeModes.Late,
+            DirectionRange = 1.74532926f,
+            SpeedMin = 10f,
+            SpeedMax = 20f,
+            SpeedMultiplier = 0.1f,
+            LifeMin = 0.3f,
+            LifeMax = 0.8f
+        };
 
         public ThrowBox(EntityData data, Vector2 offset) : this (data.Position + offset, data.Bool("isMetal", false))
         {
@@ -32,8 +49,9 @@ namespace FactoryHelper.Entities
 
         public ThrowBox(Vector2 position, bool isMetal) : base(position)
         {
+            Position -= DISPLACEMENT;
             Depth = 100;
-            Collider = new Hitbox(12f, 10f, 2f, 6f);
+            Collider = new Hitbox(8f, 10f, 4f + DISPLACEMENT.X, 6f + DISPLACEMENT.Y);
             _isMetal = isMetal;
             string pathString = isMetal ? "crate_metal" : "crate";
 
@@ -42,15 +60,16 @@ namespace FactoryHelper.Entities
             _sprite.Play("idle");
             _sprite.Visible = true;
             _sprite.Active = true;
+            _sprite.Position += DISPLACEMENT;
 
             Add(Hold = new Holdable(0.1f));
-            Hold.PickupCollider = new Hitbox(24f, 24f, -4f, -4f);
+            Hold.PickupCollider = new Hitbox(16f, 16f, DISPLACEMENT.X, DISPLACEMENT.Y);
             Hold.SlowFall = false;
             Hold.SlowRun = true;
             Hold.OnPickup = OnPickup;
             Hold.OnRelease = OnRelease;
             Hold.OnHitSpring = HitSpring;
-            Hold.OnCarry = OnCarry;
+            //Hold.OnCarry = OnCarry;
             Hold.SpeedGetter = (() => Speed);
 
             Add(ConveyorMover = new ConveyorMoverComponent());
@@ -70,6 +89,14 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
+            if (_soundTimerX > 0f)
+            {
+                _soundTimerX -= Engine.DeltaTime;
+            }
+            if (_soundTimerY > 0f)
+            {
+                _soundTimerY -= Engine.DeltaTime;
+            }
             if (_swatTimer > 0f)
             {
                 _swatTimer -= Engine.DeltaTime;
@@ -225,17 +252,6 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void OnCarry(Vector2 position)
-        {
-            Player player = Scene.Tracker.GetEntity<Player>();
-            float bonusX = 0f;
-            if (player != null)
-            {
-                bonusX = player.Facing == Facings.Right ? -2f : 2f;
-            }
-            Position = position + new Vector2(-8f + bonusX, -16f);
-        }
-
         private void OnPickup()
         {
             Speed = Vector2.Zero;
@@ -244,9 +260,18 @@ namespace FactoryHelper.Entities
 
         private void OnCollideV(CollisionData data)
         {
+            if (_soundTimerY <= 0f && Math.Abs(Speed.Y) > 100f)
+            {
+                PlayHitSound();
+                _soundTimerY = SOUND_RELOAD_TIME;
+            }
+            if (Speed.Y > 160f)
+            {
+                ImpactParticles(data.Direction);
+            }
             if (data.Hit is DashSwitch)
             {
-                (data.Hit as DashSwitch).OnDashCollide(null, Vector2.UnitX * Math.Sign(Speed.X));
+                (data.Hit as DashSwitch).OnDashCollide(null, Vector2.UnitY * Math.Sign(Speed.Y));
             }
             if (!_isMetal && Math.Abs(Speed.Y) >= VERTICAL_BREAK_SPEED)
             {
@@ -265,9 +290,22 @@ namespace FactoryHelper.Entities
 
         private void OnCollideH(CollisionData data)
         {
+            if (Math.Abs(Speed.X) > 100f)
+            {
+                ImpactParticles(data.Direction);
+                if (_soundTimerX <= 0f)
+                {
+                    PlayHitSound();
+                    _soundTimerX = SOUND_RELOAD_TIME;
+                }
+            }
             if (data.Hit is DashSwitch)
             {
-                (data.Hit as DashSwitch).OnDashCollide(null, Vector2.UnitY * Math.Sign(Speed.Y));
+                (data.Hit as DashSwitch).OnDashCollide(null, Vector2.UnitX * Math.Sign(Speed.X));
+            }
+            if (data.Hit is DashFuseBox)
+            {
+                (data.Hit as DashFuseBox).OnDashed(null, Vector2.UnitX * Math.Sign(Speed.X));
             }
             if (!_isMetal && (Math.Abs(Speed.X) >= HORIZONTAL_BREAK_SPEED))
             {
@@ -281,6 +319,50 @@ namespace FactoryHelper.Entities
             {
                 Speed.X = 0f;
             }
+        }
+
+        private void PlayHitSound()
+        {
+            if (_isMetal)
+            {
+                Audio.Play("event:/char/madeline/landing", Position, "surface_index", 7);
+            }
+            else
+            {
+                Audio.Play("event:/char/madeline/landing", Position, "surface_index", 18);
+            }
+        }
+
+        private void ImpactParticles(Vector2 dir)
+        {
+            float direction;
+            Vector2 position;
+            Vector2 positionRange;
+            if (dir.X > 0f)
+            {
+                direction = (float)Math.PI;
+                position = new Vector2(Right, Center.Y);
+                positionRange = Vector2.UnitY * 6f;
+            }
+            else if (dir.X < 0f)
+            {
+                direction = 0f;
+                position = new Vector2(Left, Center.Y);
+                positionRange = Vector2.UnitY * 6f;
+            }
+            else if (dir.Y > 0f)
+            {
+                direction = -(float)Math.PI / 2f;
+                position = new Vector2(Center.X, Bottom);
+                positionRange = Vector2.UnitX * 6f;
+            }
+            else
+            {
+                direction = (float)Math.PI / 2f;
+                position = new Vector2(Center.X, Top);
+                positionRange = Vector2.UnitX * 6f;
+            }
+            (Scene as Level).Particles.Emit(P_Impact, 12, position, positionRange, direction);
         }
 
         private void Shatter()
@@ -303,11 +385,11 @@ namespace FactoryHelper.Entities
                     {
                         if (_isMetal)
                         {
-                            base.Scene.Add(Engine.Pooler.Create<Debris>().Init(Position + new Vector2(4 + i * 8, 4 + j * 8), '8', false).BlastFrom(Center));
+                            base.Scene.Add(Engine.Pooler.Create<Debris>().Init(Position + new Vector2(4 + i * 8, 4 + j * 8) + DISPLACEMENT, '8', false).BlastFrom(Center));
                         }
                         else
                         {
-                            base.Scene.Add(Engine.Pooler.Create<Debris>().Init(Position + new Vector2(4 + i * 8, 4 + j * 8), '9', false).BlastFrom(Center));
+                            base.Scene.Add(Engine.Pooler.Create<Debris>().Init(Position + new Vector2(4 + i * 8, 4 + j * 8) + DISPLACEMENT, '9', false).BlastFrom(Center));
                         }
                     }
                 }

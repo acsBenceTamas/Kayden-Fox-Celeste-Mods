@@ -153,6 +153,7 @@ namespace FactoryHelper.Entities
 
         public DashCollisionResults OnDashed(Player player, Vector2 direction)
         {
+            Console.WriteLine("Dashed into fuse box");
             if (!_activated && (direction == _pressDirection))
             {
                 _activated = true;
@@ -166,7 +167,7 @@ namespace FactoryHelper.Entities
                 SetSessionTags();
                 SendOutSignals();
 
-                player.RefillDash();
+                player?.RefillDash();
 
                 Sparkle(20);
 

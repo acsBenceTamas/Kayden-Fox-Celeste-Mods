@@ -52,6 +52,7 @@ namespace FactoryHelper.Entities
         private Sprite[] _edgeSprites = new Sprite[2];
         private Sprite[] _gearSprites = new Sprite[2];
         private Sprite[] _midSprites;
+        private SoundSource _sfx;
 
 
         public Conveyor(EntityData data, Vector2 offset) 
@@ -109,6 +110,16 @@ namespace FactoryHelper.Entities
                 _midSprites[i].Position = new Vector2(16 + 8 * i, 0);
             }
             Add(new LightOcclude(0.2f));
+            Add(_sfx = new SoundSource() { Position = new Vector2(Width/2,Height/2)});
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (!_sfx.Playing)
+            {
+                _sfx.Play("event:/env/local/09_core/conveyor_idle");
+            }
         }
 
         public override void Added(Scene scene)

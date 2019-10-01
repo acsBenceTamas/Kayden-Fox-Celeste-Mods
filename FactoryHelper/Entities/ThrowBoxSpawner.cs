@@ -52,7 +52,6 @@ namespace FactoryHelper.Entities
                 _boxes.Add(crate);
                 crate.OnRemoved = () => _boxes.Remove(crate);
             }
-            Console.WriteLine($"AFTER| Count:{_boxes.Count} | Max: {_maximum}");
         }
     }
 }
