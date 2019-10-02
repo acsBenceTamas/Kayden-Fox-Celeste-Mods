@@ -11,7 +11,8 @@ namespace FactoryHelper.Components
     [Tracked]
     class FactoryActivatorComponent : Component
     {
-        public bool Activated { get; private set; }
+        public bool Activated => ActivationCount > 0;
+        public int ActivationCount { get; private set; } = 0;
         public bool StartOn { get; set; }
         public bool IsOn
         {
@@ -20,6 +21,7 @@ namespace FactoryHelper.Components
                 return Activated != StartOn;
             }
         }
+        public bool StateIsLocked { get; set; } = false;
 
         public string ActivationId;
 
@@ -36,33 +38,40 @@ namespace FactoryHelper.Components
         {
         }
 
-        public void Activate()
+        public void Activate(bool lockState = true)
         {
-            if (!Activated)
+            if (!StateIsLocked)
             {
-                Activated = true;
-                HandleOnOff();
+                bool wasOn = IsOn;
+                ActivationCount++;
+                HandleOnOff(wasOn);
+                StateIsLocked = lockState;
             }
         }
 
-        public void Deactivate()
+        public void Deactivate(bool lockState = true)
         {
-            if (Activated)
+            if (!StateIsLocked)
             {
-                Activated = false;
-                HandleOnOff();
+                bool wasOn = IsOn;
+                ActivationCount--;
+                HandleOnOff(wasOn);
+                StateIsLocked = lockState;
             }
         }
 
-        private void HandleOnOff()
+        private void HandleOnOff(bool wasOn)
         {
-            if (IsOn)
+            if (IsOn != wasOn)
             {
-                OnTurnOn?.Invoke();
-            }
-            else
-            {
-                OnTurnOff?.Invoke();
+                if (IsOn)
+                {
+                    OnTurnOn?.Invoke();
+                }
+                else
+                {
+                    OnTurnOff?.Invoke();
+                }
             }
         }
 
@@ -70,12 +79,12 @@ namespace FactoryHelper.Components
         {
             if (ActivationId == null)
             {
-                Activated = false;
+                ActivationCount = 0;
             }
             else
             {
                 Level level = scene as Level;
-                Activated = level.Session.GetFlag($"FactoryActivation:{ActivationId}");
+                ActivationCount += level.Session.GetFlag($"FactoryActivation:{ActivationId}") ? 1 : 0;
             }
             if (IsOn)
             {

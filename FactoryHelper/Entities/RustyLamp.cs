@@ -98,12 +98,16 @@ namespace FactoryHelper.Entities
 
         private void OnTurnOff()
         {
-            Remove(_strobePattern);
-            Add(new Coroutine(FlickerOff()));
+            SetStrobePattern("FlickerOff");
+            _startedOn = false;
         }
 
         private void SetStrobePattern(string strobePattern)
         {
+            if (_strobePattern != null)
+            {
+                Remove(_strobePattern);
+            }
             switch (strobePattern)
             {
                 default:
@@ -112,6 +116,9 @@ namespace FactoryHelper.Entities
                     break;
                 case "FlickerOn":
                     Add(_strobePattern = new Coroutine(PatternFlickerOn()));
+                    break;
+                case "FlickerOff":
+                    Add(_strobePattern = new Coroutine(FlickerOff()));
                     break;
                 case "LightFlicker":
                     Add(_strobePattern = new Coroutine(PatternLightFlicker()));

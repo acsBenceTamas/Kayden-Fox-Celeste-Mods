@@ -101,6 +101,12 @@ namespace FactoryHelper
                     case "FactoryHelper/ThrowBoxSpawner":
                         level.Add(new ThrowBoxSpawner(entityData, offset));
                         return true;
+                    case "FactoryHelper/PressurePlate":
+                        level.Add(new PressurePlate(entityData, offset));
+                        return true;
+                    case "FactoryHelper/KillerDebris":
+                        level.Add(new KillerDebris(entityData, offset));
+                        return true;
                     default:
                         return false;
                 }

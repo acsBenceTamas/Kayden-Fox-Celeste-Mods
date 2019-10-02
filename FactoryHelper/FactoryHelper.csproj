@@ -60,7 +60,9 @@
     <Compile Include="Entities\DashFuseBox.cs" />
     <Compile Include="Entities\ElectrifiedWall.cs" />
     <Compile Include="Entities\FactorySpike.cs" />
+    <Compile Include="Entities\KillerDebris.cs" />
     <Compile Include="Entities\PowerLine.cs" />
+    <Compile Include="Entities\PressurePlate.cs" />
     <Compile Include="Entities\RustyLamp.cs" />
     <Compile Include="Entities\RustySpike.cs" />
     <Compile Include="Entities\ThrowBox.cs" />

@@ -29,6 +29,7 @@ namespace FactoryHelper.Entities
         private float _angryShootTimer = _angryShootTime;
         private bool _angryMode = false;
         private bool _canGetAngry;
+        private Coroutine _sequence;
 
         public FactoryActivatorComponent Activator { get; }
 
@@ -82,12 +83,28 @@ namespace FactoryHelper.Entities
 
         private void OnTurnOn()
         {
-            Add(new Coroutine(StartupSequence()));
+            ResetTimers();
+            if (_sequence != null)
+            {
+                Remove(_sequence);
+            }
+            Add(_sequence = new Coroutine(StartupSequence()));
         }
 
         private void OnTurnOff()
         {
-            Add(new Coroutine(WindDownSequence()));
+            ResetTimers();
+            if (_sequence != null)
+            {
+                Remove(_sequence);
+            }
+            Add(_sequence = new Coroutine(WindDownSequence()));
+        }
+
+        private void ResetTimers()
+        {
+            _angryResetTimer = 0f;
+            _angryShootTimer = _angryShootTime;
         }
 
         private IEnumerator StartupSequence()
