@@ -3,7 +3,7 @@ module FactoryHelperThrowBox
 using ..Ahorn, Maple
 
 @mapdef Entity "FactoryHelper/ThrowBox" ThrowBox(x::Integer, y::Integer, isMetal::Bool=false)
-@mapdef Entity "FactoryHelper/ThrowBoxSpawner" ThrowBoxSpawner(x::Integer, y::Integer, delay::Real=1.0, maximum::Integer=0, isMetal::Bool=false, isRandom::Bool=false)
+@mapdef Entity "FactoryHelper/ThrowBoxSpawner" ThrowBoxSpawner(x::Integer, y::Integer, delay::Real=1.0, maximum::Integer=0, isMetal::Bool=false, isRandom::Bool=false, fromTop::Bool=true)
 
 const placements = Ahorn.PlacementDict(
     "ThrowBox (FactoryHelper)" => Ahorn.EntityPlacement(
@@ -63,7 +63,9 @@ function Ahorn.renderAbs(ctx::Ahorn.Cairo.CairoContext, entity::ThrowBoxSpawner,
     
     Ahorn.drawSprite(ctx, sprite, x + 8, y + 8)
     Ahorn.drawRectangle(ctx, x, y, 16, 16, color .+ (0.0, 0.0, 0.0, 0.2), color .+ (0.0, 0.0, 0.0, 0.5))
-	Ahorn.drawArrow(ctx, x+8, y+4, x+8, y+12, (0.0, 0.0, 0.7, 1.0), headLength=3)
+	if get(entity.data, "fromTop", true)
+		Ahorn.drawArrow(ctx, x+8, y+4, x+8, y+12, (0.0, 0.0, 0.7, 1.0), headLength=3)
+	end
 end
 
 function Ahorn.renderSelectedAbs(ctx::Ahorn.Cairo.CairoContext, entity::ThrowBoxSpawner)
