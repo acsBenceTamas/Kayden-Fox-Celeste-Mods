@@ -146,14 +146,17 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (Scene.OnInterval(0.05f))
+            if (Activator.IsOn)
             {
-                _edgeSeed = (uint)Calc.Random.Next();
-            }
-            if (Scene.OnInterval(_particleEmittionPeriod) && Activator.IsOn)
-            {
-                Sparkle(1);
-                SetParticleEmittionPeriod();
+                if (Scene.OnInterval(0.05f))
+                {
+                    _edgeSeed = (uint)Calc.Random.Next();
+                }
+                if (Scene.OnInterval(_particleEmittionPeriod))
+                {
+                    Sparkle(1);
+                    SetParticleEmittionPeriod();
+                }
             }
         }
 

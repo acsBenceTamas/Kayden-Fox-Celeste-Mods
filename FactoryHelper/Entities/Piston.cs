@@ -237,9 +237,9 @@ namespace FactoryHelper.Entities
                 }
             }
 
-            _base.Depth = -20;
-            _head.Depth = -20;
-            _body.Depth = -10;
+            _base.Depth = -9010;
+            _head.Depth = -9010;
+            _body.Depth = -9000;
             _body.AllowStaticMovers = false;
             _head.DisableLightsInside = false;
             _body.DisableLightsInside = false;

@@ -107,6 +107,9 @@ namespace FactoryHelper
                     case "FactoryHelper/KillerDebris":
                         level.Add(new KillerDebris(entityData, offset));
                         return true;
+                    case "FactoryHelper/DashNegator":
+                        level.Add(new DashNegator(entityData, offset));
+                        return true;
                     default:
                         return false;
                 }
