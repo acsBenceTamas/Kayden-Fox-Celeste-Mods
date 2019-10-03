@@ -55,7 +55,7 @@ namespace FactoryHelper.Entities
 
             width = 16 * (width / 16);
 
-            Depth = -8000;
+            Depth = -9000;
 
             Add(new StaticMover
             {
