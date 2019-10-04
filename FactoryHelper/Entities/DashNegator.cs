@@ -17,22 +17,24 @@ namespace FactoryHelper.Entities
 
         private Sprite[] _turretSprites;
         private Solid[] _turretSolids;
+        private float _particleSpanPeriod;
 
-        public static ParticleType P_NegatorField = new ParticleType
+        public static readonly ParticleType P_NegatorField = new ParticleType
         {
             Size = 1f,
-            Color = Calc.HexToColor("800000"),
-            Color2 = Calc.HexToColor("c40000"),
-            ColorMode = ParticleType.ColorModes.Blink,
-            FadeMode = ParticleType.FadeModes.Late,
-            SpeedMin = 2f,
+            Color = Calc.HexToColor("800000") * 0.8f,
+            Color2 = Calc.HexToColor("c40000") * 0.8f,
+            ColorMode = ParticleType.ColorModes.Static,
+            FadeMode = ParticleType.FadeModes.InAndOut,
+            SpeedMin = 4f,
             SpeedMax = 8f,
-            SpinMin = 0.3f,
-            SpinMax = 0.8f,
+            SpinMin = 0.002f,
+            SpinMax = 0.005f,
+            Acceleration = Vector2.Zero,
             DirectionRange = (float)Math.PI * 2f,
             Direction = 0f,
-            LifeMin = 0.8f,
-            LifeMax = 1.2f
+            LifeMin = 1.5f,
+            LifeMax = 2.5f
         };
         private PlayerCollider _pc;
 
@@ -80,6 +82,7 @@ namespace FactoryHelper.Entities
                 _turretSolids[i] = new Solid(position + new Vector2(2 + 16 * i, 0), 12, 8, false);
             }
 
+            _particleSpanPeriod =  256f / (width * height);
         }
 
         public override void Added(Scene scene)
@@ -105,9 +108,9 @@ namespace FactoryHelper.Entities
         {
             base.Update();
 
-            if (Visible && Activator.IsOn && Scene.OnInterval(0.05f))
+            if (Visible && Activator.IsOn && Scene.OnInterval(_particleSpanPeriod))
             {
-                SceneAs<Level>().ParticlesFG.Emit(P_NegatorField, 1, Center, new Vector2(Width, Height));
+                SceneAs<Level>().ParticlesFG.Emit(P_NegatorField, 1, Position + Collider.Center, new Vector2(Width/2, Height/2));
             }
         }
 
@@ -156,11 +159,13 @@ namespace FactoryHelper.Entities
 
         private void FizzleOff()
         {
+            Console.WriteLine("Fizzled off");
             for (int i = 0; i < Width; i += 8)
             {
                 for (int j = 0; j < Height; j += 8)
                 {
-                    SceneAs<Level>().ParticlesFG.Emit(P_NegatorField, 1, Position + new Vector2(4 + i * 8, 4 + j * 8), new Vector2(4, 4));
+                    Console.WriteLine(new Vector2(4 + i * 8, 4 + j * 8));
+                    SceneAs<Level>().ParticlesFG.Emit(P_NegatorField, 1, new Vector2(4 + i * 8, 4 + j * 8), new Vector2(4, 4));
                 }
             }
         }

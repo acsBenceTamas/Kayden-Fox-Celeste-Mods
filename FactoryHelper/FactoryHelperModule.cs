@@ -10,7 +10,7 @@ namespace FactoryHelper
 {
     class FactoryHelperModule : EverestModule
     {
-        public SpriteBank SpriteBank { get; private set; }
+        public static SpriteBank SpriteBank { get; private set; }
 
         public static FactoryHelperModule Instance;
 
@@ -20,6 +20,12 @@ namespace FactoryHelper
         }
 
         public override Type SettingsType => null;
+
+        public override void LoadContent(bool firstLoad)
+        {
+            base.LoadContent(firstLoad);
+            SpriteBank = new SpriteBank(GFX.Game, "Graphics/FactoryHelper/Sprites.xml");
+        }
 
         public override void Load()
         {
@@ -109,6 +115,9 @@ namespace FactoryHelper
                         return true;
                     case "FactoryHelper/DashNegator":
                         level.Add(new DashNegator(entityData, offset));
+                        return true;
+                    case "FactoryHelper/DoorRusty":
+                        level.Add(new DoorRusty(entityData, offset));
                         return true;
                     default:
                         return false;

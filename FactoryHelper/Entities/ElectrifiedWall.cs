@@ -20,7 +20,7 @@ namespace FactoryHelper.Entities
             Calc.HexToColor("fcf579"),
             Calc.HexToColor("8cf7e2")
         };
-        private static readonly ParticleType _fizzleParticle = new ParticleType
+        public static readonly ParticleType P_Fizzle = new ParticleType
         {
             Size = 1f,
             Color = Calc.HexToColor("B9FEFE"),
@@ -213,7 +213,7 @@ namespace FactoryHelper.Entities
             {
                 return;
             }
-            SceneAs<Level>().ParticlesFG.Emit(_fizzleParticle, count, Position + Collider.Center, new Vector2(Collider.Width/2, Collider.Height / 2));
+            SceneAs<Level>().ParticlesFG.Emit(P_Fizzle, count, Position + Collider.Center, new Vector2(Collider.Width/2, Collider.Height / 2));
         }
 
         private static void DrawSimpleLightning(ref int index, ref VertexPositionColor[] verts, uint seed, Vector2 pos, Vector2 a, Vector2 b, Color color, float thickness = 1f)

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Sprites>
+
+  <rusty_metal_door path="objects/FactoryHelper/doorRusty/" start="idle">
+    <Justify x=".5" y="1" />
+
+    <Loop id="idle" path="metaldoor" delay="0.1" frames="0"/>
+    <Anim id="open" path="metaldoor" delay="0.05" frames="4,2,1" goto="close"/>
+    <Anim id="close" path="metaldoor" delay="0.05" frames="1,1,1,1,1-4" goto="idle"/>
+  </rusty_metal_door>
+
+</Sprites>
