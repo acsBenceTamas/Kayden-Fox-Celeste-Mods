@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -17,6 +18,7 @@ namespace FactoryHelper.Entities
         private readonly Sprite _batterySprite;
         private readonly HashSet<string> _activationIds = new HashSet<string>();
         private bool _inserting = false;
+        private SoundSource _sfx;
 
         public bool Activated
         {
@@ -49,6 +51,8 @@ namespace FactoryHelper.Entities
                 }
             }
 
+            Add(_sfx = new SoundSource());
+
             Add(new PlayerCollider(OnPlayer, new Circle(60f)));
 
             Depth = 9000;
@@ -68,34 +72,41 @@ namespace FactoryHelper.Entities
                 {
                     if (follower.Entity is Battery && !(follower.Entity as Battery).StartedUsing)
                     {
-                        TryTurnOn(player, follower);
+                        TryTurnOn(player, follower.Entity as Battery);
                         break;
                     }
                 }
             }
         }
 
-        private void TryTurnOn(Player player, Follower follower)
+        private void TryTurnOn(Player player, Battery battery)
         {
             if (!Scene.CollideCheck<Solid>(player.Center, Center))
             {
                 _inserting = true;
-                (follower.Entity as Battery).StartedUsing = true;
-                Add(new Coroutine(TurnOnSequence(follower)));
+                battery.StartedUsing = true;
+                Add(new Coroutine(TurnOnSequence(battery)));
             }
         }
 
-        private IEnumerator TurnOnSequence(Follower follower)
+        private IEnumerator TurnOnSequence(Battery battery)
         {
-            Battery battery = follower.Entity as Battery;
             Add(new Coroutine(battery.UseRoutine(Center)));
             battery.RegisterUsed();
+            _sfx.Play("event:/game/03_resort/key_unlock");
+            yield return 1.2f;
             while (battery.Turning)
             {
                 yield return null;
             }
+            _sfx.Stop();
+            _sfx.Play("event:/game/03_resort/door_metal_close");
             Activated = true;
+            _batterySprite.Visible = true;
             yield return _boxSprite.PlayRoutine("activating");
+            SendOutSignals();
+            SetSessionTags();
+            _boxSprite.Play("active");
         }
 
         public override void Added(Scene scene)
@@ -109,6 +120,30 @@ namespace FactoryHelper.Entities
             {
                 StartInactive();
             }
+        }
+
+        private void SetSessionTags()
+        {
+            foreach (string activationId in _activationIds)
+            {
+                ActivatePermanently(activationId);
+            }
+        }
+
+        private void SendOutSignals()
+        {
+            foreach (FactoryActivatorComponent activator in Scene.Tracker.GetComponents<FactoryActivatorComponent>())
+            {
+                if (_activationIds.Contains(activator.ActivationId))
+                {
+                    activator.Activate();
+                }
+            }
+        }
+
+        private void ActivatePermanently(string activationId)
+        {
+            (Scene as Level).Session.SetFlag($"FactoryActivation:{activationId}", true);
         }
 
         private void StartInactive()

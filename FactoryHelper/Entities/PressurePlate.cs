@@ -29,6 +29,7 @@ namespace FactoryHelper.Entities
                 Add(Image = new Image(GFX.Game["objects/FactoryHelper/pressurePlate/plate_button0"]));
                 Collider = new Hitbox(14, 7, 1, 6);
                 Image.Position.X -= 2;
+                Image.Position.Y -= 2;
             }
         }
 

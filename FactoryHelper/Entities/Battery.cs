@@ -74,7 +74,7 @@ namespace FactoryHelper.Entities
                         sprite.Visible = true;
                         sprite.Rate = 1f;
                         sprite.Scale = Vector2.One;
-                        sprite.Play("idle");
+                        sprite.Play("rotating");
                         sprite.Rotation = 0f;
                         wiggler.Stop();
                         follower.MoveTowardsLeader = true;
@@ -85,7 +85,7 @@ namespace FactoryHelper.Entities
             {
                 sprite.Scale = Vector2.One * (1f + v * 0.35f);
             }));
-            Add(light = new VertexLight(Color.White, 1f, 32, 48));
+            Add(light = new VertexLight(Color.LightSeaGreen, 1f, 32, 48));
         }
 
         public Battery(EntityData data, Vector2 offset) : this(data.Position + offset, new EntityID(data.Level.Name, data.ID))
@@ -120,7 +120,10 @@ namespace FactoryHelper.Entities
 
         public override void Render()
         {
-            sprite.DrawSimpleOutline();
+            if (sprite.Visible)
+            {
+                sprite.DrawSimpleOutline();
+            }
             base.Render();
         }
 
@@ -162,7 +165,9 @@ namespace FactoryHelper.Entities
             {
                 SceneAs<Level>().ParticlesFG.Emit(P_Insert, Center, (float)Math.PI / 8f * (float)j);
             }
-            RemoveSelf();
+            sprite.Visible = false;
+            light.Visible = false;
+            Turning = false;
         }
 
         private void OnPlayer(Player player)

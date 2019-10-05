@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using FactoryHelper.Components;
 using Monocle;
 using FactoryHelper.Entities;
-using System.Linq;
 
 namespace FactoryHelper
 {

@@ -275,10 +275,5 @@ namespace FactoryHelper.Entities
         {
             (Scene as Level).Session.SetFlag($"FactoryActivation:{activationId}", true);
         }
-
-        private void DeactivatePermanently(string activationId)
-        {
-            (Scene as Level).Session.SetFlag($"FactoryActivation:{activationId}", false);
-        }
     }
 }
