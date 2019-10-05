@@ -49,6 +49,7 @@ namespace FactoryHelper.Entities
 
         public ThrowBox(Vector2 position, bool isMetal) : base(position)
         {
+            IgnoreJumpThrus = true;
             Position -= DISPLACEMENT;
             Depth = 100;
             Collider = new Hitbox(8f, 10f, 4f + DISPLACEMENT.X, 6f + DISPLACEMENT.Y);
@@ -69,7 +70,6 @@ namespace FactoryHelper.Entities
             Hold.OnPickup = OnPickup;
             Hold.OnRelease = OnRelease;
             Hold.OnHitSpring = HitSpring;
-            //Hold.OnCarry = OnCarry;
             Hold.SpeedGetter = (() => Speed);
 
             Add(ConveyorMover = new ConveyorMoverComponent());

@@ -130,6 +130,7 @@ namespace FactoryHelper.Entities
             {
                 sprite.Play("active", true);
             }
+            Fizzle();
         }
 
         private void OnTurnOff()
@@ -138,7 +139,7 @@ namespace FactoryHelper.Entities
             {
                 sprite.Play("inactive");
             }
-            FizzleOff();
+            Fizzle();
         }
 
         private void OnStartOn()
@@ -157,15 +158,13 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void FizzleOff()
+        private void Fizzle()
         {
-            Console.WriteLine("Fizzled off");
-            for (int i = 0; i < Width; i += 8)
+            for (int i = 0; i < Width; i += 16)
             {
-                for (int j = 0; j < Height; j += 8)
+                for (int j = 0; j < Height; j += 16)
                 {
-                    Console.WriteLine(new Vector2(4 + i * 8, 4 + j * 8));
-                    SceneAs<Level>().ParticlesFG.Emit(P_NegatorField, 1, new Vector2(4 + i * 8, 4 + j * 8), new Vector2(4, 4));
+                    SceneAs<Level>().ParticlesFG.Emit(P_NegatorField, 1, Position + new Vector2(4 + i, 4 + j), new Vector2(4, 4));
                 }
             }
         }

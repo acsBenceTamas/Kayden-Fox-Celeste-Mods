@@ -106,10 +106,6 @@ namespace FactoryHelper.Entities
             OnDashCollide = OnDashed;
         }
 
-        public DashFuseBox(Vector2 position, float width, float height, bool safe) : base(position, width, height, safe)
-        {
-        }
-
         public override void Added(Scene scene)
         {
             base.Added(scene);

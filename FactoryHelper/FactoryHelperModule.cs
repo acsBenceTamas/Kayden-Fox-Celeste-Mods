@@ -17,9 +17,12 @@ namespace FactoryHelper
         public FactoryHelperModule()
         {
             Instance = this;
+            Instance._SaveData = new FactoryHelperSaveData();
         }
 
         public override Type SettingsType => null;
+        public override Type SaveDataType => typeof(FactoryHelperSaveData);
+        public static FactoryHelperSaveData SaveData => (FactoryHelperSaveData)Instance._SaveData;
 
         public override void LoadContent(bool firstLoad)
         {
@@ -75,28 +78,28 @@ namespace FactoryHelper
                         level.Add(new BoomBox(entityData, offset));
                         return true;
                     case "FactoryHelper/RustySpikeUp":
-                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Up));
+                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Up));
                         return true;
                     case "FactoryHelper/RustySpikeDown":
-                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Down));
+                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Down));
                         return true;
                     case "FactoryHelper/RustySpikeLeft":
-                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Left));
+                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Left));
                         return true;
                     case "FactoryHelper/RustySpikeRight":
-                        level.Add(new RustySpike(entityData, offset, RustySpike.Directions.Right));
+                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Right));
                         return true;
                     case "FactoryHelper/ElectrifiedWallUp":
-                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Up));
+                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Up));
                         return true;
                     case "FactoryHelper/ElectrifiedWallDown":
-                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Down));
+                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Down));
                         return true;
                     case "FactoryHelper/ElectrifiedWallLeft":
-                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Left));
+                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Left));
                         return true;
                     case "FactoryHelper/ElectrifiedWallRight":
-                        level.Add(new ElectrifiedWall(entityData, offset, RustySpike.Directions.Right));
+                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Right));
                         return true;
                     case "FactoryHelper/Conveyor":
                         level.Add(new Conveyor(entityData, offset));
@@ -118,6 +121,15 @@ namespace FactoryHelper
                         return true;
                     case "FactoryHelper/DoorRusty":
                         level.Add(new DoorRusty(entityData, offset));
+                        return true;
+                    case "FactoryHelper/RustyJumpthruPlatform":
+                        level.Add(new RustyJumpthruPlatform(entityData, offset));
+                        return true;
+                    case "FactoryHelper/BatteryBox":
+                        level.Add(new BatteryBox(entityData, offset));
+                        return true;
+                    case "FactoryHelper/Battery":
+                        level.Add(new Battery(entityData, offset));
                         return true;
                     default:
                         return false;
