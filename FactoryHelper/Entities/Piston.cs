@@ -8,6 +8,15 @@ namespace FactoryHelper.Entities
 {
     class Piston : Entity
     {
+        public static ParticleType P_Steam = new ParticleType(ParticleTypes.Steam)
+        {
+            SpeedMin = 16.0f,
+            SpeedMax = 32.0f,
+            DirectionRange = (float)Math.PI / 3,
+            Size = 1.5f,
+            SizeRange = 0.5f
+        };
+
         public FactoryActivatorComponent Activator { get; }
 
         public float MoveTime { get; } = 0.2f;
@@ -301,20 +310,22 @@ namespace FactoryHelper.Entities
                         if (player.Bottom <= _body.Top)
                         {
                             dir = -Vector2.UnitY;
+                            SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.BottomCenter, Vector2.UnitX * 4f, direction: dir.Angle());
                         }
                         else if (player.Right <= _body.Left)
                         {
                             dir = -Vector2.UnitX;
+                            SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.CenterRight, Vector2.UnitY * 4f, direction: dir.Angle());
                         }
                         else if (player.Left >= _body.Right)
                         {
                             dir = Vector2.UnitX;
+                            SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.CenterLeft, Vector2.UnitY * 4f, direction: dir.Angle());
                         }
                         else
                         {
                             dir = Vector2.Zero;
                         }
-
                         _body.GetPlayerRider().Die(dir);
                     }
                 }

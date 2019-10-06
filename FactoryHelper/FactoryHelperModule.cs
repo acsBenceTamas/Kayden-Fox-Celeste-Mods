@@ -131,6 +131,12 @@ namespace FactoryHelper
                     case "FactoryHelper/Battery":
                         level.Add(new Battery(entityData, offset));
                         return true;
+                    case "FactoryHelper/FanHorizontal":
+                        level.Add(new Fan(entityData, offset, Fan.Directions.Horizontal));
+                        return true;
+                    case "FactoryHelper/FanVertical":
+                        level.Add(new Fan(entityData, offset, Fan.Directions.Vertical));
+                        return true;
                     default:
                         return false;
                 }
