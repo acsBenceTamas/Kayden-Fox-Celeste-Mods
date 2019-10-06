@@ -1,12 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Sprites>
 
-  <rusty_metal_door path="objects/FactoryHelper/doorRusty/" start="idle">
-    <Justify x=".5" y="1" />
+    <rusty_metal_door path="objects/FactoryHelper/doorRusty/" start="idle">
+        <Justify x=".5" y="1" />
 
-    <Loop id="idle" path="metaldoor" delay="0.1" frames="0"/>
-    <Anim id="open" path="metaldoor" delay="0.05" frames="4,2,1" goto="close"/>
-    <Anim id="close" path="metaldoor" delay="0.05" frames="1,1,1,1,1-4" goto="idle"/>
-  </rusty_metal_door>
+        <Loop id="idle" path="metaldoor" delay="0.1" frames="0"/>
+        <Anim id="open" path="metaldoor" delay="0.05" frames="4,2,1" goto="close"/>
+        <Anim id="close" path="metaldoor" delay="0.05" frames="1,1,1,1,1-4" goto="idle"/>
+    </rusty_metal_door>
+      
+    <battery_box path="objects/FactoryHelper/batteryBox/" start="inactive">
+        <Justify x="0.5" y="0.5" />
+        
+        <Loop id="inactive" path="inactive" delay="0.3" frames="0,1"/>
+        <Anim id="activating" path="active" delay="0.1" frames="0,0,1,0,0,1,2,3,2,1,3,2,1,3"/>
+        <Anim id="active" path="active" delay="0.3" frames="3,2" goto="active"/>
+    </battery_box>
+    
+    <battery path="objects/FactoryHelper/batteryBox/" start="rotating">
+        <Justify x="0.5" y="0.5" />
+        
+        <Anim id="rotating" path="battery" delay="0.1" frames="0-11" goto="rotating"/>
+        <Loop id="idle" path="battery" delay="0.1" frames="0"/>
+    </battery>
+    
+    <fan path="objects/FactoryHelper/fan/" start="rotating">
+        <Justify x="0.5" y="0.5" />
+        
+        <Anim id="rotating" path="fan" delay="0.03" frames="0-8,8-1" goto="rotating"/>
+    </fan>
 
 </Sprites>
