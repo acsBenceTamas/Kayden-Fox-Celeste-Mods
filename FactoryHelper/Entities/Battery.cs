@@ -9,11 +9,19 @@ namespace FactoryHelper.Entities
 {
     public class Battery : Entity
     {
-        public static ParticleType P_Shimmer = Key.P_Shimmer;
+        public static ParticleType P_Shimmer = new ParticleType(Key.P_Shimmer)
+        {
+            Color = Calc.HexToColor("61c200"),
+            Color2 = Calc.HexToColor("a1db00")
+        };
 
-        public static ParticleType P_Insert = Key.P_Insert;
+        public static ParticleType P_Insert = new ParticleType(Key.P_Insert)
+        {
+            Color = Calc.HexToColor("61c200"),
+            Color2 = Calc.HexToColor("a1db00")
+        };
 
-        public static ParticleType P_Collect = Key.P_Collect;
+        public static ParticleType P_Collect = new ParticleType(P_Shimmer);
 
         public EntityID ID;
 
@@ -23,13 +31,13 @@ namespace FactoryHelper.Entities
 
         public bool Turning;
 
-        private Follower follower;
+        private readonly Follower follower;
 
-        private Sprite sprite;
+        private readonly Sprite sprite;
 
-        private Wiggler wiggler;
+        private readonly Wiggler wiggler;
 
-        private VertexLight light;
+        private readonly VertexLight light;
 
         private ParticleEmitter shimmerParticles;
 

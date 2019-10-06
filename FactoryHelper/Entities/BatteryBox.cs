@@ -19,6 +19,7 @@ namespace FactoryHelper.Entities
         private readonly HashSet<string> _activationIds = new HashSet<string>();
         private bool _inserting = false;
         private SoundSource _sfx;
+        private VertexLight _light;
 
         public bool Activated
         {
@@ -54,6 +55,11 @@ namespace FactoryHelper.Entities
             Add(_sfx = new SoundSource());
 
             Add(new PlayerCollider(OnPlayer, new Circle(60f)));
+
+            Add(new LightOcclude(new Rectangle(-15,-15,30,30), 0.2f));
+
+            Add(_light = new VertexLight(Color.LightSeaGreen, 1f, 32, 48));
+            _light.Visible = false;
 
             Depth = 9000;
         }
@@ -103,10 +109,12 @@ namespace FactoryHelper.Entities
             _sfx.Play("event:/game/03_resort/door_metal_close");
             Activated = true;
             _batterySprite.Visible = true;
+            _light.Visible = true;
             yield return _boxSprite.PlayRoutine("activating");
             SendOutSignals();
             SetSessionTags();
             _boxSprite.Play("active");
+            _light.Visible = true;
         }
 
         public override void Added(Scene scene)
@@ -155,6 +163,7 @@ namespace FactoryHelper.Entities
         private void StartActive()
         {
             _boxSprite.Play("active");
+            _light.Visible = true;
         }
     }
 }
