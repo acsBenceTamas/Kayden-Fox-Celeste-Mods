@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/BatteryBox")]
     class BatteryBox : Entity
     {
         private readonly EntityID _id;
@@ -98,7 +100,6 @@ namespace FactoryHelper.Entities
         private IEnumerator TurnOnSequence(Battery battery)
         {
             Add(new Coroutine(battery.UseRoutine(Center)));
-            battery.RegisterUsed();
             _sfx.Play("event:/game/03_resort/key_unlock");
             yield return 1.2f;
             while (battery.Turning)
@@ -108,13 +109,13 @@ namespace FactoryHelper.Entities
             _sfx.Stop();
             _sfx.Play("event:/game/03_resort/door_metal_close");
             Activated = true;
-            _batterySprite.Visible = true;
-            _light.Visible = true;
-            yield return _boxSprite.PlayRoutine("activating");
             SendOutSignals();
             SetSessionTags();
-            _boxSprite.Play("active");
+            _batterySprite.Visible = true;
             _light.Visible = true;
+            battery.RegisterUsed();
+            yield return _boxSprite.PlayRoutine("activating");
+            _boxSprite.Play("active");
         }
 
         public override void Added(Scene scene)

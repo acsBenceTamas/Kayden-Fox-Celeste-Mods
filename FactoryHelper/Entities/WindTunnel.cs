@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -6,6 +7,7 @@ using System;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/WindTunnel")]
     class WindTunnel : Entity
     {
         public FactoryActivatorComponent Activator { get; }

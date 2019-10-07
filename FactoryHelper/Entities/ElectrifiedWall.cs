@@ -4,13 +4,24 @@ using Microsoft.Xna.Framework;
 using Celeste;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections;
 using FactoryHelper.Components;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity(
+        "FactoryHelper/ElectrifiedWallUp = LoadUp",
+        "FactoryHelper/ElectrifiedWallDown = LoadDown",
+        "FactoryHelper/ElectrifiedWallLeft = LoadLeft",
+        "FactoryHelper/ElectrifiedWallRight = LoadRight")]
     class ElectrifiedWall : FactorySpike
     {
+        public static Entity LoadUp(Level level, LevelData levelData, Vector2 offset, EntityData data) => new ElectrifiedWall(data, offset, Directions.Up);
+        public static Entity LoadDown(Level level, LevelData levelData, Vector2 offset, EntityData data) => new ElectrifiedWall(data, offset, Directions.Down);
+        public static Entity LoadLeft(Level level, LevelData levelData, Vector2 offset, EntityData data) => new ElectrifiedWall(data, offset, Directions.Left);
+        public static Entity LoadRight(Level level, LevelData levelData, Vector2 offset, EntityData data) => new ElectrifiedWall(data, offset, Directions.Right);
+
+
         public FactoryActivatorComponent Activator { get; }
 
         public float Fade { get; private set; } = 0f;

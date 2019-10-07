@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -6,6 +7,7 @@ using System.Collections;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/RustyLamp")]
     class RustyLamp : Entity
     {
         public static readonly Color Color = Color.Lerp(Color.White, Color.Orange, 0.5f);

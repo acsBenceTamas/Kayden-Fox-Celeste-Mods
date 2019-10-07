@@ -4,9 +4,11 @@ using Microsoft.Xna.Framework;
 using FactoryHelper.Components;
 using System;
 using System.Collections;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/Conveyor")]
     [Tracked]
     class Conveyor : Solid
     {

@@ -1,9 +1,11 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/RustyJumpthruPlatform")]
     public class RustyJumpthruPlatform : JumpThru
     {
         private readonly int _columns;

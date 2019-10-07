@@ -1,16 +1,13 @@
 ﻿using Monocle;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Celeste;
 using FactoryHelper.Components;
-using Microsoft.Xna.Framework.Graphics;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/DashNegator")]
     class DashNegator : Entity
     {
         public FactoryActivatorComponent Activator;
@@ -116,12 +113,12 @@ namespace FactoryHelper.Entities
 
         public override void Render()
         {
-            base.Render();
             Color color = Color.DarkRed * 0.3f;
             if (Visible && Activator.IsOn)
             {
                 Draw.Rect(Collider, color);
             }
+            base.Render();
         }
 
         private void OnTurnOn()

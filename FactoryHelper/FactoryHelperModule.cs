@@ -17,12 +17,13 @@ namespace FactoryHelper
         public FactoryHelperModule()
         {
             Instance = this;
-            Instance._SaveData = new FactoryHelperSaveData();
         }
 
         public override Type SettingsType => null;
         public override Type SaveDataType => typeof(FactoryHelperSaveData);
         public static FactoryHelperSaveData SaveData => (FactoryHelperSaveData)Instance._SaveData;
+        public override Type SessionType => typeof(FactoryHelperSession);
+        public static FactoryHelperSession Session => (FactoryHelperSession)Instance._Session;
 
         public override void LoadContent(bool firstLoad)
         {
@@ -32,116 +33,11 @@ namespace FactoryHelper
 
         public override void Load()
         {
-            Everest.Events.Level.OnLoadEntity += LevelOnLoadEntity;
             FactoryHelperHooks.Load();
         }
 
         public override void Unload()
         {
-            Everest.Events.Level.OnLoadEntity -= LevelOnLoadEntity;
-        }
-
-        private bool LevelOnLoadEntity(Level level, LevelData levelData, Vector2 offset, EntityData entityData)
-        {
-            if (entityData.Name.StartsWith("FactoryHelper"))
-            {
-                switch (entityData.Name)
-                {
-                    case "FactoryHelper/PistonUp":
-                        level.Add(new Piston(entityData, offset, Piston.Direction.Up));
-                        return true;
-                    case "FactoryHelper/PistonDown":
-                        level.Add(new Piston(entityData, offset, Piston.Direction.Down));
-                        return true;
-                    case "FactoryHelper/PistonLeft":
-                        level.Add(new Piston(entityData, offset, Piston.Direction.Left));
-                        return true;
-                    case "FactoryHelper/PistonRight":
-                        level.Add(new Piston(entityData, offset, Piston.Direction.Right));
-                        return true;
-                    case "FactoryHelper/FactoryActivationTrigger":
-                        level.Add(new FactoryActivationTrigger(entityData, offset));
-                        return true;
-                    case "FactoryHelper/WindTunnel":
-                        level.Add(new WindTunnel(entityData, offset));
-                        return true;
-                    case "FactoryHelper/DashFuseBox":
-                        level.Add(new DashFuseBox(entityData, offset));
-                        return true;
-                    case "FactoryHelper/PowerLine":
-                        level.Add(new PowerLine(entityData, offset));
-                        return true;
-                    case "FactoryHelper/RustyLamp":
-                        level.Add(new RustyLamp(entityData, offset));
-                        return true;
-                    case "FactoryHelper/BoomBox":
-                        level.Add(new BoomBox(entityData, offset));
-                        return true;
-                    case "FactoryHelper/RustySpikeUp":
-                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Up));
-                        return true;
-                    case "FactoryHelper/RustySpikeDown":
-                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Down));
-                        return true;
-                    case "FactoryHelper/RustySpikeLeft":
-                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Left));
-                        return true;
-                    case "FactoryHelper/RustySpikeRight":
-                        level.Add(new RustySpike(entityData, offset, FactorySpike.Directions.Right));
-                        return true;
-                    case "FactoryHelper/ElectrifiedWallUp":
-                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Up));
-                        return true;
-                    case "FactoryHelper/ElectrifiedWallDown":
-                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Down));
-                        return true;
-                    case "FactoryHelper/ElectrifiedWallLeft":
-                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Left));
-                        return true;
-                    case "FactoryHelper/ElectrifiedWallRight":
-                        level.Add(new ElectrifiedWall(entityData, offset, FactorySpike.Directions.Right));
-                        return true;
-                    case "FactoryHelper/Conveyor":
-                        level.Add(new Conveyor(entityData, offset));
-                        return true;
-                    case "FactoryHelper/ThrowBox":
-                        level.Add(new ThrowBox(entityData, offset));
-                        return true;
-                    case "FactoryHelper/ThrowBoxSpawner":
-                        level.Add(new ThrowBoxSpawner(entityData, offset));
-                        return true;
-                    case "FactoryHelper/PressurePlate":
-                        level.Add(new PressurePlate(entityData, offset));
-                        return true;
-                    case "FactoryHelper/KillerDebris":
-                        level.Add(new KillerDebris(entityData, offset));
-                        return true;
-                    case "FactoryHelper/DashNegator":
-                        level.Add(new DashNegator(entityData, offset));
-                        return true;
-                    case "FactoryHelper/DoorRusty":
-                        level.Add(new DoorRusty(entityData, offset));
-                        return true;
-                    case "FactoryHelper/RustyJumpthruPlatform":
-                        level.Add(new RustyJumpthruPlatform(entityData, offset));
-                        return true;
-                    case "FactoryHelper/BatteryBox":
-                        level.Add(new BatteryBox(entityData, offset));
-                        return true;
-                    case "FactoryHelper/Battery":
-                        level.Add(new Battery(entityData, offset));
-                        return true;
-                    case "FactoryHelper/FanHorizontal":
-                        level.Add(new Fan(entityData, offset, Fan.Directions.Horizontal));
-                        return true;
-                    case "FactoryHelper/FanVertical":
-                        level.Add(new Fan(entityData, offset, Fan.Directions.Vertical));
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-            return false;
         }
     }
 }

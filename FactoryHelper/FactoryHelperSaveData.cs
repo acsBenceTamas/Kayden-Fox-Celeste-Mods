@@ -1,11 +1,8 @@
-﻿using Celeste;
-using Celeste.Mod;
-using System.Collections.Generic;
+﻿using Celeste.Mod;
 
 namespace FactoryHelper
 {
     public class FactoryHelperSaveData : EverestModuleSaveData
     {
-        public HashSet<EntityID> Batteries = new HashSet<EntityID>();
     }
 }

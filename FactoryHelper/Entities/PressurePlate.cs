@@ -8,9 +8,11 @@ using Microsoft.Xna.Framework;
 using FactoryHelper.Components;
 using Monocle;
 using System.Collections;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/PressurePlate")]
     class PressurePlate : Solid
     {
         public Image CaseImage { get; private set; }

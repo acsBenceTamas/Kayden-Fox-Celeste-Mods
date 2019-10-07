@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -6,8 +7,18 @@ using System;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity(
+        "FactoryHelper/PistonUp = LoadUp",
+        "FactoryHelper/PistonDown = LoadDown",
+        "FactoryHelper/PistonLeft = LoadLeft",
+        "FactoryHelper/PistonRight = LoadRight")]
     class Piston : Entity
     {
+        public static Entity LoadUp(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Piston(data, offset, Directions.Up);
+        public static Entity LoadDown(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Piston(data, offset, Directions.Down);
+        public static Entity LoadLeft(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Piston(data, offset, Directions.Left);
+        public static Entity LoadRight(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Piston(data, offset, Directions.Right);
+
         public static ParticleType P_Steam = new ParticleType(ParticleTypes.Steam)
         {
             SpeedMin = 16.0f,
@@ -45,7 +56,7 @@ namespace FactoryHelper.Entities
         private Vector2 _endPos;
         private Vector2 _basePos;
         private int _bodyPartCount;
-        private Direction _direction = Direction.Up;
+        private Directions _direction = Directions.Up;
 
         private float _rotationModifier {
             get
@@ -54,11 +65,11 @@ namespace FactoryHelper.Entities
                 {
                     default:
                         return 0f;
-                    case Direction.Down:
+                    case Directions.Down:
                         return (float)Math.PI;
-                    case Direction.Left:
+                    case Directions.Left:
                         return (float)Math.PI / -2;
-                    case Direction.Right:
+                    case Directions.Right:
                         return (float)Math.PI / 2;
                 }
             }
@@ -71,11 +82,11 @@ namespace FactoryHelper.Entities
                 switch (_direction)
                 {
                     default:
-                    case Direction.Up:
-                    case Direction.Left:
+                    case Directions.Up:
+                    case Directions.Left:
                         return -8;
-                    case Direction.Right:
-                    case Direction.Down:
+                    case Directions.Right:
+                    case Directions.Down:
                         return 8;
                 }
             }
@@ -88,11 +99,11 @@ namespace FactoryHelper.Entities
                 switch (_direction)
                 {
                     default:
-                    case Direction.Left:
-                    case Direction.Up:
+                    case Directions.Left:
+                    case Directions.Up:
                         return 8;
-                    case Direction.Right:
-                    case Direction.Down:
+                    case Directions.Right:
+                    case Directions.Down:
                         return -8;
                 }
             }
@@ -105,11 +116,11 @@ namespace FactoryHelper.Entities
                 switch (_direction)
                 {
                     default:
-                    case Direction.Up:
-                    case Direction.Left:
+                    case Directions.Up:
+                    case Directions.Left:
                         return 8;
-                    case Direction.Right:
-                    case Direction.Down:
+                    case Directions.Right:
+                    case Directions.Down:
                         return 8;
                 }
             }
@@ -122,18 +133,18 @@ namespace FactoryHelper.Entities
                 switch (_direction)
                 {
                     default:
-                    case Direction.Up:
-                    case Direction.Left:
+                    case Directions.Up:
+                    case Directions.Left:
                         return 0;
-                    case Direction.Down:
+                    case Directions.Down:
                         return (int)Math.Abs(_basePos.Y - _head.Y) - 16;
-                    case Direction.Right:
+                    case Directions.Right:
                         return (int)Math.Abs(_basePos.X - _head.X) - 16;
                 }
             }
         }
 
-        public Piston(EntityData data, Vector2 offset, Direction direction) 
+        public Piston(EntityData data, Vector2 offset, Directions direction) 
             : this(data.Position + offset,
                    data.Nodes[0] + offset,
                    data.Nodes[1] + offset,
@@ -147,7 +158,7 @@ namespace FactoryHelper.Entities
         {
         }
 
-        public Piston(Vector2 position, Vector2 start, Vector2 end, Direction direction, string activationId, float moveTime, float pauseTime, float initialDelay, bool startActive, bool heated)
+        public Piston(Vector2 position, Vector2 start, Vector2 end, Directions direction, string activationId, float moveTime, float pauseTime, float initialDelay, bool startActive, bool heated)
         {
             Heated = heated;
             MoveTime = moveTime;
@@ -164,12 +175,12 @@ namespace FactoryHelper.Entities
 
             _basePos = position;
 
-            if (_direction == Direction.Up || _direction == Direction.Down)
+            if (_direction == Directions.Up || _direction == Directions.Down)
             {
                 _startPos.X = _basePos.X;
                 _endPos.X = _basePos.X;
 
-                if (_direction == Direction.Up)
+                if (_direction == Directions.Up)
                 {
                     _startPos.Y = Math.Min(start.Y, _basePos.Y + _headMinimumPositionModifier);
                     _endPos.Y = Math.Min(end.Y, _basePos.Y + _headMinimumPositionModifier);
@@ -185,12 +196,12 @@ namespace FactoryHelper.Entities
                 _head = new PistonPart(_startPos, 16, 8, "objects/FactoryHelper/piston/head00");
                 _body = new Solid(new Vector2(_basePos.X + 3, Math.Min(_startPos.Y, _basePos.Y) + 8), 10, 0, false);
             }
-            else if (_direction == Direction.Left || _direction == Direction.Right)
+            else if (_direction == Directions.Left || _direction == Directions.Right)
             {
                 _startPos.Y = _basePos.Y;
                 _endPos.Y = _basePos.Y;
 
-                if (_direction == Direction.Left)
+                if (_direction == Directions.Left)
                 {
                     _startPos.X = Math.Min(start.X, _basePos.X + _headMinimumPositionModifier);
                     _endPos.X = Math.Min(end.X, _basePos.X + _headMinimumPositionModifier);
@@ -223,7 +234,7 @@ namespace FactoryHelper.Entities
             for (int i = 0; i < _bodyPartCount; i++)
             {
                 Vector2 bodyPosition;
-                if (_direction == Direction.Up || _direction == Direction.Down)
+                if (_direction == Directions.Up || _direction == Directions.Down)
                 {
                     bodyPosition = new Vector2(-3, i * (_basePos.Y - (_head.Y + _headPositionModifier)) / (_bodyPartCount) + _bodyPositionModifier);
                 }
@@ -239,7 +250,7 @@ namespace FactoryHelper.Entities
                 });
                 _bodyImages[i].CenterOrigin();
                 _bodyImages[i].Rotation += _rotationModifier;
-                _bodyImages[i].Position = _direction == Direction.Down || _direction == Direction.Up ? new Vector2(8, 4) : new Vector2(4, 8);
+                _bodyImages[i].Position = _direction == Directions.Down || _direction == Directions.Up ? new Vector2(8, 4) : new Vector2(4, 8);
                 if (Heated)
                 {
                     _bodyImages[i].Color = new Color(1.0f, 0.5f, 0.5f);
@@ -330,11 +341,11 @@ namespace FactoryHelper.Entities
                     }
                 }
             }
-            if (_direction == Direction.Down)
+            if (_direction == Directions.Down)
             {
                 DisplacePlayerOnTop(_head);
             }
-            if (_direction == Direction.Down || _direction == Direction.Up)
+            if (_direction == Directions.Down || _direction == Directions.Up)
             {
                 DisplacePlayerOnTop(_base);
             }
@@ -369,8 +380,8 @@ namespace FactoryHelper.Entities
             switch (_direction)
             {
                 default:
-                case Direction.Up:
-                case Direction.Down:
+                case Directions.Up:
+                case Directions.Down:
                     posDisplacement = new Vector2(8, 4);
                     float heightBefore = _body.Collider.Height;
                     float heightAfter = Math.Abs(_base.Y - _head.Y) - 8;
@@ -394,8 +405,8 @@ namespace FactoryHelper.Entities
                         _bodyImages[i].Position = new Vector2(-3, i * (_basePos.Y - (_head.Y + _headPositionModifier)) / (_bodyPartCount) + _bodyPositionModifier) + posDisplacement;
                     }
                     break;
-                case Direction.Left:
-                case Direction.Right:
+                case Directions.Left:
+                case Directions.Right:
                     posDisplacement = new Vector2(4, 8);
                     float widthBefore = _body.Collider.Width;
                     float widthAfter = Math.Abs(_base.X - _head.X) - 8;
@@ -439,7 +450,7 @@ namespace FactoryHelper.Entities
             base.Removed(scene);
         }
 
-        public enum Direction
+        public enum Directions
         {
             Up,
             Down,

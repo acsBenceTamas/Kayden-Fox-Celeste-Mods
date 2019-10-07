@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using Celeste;
 using Microsoft.Xna.Framework;
 using Monocle;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/Battery")]
     public class Battery : Entity
     {
         public static ParticleType P_Shimmer = new ParticleType(Key.P_Shimmer)
@@ -194,13 +196,13 @@ namespace FactoryHelper.Entities
 
         private void AddBattery(EntityID id)
         {
-            (FactoryHelperModule.Instance._SaveData as FactoryHelperSaveData).Batteries.Add(id);
+            (FactoryHelperModule.Instance._Session as FactoryHelperSession).Batteries.Add(id);
         }
 
         private void RemoveBattery(EntityID id)
         {
 
-            (FactoryHelperModule.Instance._SaveData as FactoryHelperSaveData).Batteries.Remove(id);
+            (FactoryHelperModule.Instance._Session as FactoryHelperSession).Batteries.Remove(id);
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/DoorRusty")]
     [Tracked(false)]
     public class DoorRusty : Actor
     {

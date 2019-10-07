@@ -6,9 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Celeste;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/ThrowBoxSpawner")]
     class ThrowBoxSpawner : Entity
     {
         private Random _rnd = new Random();

@@ -5,9 +5,11 @@ using Microsoft.Xna.Framework;
 using Monocle;
 using FactoryHelper.Components;
 using System.Collections;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/DashFuseBox")]
     class DashFuseBox : Solid
     {
         public enum Direction

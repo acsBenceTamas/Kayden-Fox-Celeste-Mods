@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -9,8 +10,18 @@ using System.Threading.Tasks;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity(
+        "FactoryHelper/RustySpikeUp = LoadUp",
+        "FactoryHelper/RustySpikeDown = LoadDown",
+        "FactoryHelper/RustySpikeLeft = LoadLeft",
+        "FactoryHelper/RustySpikeRight = LoadRight")]
     public class RustySpike : FactorySpike
     {
+        public static Entity LoadUp(Level level, LevelData levelData, Vector2 offset, EntityData data) => new RustySpike(data, offset, Directions.Up);
+        public static Entity LoadDown(Level level, LevelData levelData, Vector2 offset, EntityData data) => new RustySpike(data, offset, Directions.Down);
+        public static Entity LoadLeft(Level level, LevelData levelData, Vector2 offset, EntityData data) => new RustySpike(data, offset, Directions.Left);
+        public static Entity LoadRight(Level level, LevelData levelData, Vector2 offset, EntityData data) => new RustySpike(data, offset, Directions.Right);
+
         public RustySpike(Vector2 position, int size, Directions direction)
             : base(position, size, direction)
         {

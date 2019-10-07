@@ -1,4 +1,5 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity("FactoryHelper/PowerLine")]
     [Tracked]
     class PowerLine : Entity
     {

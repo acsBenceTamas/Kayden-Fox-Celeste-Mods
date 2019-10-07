@@ -21,7 +21,7 @@ namespace FactoryHelper
             {
                 Player player = self.Tracker.GetEntity<Player>();
 
-                foreach (EntityID key in (FactoryHelperModule.Instance._SaveData as FactoryHelperSaveData).Batteries)
+                foreach (EntityID key in (FactoryHelperModule.Instance._Session as FactoryHelperSession).Batteries)
                 {
                     self.Add(new Battery(player, key));
                 }

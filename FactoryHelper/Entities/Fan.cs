@@ -1,17 +1,21 @@
 ﻿using Celeste;
+using Celeste.Mod.Entities;
 using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FactoryHelper.Entities
 {
+    [CustomEntity(
+        "FactoryHelper/FanHorizontal = LoadHorizontal",
+        "FactoryHelper/FanVertical = LoadVertical"
+        )]
     class Fan : Solid
     {
+        public static Entity LoadHorizontal(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Fan(data, offset, Directions.Horizontal);
+        public static Entity LoadVertical(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Fan(data, offset, Directions.Vertical);
+
         public enum Directions
         {
             Horizontal,
