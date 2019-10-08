@@ -14,6 +14,7 @@ namespace FactoryHelper.Entities
         public Holdable Hold;
         public ConveyorMoverComponent ConveyorMover;
         public Action OnRemoved;
+        public bool IsSpecial;
 
         private const float HORIZONTAL_BREAK_SPEED = 180f;
         private const float VERTICAL_BREAK_SPEED = 300f;
@@ -29,7 +30,6 @@ namespace FactoryHelper.Entities
         private Level _level;
         private bool _shattered;
         private bool _isMetal;
-        private bool _isSpecial;
         private float _soundTimerX = 0f;
         private float _soundTimerY = 0f;
         private string _levelName;
@@ -61,7 +61,7 @@ namespace FactoryHelper.Entities
             Depth = 100;
             Collider = new Hitbox(8f, 10f, 4f + DISPLACEMENT.X, 6f + DISPLACEMENT.Y);
             _isMetal = isMetal;
-            _isSpecial = isSpecial;
+            IsSpecial = isSpecial;
             string pathString = isMetal ? "crate_metal" : "crate";
 
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/crate/"));
@@ -176,7 +176,7 @@ namespace FactoryHelper.Entities
                 MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
                 if (Left > _level.Bounds.Right + 8 || Right < _level.Bounds.Left - 8 || Top > _level.Bounds.Bottom + 8 || Bottom < _level.Bounds.Top - 8)
                 {
-                    if (_isSpecial)
+                    if (IsSpecial)
                     {
                         (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
                     }
@@ -194,11 +194,18 @@ namespace FactoryHelper.Entities
         public override void Removed(Scene scene)
         {
             OnRemoved?.Invoke();
-            if (_isSpecial)
+            if (IsSpecial)
             {
                 (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
             }
             base.Removed(scene);
+        }
+
+        public void StopBeingSpecial()
+        {
+            (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
+            Remove(_shimmerParticles);
+            _shimmerParticles = null;
         }
 
         private void MoveOnConveyor(float amount)
@@ -278,7 +285,7 @@ namespace FactoryHelper.Entities
         {
             Speed = Vector2.Zero;
             AddTag(Tags.Persistent);
-            if (_isSpecial)
+            if (IsSpecial)
             {
                 (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = _levelName;
                 ParticleSystem particlesFG = (Scene as Level).ParticlesFG;
@@ -423,7 +430,7 @@ namespace FactoryHelper.Entities
                     }
                 }
                 RemoveSelf();
-                if (_isSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel != null)
+                if (IsSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel != null)
                 {
                     Player player = Scene.Tracker.GetEntity<Player>();
                     if (player != null)

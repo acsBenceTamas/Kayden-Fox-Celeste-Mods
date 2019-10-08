@@ -70,6 +70,8 @@
     <Compile Include="Entities\KillerDebris.cs" />
     <Compile Include="Entities\PowerLine.cs" />
     <Compile Include="Entities\PressurePlate.cs" />
+    <Compile Include="Entities\RustBerry.cs" />
+    <Compile Include="Entities\RustBerryPoints.cs" />
     <Compile Include="Entities\RustyJumpthruPlatform.cs" />
     <Compile Include="Entities\RustyLamp.cs" />
     <Compile Include="Entities\RustySpike.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="FactoryHelperSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Triggers\FactoryActivationTrigger.cs" />
+    <Compile Include="Triggers\SpecialBoxDeactivationTrigger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ModAssets\" />
