@@ -29,5 +29,28 @@
         
         <Anim id="rotating" path="fan" delay="0.03" frames="0-8,8-1" goto="rotating"/>
     </fan>
+	
+	<rustBerry path="objects/FactoryHelper/rustBerry/" start="idle">
+		<Center />
+
+		<Loop id="idle" path="berry_" delay=".1" frames="0-6,0-6,0-6,0-6,0-7" />
+		<Loop id="idleGhost" path="berry_ghost" delay=".1" frames="0-6,0-6,0-6,0-6,0-7" />
+		<Loop id="noFlash" path="berry_" delay=".1" frames="0-6" />
+		<Loop id="noFlashGhost" path="berry_ghost" delay=".1" frames="0-6" />
+		<Anim id="collect" path="berry_" delay=".07" frames="7-11"/>
+		<Anim id="collectGhost" path="berry_ghost" delay=".07" frames="7-11"/>
+
+		<Anim id="fade" path="berry_" delay=".1" frames="12-15,15*10,16-19"/>
+		<Anim id="fadeGhost" path="berry_ghost" delay=".1" frames="12-15,15*10,16-19"/>
+	</rustBerry>
+	
+	<rustBerryGear path="objects/FactoryHelper/rustBerry/" start="idle">
+		<Center />
+
+		<Loop id="idle" path="gear_" delay=".1" frames="0-3" />
+		<Loop id="idleGhost" path="gear_ghost" delay=".1" frames="0-3" />
+		<Anim id="collect" path="gear_" delay=".07" frames="4-6"/>
+		<Anim id="collectGhost" path="gear_ghost" delay=".07" frames="4-6"/>
+	</rustBerryGear>
 
 </Sprites>
