@@ -29,8 +29,12 @@ namespace FactoryHelper.Entities
         private Level _level;
         private bool _shattered;
         private bool _isMetal;
+        private bool _isSpecial;
         private float _soundTimerX = 0f;
         private float _soundTimerY = 0f;
+        private string _levelName;
+
+        private ParticleEmitter _shimmerParticles;
 
         public static ParticleType P_Impact { get; } = new ParticleType
         {
@@ -45,17 +49,19 @@ namespace FactoryHelper.Entities
             LifeMax = 0.8f
         };
 
-        public ThrowBox(EntityData data, Vector2 offset) : this (data.Position + offset, data.Bool("isMetal", false))
+        public ThrowBox(EntityData data, Vector2 offset) : this (data.Position + offset, data.Bool("isMetal", false), data.Bool("isSpecial", false))
         {
+            _levelName = data.Level.Name;
         }
 
-        public ThrowBox(Vector2 position, bool isMetal) : base(position)
+        public ThrowBox(Vector2 position, bool isMetal, bool isSpecial = false) : base(position)
         {
             IgnoreJumpThrus = true;
             Position -= DISPLACEMENT;
             Depth = 100;
             Collider = new Hitbox(8f, 10f, 4f + DISPLACEMENT.X, 6f + DISPLACEMENT.Y);
             _isMetal = isMetal;
+            _isSpecial = isSpecial;
             string pathString = isMetal ? "crate_metal" : "crate";
 
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/crate/"));
@@ -72,6 +78,7 @@ namespace FactoryHelper.Entities
             Hold.OnPickup = OnPickup;
             Hold.OnRelease = OnRelease;
             Hold.OnHitSpring = HitSpring;
+            Hold.OnHitSpinner = OnHitSpinner;
             Hold.SpeedGetter = (() => Speed);
 
             Add(ConveyorMover = new ConveyorMoverComponent());
@@ -80,6 +87,11 @@ namespace FactoryHelper.Entities
             LiftSpeedGraceTime = 0.1f;
 
             Add(new LightOcclude(0.2f));
+        }
+
+        private void OnHitSpinner(Entity spinner)
+        {
+            Shatter();
         }
 
         public override void Added(Scene scene)
@@ -164,6 +176,10 @@ namespace FactoryHelper.Entities
                 MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
                 if (Left > _level.Bounds.Right + 8 || Right < _level.Bounds.Left - 8 || Top > _level.Bounds.Bottom + 8 || Bottom < _level.Bounds.Top - 8)
                 {
+                    if (_isSpecial)
+                    {
+                        (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
+                    }
                     RemoveSelf();
                 }
             }
@@ -177,8 +193,12 @@ namespace FactoryHelper.Entities
 
         public override void Removed(Scene scene)
         {
-            base.Removed(scene);
             OnRemoved?.Invoke();
+            if (_isSpecial)
+            {
+                (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
+            }
+            base.Removed(scene);
         }
 
         private void MoveOnConveyor(float amount)
@@ -258,6 +278,13 @@ namespace FactoryHelper.Entities
         {
             Speed = Vector2.Zero;
             AddTag(Tags.Persistent);
+            if (_isSpecial)
+            {
+                (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = _levelName;
+                ParticleSystem particlesFG = (Scene as Level).ParticlesFG;
+                Add(_shimmerParticles = new ParticleEmitter(particlesFG, Key.P_Shimmer, Vector2.Zero, new Vector2(6f, 6f), 1, 0.1f));
+                _shimmerParticles.SimulateCycle();
+            }
         }
 
         private void OnCollideV(CollisionData data)
@@ -396,6 +423,14 @@ namespace FactoryHelper.Entities
                     }
                 }
                 RemoveSelf();
+                if (_isSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel != null)
+                {
+                    Player player = Scene.Tracker.GetEntity<Player>();
+                    if (player != null)
+                    {
+                        player.Die(-(Position - player.Position).SafeNormalize());
+                    }
+                }
             }
         }
     }

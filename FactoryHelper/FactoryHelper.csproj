@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Celeste">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\Celeste.exe</HintPath>
+    <Reference Include="Celeste, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\Steam\steamapps\common\Celeste\Celeste.exe</HintPath>
     </Reference>
     <Reference Include="FNA">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\FNA.dll</HintPath>
