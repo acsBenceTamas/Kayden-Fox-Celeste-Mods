@@ -24,7 +24,7 @@ namespace FactoryHelper.Entities
 
         private Sprite _sprite;
         private float _noGravityTimer;
-	    private Vector2 _prevLiftSpeed;
+        private Vector2 _prevLiftSpeed;
         private Vector2 _previousPosition;
         private float _swatTimer;
         private Level _level;
@@ -35,6 +35,8 @@ namespace FactoryHelper.Entities
         private string _levelName;
 
         private ParticleEmitter _shimmerParticles;
+        private Vector2 _starterPosition;
+        private bool _unspecializeOnRemove = true;
 
         public static ParticleType P_Impact { get; } = new ParticleType
         {
@@ -49,7 +51,7 @@ namespace FactoryHelper.Entities
             LifeMax = 0.8f
         };
 
-        public ThrowBox(EntityData data, Vector2 offset) : this (data.Position + offset, data.Bool("isMetal", false), data.Bool("isSpecial", false))
+        public ThrowBox(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("isMetal", false), data.Bool("isSpecial", false))
         {
             _levelName = data.Level.Name;
         }
@@ -58,6 +60,7 @@ namespace FactoryHelper.Entities
         {
             IgnoreJumpThrus = true;
             Position -= DISPLACEMENT;
+            _starterPosition = Position;
             Depth = 100;
             Collider = new Hitbox(8f, 10f, 4f + DISPLACEMENT.X, 6f + DISPLACEMENT.Y);
             _isMetal = isMetal;
@@ -174,16 +177,41 @@ namespace FactoryHelper.Entities
                 _previousPosition = base.ExactPosition;
                 MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
                 MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
+                if (IsSpecial)
+                {
+                    if (Left < _level.Bounds.Left)
+                    {
+                        Left = _level.Bounds.Left;
+                        Speed.X *= -0.4f;
+                    }
+                    else if (Right > _level.Bounds.Right)
+                    {
+                        Right = _level.Bounds.Right;
+                        Speed.X *= -0.4f;
+                    }
+                    else if (Top < _level.Bounds.Top - 4)
+                    {
+                        Top = _level.Bounds.Top - 4;
+                        Speed.Y = 0;
+                    }
+                }
                 if (Left > _level.Bounds.Right + 8 || Right < _level.Bounds.Left - 8 || Top > _level.Bounds.Bottom + 8 || Bottom < _level.Bounds.Top - 8)
                 {
-                    if (IsSpecial)
+                    if (IsSpecial && Top > _level.Bounds.Bottom + 8)
                     {
-                        (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
+                        _unspecializeOnRemove = true;
                     }
-                    RemoveSelf();
+                    else
+                    {
+                        RemoveSelf();
+                    }
                 }
             }
-            Hold.CheckAgainstColliders();
+            if (Collidable)
+            {
+                Hold.CheckAgainstColliders();
+            }
+            Console.WriteLine("Collidable: " + Collidable);
         }
 
         public override bool IsRiding(Solid solid)
@@ -194,18 +222,19 @@ namespace FactoryHelper.Entities
         public override void Removed(Scene scene)
         {
             OnRemoved?.Invoke();
-            if (IsSpecial)
+            if (IsSpecial && _unspecializeOnRemove)
             {
-                (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
+                (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxPosition = null;
             }
             base.Removed(scene);
         }
 
         public void StopBeingSpecial()
         {
-            (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = null;
+            (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxPosition = null;
             Remove(_shimmerParticles);
             _shimmerParticles = null;
+            IsSpecial = false;
         }
 
         private void MoveOnConveyor(float amount)
@@ -230,8 +259,9 @@ namespace FactoryHelper.Entities
 
         protected override void OnSquish(CollisionData data)
         {
-            if (!TrySquishWiggle(data))
+            if (Collidable && !TrySquishWiggle(data))
             {
+                Console.WriteLine("Collidable: " + Collidable);
                 Shatter();
             }
         }
@@ -269,6 +299,8 @@ namespace FactoryHelper.Entities
 
         private void OnRelease(Vector2 force)
         {
+            Collidable = true;
+            _unspecializeOnRemove = true;
             RemoveTag(Tags.Persistent);
             if (force.X != 0f && force.Y == 0f)
             {
@@ -283,19 +315,28 @@ namespace FactoryHelper.Entities
 
         private void OnPickup()
         {
+            Collidable = false;
+            _unspecializeOnRemove = false;
             Speed = Vector2.Zero;
             AddTag(Tags.Persistent);
             if (IsSpecial)
             {
-                (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel = _levelName;
+                FactoryHelperSession factorySession = (FactoryHelperModule.Instance._Session as FactoryHelperSession);
+                if (factorySession.SpecialBoxPosition == null)
+                {
+                    factorySession.SpecialBoxPosition = _starterPosition;
+                    factorySession.OriginalSession = (Scene as Level).Session;
+                    factorySession.SpecialBoxLevel = _levelName;
+                }
                 ParticleSystem particlesFG = (Scene as Level).ParticlesFG;
-                Add(_shimmerParticles = new ParticleEmitter(particlesFG, Key.P_Shimmer, Vector2.Zero, new Vector2(6f, 6f), 1, 0.1f));
+                Add(_shimmerParticles = new ParticleEmitter(particlesFG, Key.P_Shimmer, Vector2.UnitY * -6, new Vector2(6f, 6f), 1, 0.2f));
                 _shimmerParticles.SimulateCycle();
             }
         }
 
         private void OnCollideV(CollisionData data)
         {
+            Console.WriteLine("Collidable: " + Collidable);
             if (_soundTimerY <= 0f && Math.Abs(Speed.Y) > 100f)
             {
                 PlayHitSound();
@@ -320,12 +361,13 @@ namespace FactoryHelper.Entities
             else
             {
                 Speed.Y = 0f;
-                Position.Y = (float) Math.Floor(Position.Y);
+                Position.Y = (float)Math.Floor(Position.Y);
             }
         }
 
         private void OnCollideH(CollisionData data)
         {
+            Console.WriteLine("Collidable: " + Collidable);
             if (Math.Abs(Speed.X) > 100f)
             {
                 ImpactParticles(data.Direction);
@@ -403,7 +445,7 @@ namespace FactoryHelper.Entities
 
         private void Shatter()
         {
-            if (!_shattered)
+            if (!_shattered && !Hold.IsHeld)
             {
                 _shattered = true;
                 _sprite.Visible = false;
@@ -429,8 +471,7 @@ namespace FactoryHelper.Entities
                         }
                     }
                 }
-                RemoveSelf();
-                if (IsSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel != null)
+                if (IsSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxPosition != null)
                 {
                     Player player = Scene.Tracker.GetEntity<Player>();
                     if (player != null)
@@ -438,6 +479,8 @@ namespace FactoryHelper.Entities
                         player.Die(-(Position - player.Position).SafeNormalize());
                     }
                 }
+                _unspecializeOnRemove = false;
+                RemoveSelf();
             }
         }
     }

@@ -4,6 +4,7 @@ using FactoryHelper.Components;
 using Monocle;
 using FactoryHelper.Entities;
 using System;
+using System.Collections;
 
 namespace FactoryHelper
 {
@@ -14,6 +15,23 @@ namespace FactoryHelper
             On.Celeste.Player.ctor += ctor;
             On.Celeste.Level.LoadLevel += LoadLevel;
             On.Celeste.Player.Die += PlayerDie;
+            On.Celeste.LevelExit.Routine += RespawnRoutine;
+        }
+
+        private static IEnumerator RespawnRoutine(On.Celeste.LevelExit.orig_Routine orig, LevelExit self)
+        {
+            FactoryHelperSession factorySession = (FactoryHelperModule.Instance._Session as FactoryHelperSession);
+            if (factorySession.SpecialBoxPosition != null)
+            {
+                factorySession.OriginalSession.Level = factorySession.SpecialBoxLevel;
+                factorySession.OriginalSession.RespawnPoint = factorySession.SpecialBoxPosition;
+                Engine.Scene = new LevelLoader(factorySession.OriginalSession);
+                factorySession.SpecialBoxPosition = null;
+            }
+            else
+            {
+                yield return orig(self);
+            }
         }
 
         private static PlayerDeadBody PlayerDie(On.Celeste.Player.orig_Die orig, Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats)
@@ -22,24 +40,24 @@ namespace FactoryHelper
 
             PlayerDeadBody playerDeadBody = orig(self, direction, evenIfInvincible, registerDeathInStats);
 
-            Strawberry goldenStrawb = null;
-            foreach (Follower follower in self.Leader.Followers)
+            if (playerDeadBody != null)
             {
-                if (follower.Entity is Strawberry && (follower.Entity as Strawberry).Golden && !(follower.Entity as Strawberry).Winged)
+                Strawberry goldenStrawb = null;
+                foreach (Follower follower in self.Leader.Followers)
                 {
-                    goldenStrawb = (follower.Entity as Strawberry);
-                }
-            }
-            string specialBoxLevel = (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxLevel;
-            if (goldenStrawb == null && specialBoxLevel != null)
-            {
-                playerDeadBody.DeathAction = delegate
-                {
-                    Engine.Scene = new LevelExit(LevelExit.Mode.GoldenBerryRestart, session)
+                    if (follower.Entity is Strawberry && (follower.Entity as Strawberry).Golden && !(follower.Entity as Strawberry).Winged)
                     {
-                        GoldenStrawberryEntryLevel = specialBoxLevel
+                        goldenStrawb = (follower.Entity as Strawberry);
+                    }
+                }
+                Vector2? specialBoxLevel = (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxPosition;
+                if (goldenStrawb == null && specialBoxLevel != null)
+                {
+                    playerDeadBody.DeathAction = delegate
+                    {
+                        Engine.Scene = new LevelExit(LevelExit.Mode.Restart, session);
                     };
-                };
+                }
             }
             return playerDeadBody;
         }

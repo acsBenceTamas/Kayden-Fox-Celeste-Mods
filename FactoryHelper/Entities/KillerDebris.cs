@@ -178,7 +178,7 @@ namespace FactoryHelper.Entities
                     Player entity = Scene.Tracker.GetEntity<Player>();
                     if (entity != null)
                     {
-                        Collidable = (Math.Abs(entity.X - X) < 128f && Math.Abs(entity.Y - Y) < 128f);
+                        Collidable = (Math.Abs(entity.X - X) < 256f && Math.Abs(entity.Y - Y) < 128f);
                     }
                 }
             }

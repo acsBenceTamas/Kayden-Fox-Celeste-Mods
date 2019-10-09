@@ -8,7 +8,9 @@ namespace FactoryHelper
     public class FactoryHelperSession : EverestModuleSession
     {
         public HashSet<EntityID> Batteries = new HashSet<EntityID>();
-
+        
+        public Vector2? SpecialBoxPosition;
+        public Session OriginalSession;
         public string SpecialBoxLevel;
     }
 }
