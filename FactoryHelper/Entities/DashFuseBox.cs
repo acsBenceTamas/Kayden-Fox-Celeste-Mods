@@ -6,6 +6,7 @@ using Monocle;
 using FactoryHelper.Components;
 using System.Collections;
 using Celeste.Mod.Entities;
+using FactoryHelper.Cutscenes;
 
 namespace FactoryHelper.Entities
 {
@@ -54,11 +55,13 @@ namespace FactoryHelper.Entities
         private EntityID _id;
         private HashSet<string> _activationIds = new HashSet<string>();
         private Vector2 _pressDirection;
+        private bool _startCutscene;
 
         public DashFuseBox(EntityData data, Vector2 offset) : base(data.Position + offset, 4f, 16f, false)
         {
             string[] activationIds = data.Attr("activationIds", "").Split(',');
 
+            _startCutscene = data.Bool("startCutscene", false);
             _persistent = data.Bool("persistent", false);
             _id = new EntityID(data.Level.Name, data.ID);
             _direction = Direction.Right;
@@ -151,6 +154,10 @@ namespace FactoryHelper.Entities
 
         public DashCollisionResults OnDashed(Player player, Vector2 direction)
         {
+            if (_startCutscene)
+            {
+                Scene.Add(new CS01_FactoryHelper_BreakFirstFuse(player));
+            }
             if (!_activated && (direction == _pressDirection))
             {
                 _activated = true;

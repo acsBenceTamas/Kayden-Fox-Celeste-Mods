@@ -211,7 +211,6 @@ namespace FactoryHelper.Entities
             {
                 Hold.CheckAgainstColliders();
             }
-            Console.WriteLine("Collidable: " + Collidable);
         }
 
         public override bool IsRiding(Solid solid)
@@ -261,7 +260,6 @@ namespace FactoryHelper.Entities
         {
             if (Collidable && !TrySquishWiggle(data))
             {
-                Console.WriteLine("Collidable: " + Collidable);
                 Shatter();
             }
         }
@@ -336,7 +334,6 @@ namespace FactoryHelper.Entities
 
         private void OnCollideV(CollisionData data)
         {
-            Console.WriteLine("Collidable: " + Collidable);
             if (_soundTimerY <= 0f && Math.Abs(Speed.Y) > 100f)
             {
                 PlayHitSound();
@@ -367,7 +364,6 @@ namespace FactoryHelper.Entities
 
         private void OnCollideH(CollisionData data)
         {
-            Console.WriteLine("Collidable: " + Collidable);
             if (Math.Abs(Speed.X) > 100f)
             {
                 ImpactParticles(data.Direction);

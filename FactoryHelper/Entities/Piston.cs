@@ -168,6 +168,7 @@ namespace FactoryHelper.Entities
             Add(Activator = new FactoryActivatorComponent());
             Activator.StartOn = startActive;
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
+            Activator.OnStartOn = OnStartOn;
 
             _direction = direction;
             
@@ -269,6 +270,31 @@ namespace FactoryHelper.Entities
             _base.Add(new LightOcclude(0.2f));
             _head.Add(new LightOcclude(0.2f));
             _body.Add(new LightOcclude(0.2f));
+        }
+
+        private void OnStartOn()
+        {
+            if (InitialDelay > ((MoveTime + PauseTime) * 2))
+            {
+                InitialDelay = InitialDelay % ((MoveTime + PauseTime) * 2);
+            }
+            if (InitialDelay >= PauseTime + MoveTime)
+            {
+                InitialDelay -= PauseTime + MoveTime;
+                MovingForward = !MovingForward;
+            }
+            if (InitialDelay >= MoveTime)
+            {
+                InitialDelay -= MoveTime;
+            }
+            else
+            {
+                Percent = 1-(InitialDelay / MoveTime);
+                InitialDelay = 0;
+            }
+            Console.WriteLine($"InitialDelay: {InitialDelay}");
+            Console.WriteLine($"Percent: {Percent}");
+            Console.WriteLine($"MovingForward: {MovingForward}");
         }
 
         public override void Awake(Scene scene)
