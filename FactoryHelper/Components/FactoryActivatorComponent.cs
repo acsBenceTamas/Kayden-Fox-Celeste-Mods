@@ -34,10 +34,6 @@ namespace FactoryHelper.Components
         {
         }
 
-        public FactoryActivatorComponent(bool active, bool visible) : base(active, visible)
-        {
-        }
-
         public void Activate(bool lockState = true)
         {
             if (!StateIsLocked)

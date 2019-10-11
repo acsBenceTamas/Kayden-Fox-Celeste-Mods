@@ -258,9 +258,9 @@ namespace FactoryHelper.Entities
                 }
             }
 
-            _base.Depth = -9010;
-            _head.Depth = -9010;
-            _body.Depth = -9000;
+            _base.Depth = -8010;
+            _head.Depth = -8010;
+            _body.Depth = -8000;
             _body.AllowStaticMovers = false;
             _head.DisableLightsInside = false;
             _body.DisableLightsInside = false;
@@ -292,9 +292,6 @@ namespace FactoryHelper.Entities
                 Percent = 1-(InitialDelay / MoveTime);
                 InitialDelay = 0;
             }
-            Console.WriteLine($"InitialDelay: {InitialDelay}");
-            Console.WriteLine($"Percent: {Percent}");
-            Console.WriteLine($"MovingForward: {MovingForward}");
         }
 
         public override void Awake(Scene scene)

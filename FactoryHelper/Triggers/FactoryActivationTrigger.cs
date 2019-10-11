@@ -50,6 +50,7 @@ namespace FactoryHelper.Triggers
         {
             base.Added(scene);
             Activator.Added(scene);
+
         }
 
         private void SendOutSignals(bool activating = true)
