@@ -2,9 +2,6 @@
 using Celeste.Mod.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Monocle;
 using FactoryHelper.Components;
@@ -14,7 +11,9 @@ namespace FactoryHelper.Triggers
     [CustomEntity("FactoryHelper/PermanentActivationTrigger")]
     class PremanentActivationTrigger : Trigger
     {
-        private FactoryActivatorComponent[] _activators;
+        private readonly FactoryActivatorComponent[] _activators;
+        private readonly HashSet<string> _shouldStayPermanent = new HashSet<string>();
+        private Level _level;
 
         public PremanentActivationTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
@@ -24,18 +23,13 @@ namespace FactoryHelper.Triggers
             {
                 Add(_activators[i] = new FactoryActivatorComponent());
                 _activators[i].ActivationId = _activationIds[i];
-                _activators[i].OnTurnOn = OnTurnOn;
             }
-        }
-
-        private void OnTurnOn()
-        {
-            Console.WriteLine("Turned on");
         }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
+            _level = Scene as Level;
             if (_activators.Length == 0)
             {
                 RemoveSelf();
@@ -43,33 +37,40 @@ namespace FactoryHelper.Triggers
             foreach (var activator in _activators)
             {
                 activator.Added(scene);
+                if (activator.Activated)
+                {
+                    _shouldStayPermanent.Add(activator.ActivationId);
+                }
             }
         }
 
-        public override void Removed(Scene scene)
+        public override void OnEnter(Player player)
         {
-            Level level = scene as Level;
-            Console.WriteLine($"Player exists: {level.Tracker.GetEntity<Player>() != null}");
-            if (CollideCheck<Player>())
+            Console.WriteLine(Collidable);
+            base.OnEnter(player);
+            foreach (var activator in _activators)
+            {
+                if (activator.Activated)
+                {
+                    _level.Session.SetFlag($"FactoryActivation:{activator.ActivationId}", true);
+                }
+            }
+        }
+
+        public override void OnLeave(Player player)
+        {
+            Console.WriteLine(Collidable);
+            if (!CollideCheck(player))
             {
                 foreach (var activator in _activators)
                 {
-                    Console.WriteLine($"Activator with ID {activator.ActivationId} is {activator.Activated} ({activator.ActivationCount})");
-                    if (activator.Activated)
+                    if (!_shouldStayPermanent.Contains(activator.ActivationId))
                     {
-                        Console.WriteLine("Activating permanently");
-                        level.Session.SetFlag($"FactoryActivation:{activator.ActivationId}", true);
-                    }
-                    foreach (FactoryActivatorComponent otherActivator in Scene.Tracker.GetComponents<FactoryActivatorComponent>())
-                    {
-                        if (otherActivator != activator)
-                        {
-                            otherActivator.Added(level);
-                        }
+                        _level.Session.SetFlag($"FactoryActivation:{activator.ActivationId}", false);
                     }
                 }
             }
-            base.Removed(scene);
+            base.OnLeave(player);
         }
     }
 }
