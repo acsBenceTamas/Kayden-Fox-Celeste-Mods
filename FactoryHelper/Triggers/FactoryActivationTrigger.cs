@@ -4,9 +4,11 @@ using System;
 using Monocle;
 using System.Collections.Generic;
 using FactoryHelper.Components;
+using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Triggers
 {
+    [CustomEntity("FactoryHelper/FactoryActivationTrigger")]
     class FactoryActivationTrigger : Trigger
     {
         public FactoryActivatorComponent Activator { get; }
@@ -24,7 +26,7 @@ namespace FactoryHelper.Triggers
             _resetOnLeave = _persistent ? false : data.Bool("resetOnLeave", false);
             Add(Activator = new FactoryActivatorComponent());
             Activator.ActivationId = data.Attr("ownActivationId") == string.Empty ? null : data.Attr("ownActivationId");
-            Activator.StartOn = false;
+            Activator.StartOn = Activator.ActivationId == null;
 
             foreach (string activationId in activationIds)
             {
@@ -38,11 +40,21 @@ namespace FactoryHelper.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (Activator.IsOn && (_resetOnLeave || !_hasFired))
+            if (Activator.IsOn && (!_hasFired || _resetOnLeave))
             {
                 SetSessionTags(true);
                 SendOutSignals(true);
                 _hasFired = true;
+            }
+        }
+
+        public override void OnLeave(Player player)
+        {
+            base.OnLeave(player);
+            if (Activator.IsOn && _resetOnLeave)
+            {
+                SetSessionTags(false);
+                SendOutSignals(false);
             }
         }
 
@@ -80,16 +92,6 @@ namespace FactoryHelper.Triggers
                 {
                     level.Session.SetFlag($"FactoryActivation:{activationId}", activating);
                 }
-            }
-        }
-
-        public override void OnLeave(Player player)
-        {
-            base.OnLeave(player);
-            if (Activator.IsOn && _resetOnLeave)
-            {
-                SetSessionTags(false);
-                SendOutSignals(false);
             }
         }
     }
