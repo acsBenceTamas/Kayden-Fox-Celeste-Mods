@@ -46,7 +46,6 @@ namespace FactoryHelper.Triggers
 
         public override void OnEnter(Player player)
         {
-            Console.WriteLine(Collidable);
             base.OnEnter(player);
             foreach (var activator in _activators)
             {
@@ -59,7 +58,6 @@ namespace FactoryHelper.Triggers
 
         public override void OnLeave(Player player)
         {
-            Console.WriteLine(Collidable);
             if (!CollideCheck(player))
             {
                 foreach (var activator in _activators)

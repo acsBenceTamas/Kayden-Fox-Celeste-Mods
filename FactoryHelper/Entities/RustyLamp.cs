@@ -78,7 +78,7 @@ namespace FactoryHelper.Entities
             Activator.Added(scene);
         }
 
-        private void OnStartOn()
+        private void OnStartOn(Scene scene)
         {
             _startedOn = true;
             _initialDelay = 0f;
@@ -87,7 +87,7 @@ namespace FactoryHelper.Entities
             SetStrobePattern(_strobePatternString);
         }
 
-        private void OnStartOff()
+        private void OnStartOff(Scene scene)
         {
             _startedOn = false;
             SetLightLevel(0f);

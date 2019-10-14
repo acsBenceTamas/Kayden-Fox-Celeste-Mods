@@ -10,6 +10,15 @@ namespace FactoryHelper.Entities
     [CustomEntity("FactoryHelper/BoomBox")]
     class BoomBox : Solid
     {
+        public ParticleType P_Steam = ParticleTypes.Steam;
+        public ParticleType P_SteamAngry = new ParticleType(ParticleTypes.Steam)
+        {
+            LifeMin = 1f,
+            LifeMax = 2f,
+            SpeedMin = 12f,
+            SpeedMax = 24f
+        };
+
         private class BoomCollider : Entity
         {
             public BoomCollider(Vector2 position) : base(position)
@@ -20,6 +29,9 @@ namespace FactoryHelper.Entities
 
         private const float _angryResetTime = 2f;
         private const float _angryShootTime = 0.5f;
+        private const float _idlePuffTime = 0.5f;
+        private const float _activePuffTime = 0.1f;
+        private const float _angryPuffTime = 0.02f;
 
         private readonly float _initialDelay;
         private readonly Sprite _sprite;
@@ -30,7 +42,7 @@ namespace FactoryHelper.Entities
         private float _angryResetTimer = 0f;
         private float _angryShootTimer = _angryShootTime;
         private bool _angryMode = false;
-        private bool _canGetAngry;
+        private bool _canGetAngry = false;
         private Coroutine _sequence;
 
         public FactoryActivatorComponent Activator { get; }
@@ -71,13 +83,13 @@ namespace FactoryHelper.Entities
             Add(new LightOcclude(0.2f));
         }
 
-        private void OnStartOn()
+        private void OnStartOn(Scene scene)
         {
             _sprite.Play("active", true);
             _canGetAngry = true;
         }
 
-        private void OnStartOff()
+        private void OnStartOff(Scene scene)
         {
             _sprite.Play("idle", true);
             _canGetAngry = false;
@@ -146,6 +158,18 @@ namespace FactoryHelper.Entities
             if(_canGetAngry)
             {
                 HandleAngryMode();
+            }
+            if(!_canGetAngry && Scene.OnInterval(_idlePuffTime))
+            {
+                SceneAs<Level>().ParticlesFG.Emit(P_Steam, 1, Center, new Vector2(8f, 8f));
+            }
+            else if (_canGetAngry && !_angryMode && Scene.OnInterval(_activePuffTime))
+            {
+                SceneAs<Level>().ParticlesFG.Emit(P_Steam, 1, Center, new Vector2(8f, 8f));
+            }
+            else if (_angryMode && Scene.OnInterval(_angryPuffTime))
+            {
+                SceneAs<Level>().ParticlesFG.Emit(P_SteamAngry, 3, Center, new Vector2(8f, 8f), direction:Calc.Random.NextAngle());
             }
 
             if (_boomSprite.Visible && !_boomSprite.Active)

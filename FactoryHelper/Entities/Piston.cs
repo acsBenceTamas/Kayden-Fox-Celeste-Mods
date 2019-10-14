@@ -28,6 +28,8 @@ namespace FactoryHelper.Entities
             SizeRange = 0.5f
         };
 
+        public static ParticleType P_WorkSteam = ParticleTypes.Steam;
+
         public FactoryActivatorComponent Activator { get; }
 
         public float MoveTime { get; } = 0.2f;
@@ -40,11 +42,11 @@ namespace FactoryHelper.Entities
 
         public float PauseTimer { get; private set; }
 
-        public bool MovingForward { get; private set; } = false;
+        public bool MovingForward { get; private set; } = true;
 
         public bool Heated { get; private set; }
 
-
+        private const float _steamReleaseInterval = 0.5f;
         private static readonly Random _rnd = new Random();
         private const int _bodyVariantCount = 4;
         private PistonPart _head;
@@ -169,6 +171,7 @@ namespace FactoryHelper.Entities
             Activator.StartOn = startActive;
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.OnStartOn = OnStartOn;
+            Activator.OnStartOff = OnStartOff;
 
             _direction = direction;
             
@@ -272,7 +275,13 @@ namespace FactoryHelper.Entities
             _body.Add(new LightOcclude(0.2f));
         }
 
-        private void OnStartOn()
+        private void OnStartOff(Scene scene)
+        {
+            MovingForward = false;
+            UpdatePosition(false);
+        }
+
+        private void OnStartOn(Scene scene)
         {
             if (InitialDelay > ((MoveTime + PauseTime) * 2))
             {
@@ -294,75 +303,24 @@ namespace FactoryHelper.Entities
             }
         }
 
-        public override void Awake(Scene scene)
-        {
-            base.Awake(scene);
-            UpdatePosition();
-        }
-
         public override void Update()
         {
             base.Update();
             if (Activator.IsOn)
             {
-
-                if (InitialDelay > 0f)
+                HandlePistonMovement();
+                if (Scene.OnInterval(_steamReleaseInterval))
                 {
-                    InitialDelay -= Engine.DeltaTime;
+                    EmitSteamAtBase();
                 }
-                else if (PauseTimer > 0f)
-                {
-                    PauseTimer -= Engine.DeltaTime;
-                }
-                else if (Percent < 1f)
-                {
-                    Percent = Calc.Approach(Percent, 1f, Engine.DeltaTime / MoveTime);
-                    UpdatePosition();
-                    if (!_sfx.Playing)
-                    {
-                        _sfx.Play("event:/env/local/09_core/conveyor_idle");
-                    }
-                }
-                else
-                {
-                    PauseTimer = PauseTime;
-                    Percent = 0f;
-                    MovingForward = !MovingForward;
-                }
-            } else if (_sfx.Playing)
+            }
+            else if (_sfx.Playing)
             {
                 _sfx.Stop();
             }
             if (Heated)
             {
-                if (_body.HasPlayerRider())
-                {
-                    Player player = _body.GetPlayerRider();
-                    if (player != null)
-                    {
-                        Vector2 dir;
-                        if (player.Bottom <= _body.Top)
-                        {
-                            dir = -Vector2.UnitY;
-                            SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.BottomCenter, Vector2.UnitX * 4f, direction: dir.Angle());
-                        }
-                        else if (player.Right <= _body.Left)
-                        {
-                            dir = -Vector2.UnitX;
-                            SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.CenterRight, Vector2.UnitY * 4f, direction: dir.Angle());
-                        }
-                        else if (player.Left >= _body.Right)
-                        {
-                            dir = Vector2.UnitX;
-                            SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.CenterLeft, Vector2.UnitY * 4f, direction: dir.Angle());
-                        }
-                        else
-                        {
-                            dir = Vector2.Zero;
-                        }
-                        _body.GetPlayerRider().Die(dir);
-                    }
-                }
+                TryEvaporatePlayer();
             }
             if (_direction == Directions.Down)
             {
@@ -371,6 +329,97 @@ namespace FactoryHelper.Entities
             if (_direction == Directions.Down || _direction == Directions.Up)
             {
                 DisplacePlayerOnTop(_base);
+            }
+        }
+
+        private void EmitSteamAtBase()
+        {
+            Vector2 position;
+            Vector2 range;
+            float angle;
+            switch (_direction)
+            {
+                default:
+                case Directions.Up:
+                    position = _base.TopCenter;
+                    range = Vector2.UnitX * 6f;
+                    angle = (-Vector2.UnitY).Angle();
+                    break;
+                case Directions.Down:
+                    position = _base.BottomCenter;
+                    range = Vector2.UnitX * 6f;
+                    angle = (-Vector2.UnitY).Angle();
+                    break;
+                case Directions.Left:
+                    position = _base.CenterLeft;
+                    range = Vector2.UnitY * 6f;
+                    angle = (-Vector2.UnitX - Vector2.UnitY).Angle();
+                    break;
+                case Directions.Right:
+                    position = _base.CenterRight;
+                    range = Vector2.UnitY * 6f;
+                    angle = (Vector2.UnitX - Vector2.UnitY).Angle();
+                    break;
+            }
+            SceneAs<Level>().ParticlesFG.Emit(P_WorkSteam, 1, position, range, direction: angle);
+        }
+
+        private void HandlePistonMovement()
+        {
+            if (InitialDelay > 0f)
+            {
+                InitialDelay -= Engine.DeltaTime;
+            }
+            else if (PauseTimer > 0f)
+            {
+                PauseTimer -= Engine.DeltaTime;
+            }
+            else if (Percent < 1f)
+            {
+                Percent = Calc.Approach(Percent, 1f, Engine.DeltaTime / MoveTime);
+                if (!_sfx.Playing)
+                {
+                    _sfx.Play("event:/env/local/09_core/conveyor_idle");
+                }
+            }
+            else
+            {
+                PauseTimer = PauseTime;
+                Percent = 0f;
+                MovingForward = !MovingForward;
+            }
+            UpdatePosition();
+        }
+
+        private void TryEvaporatePlayer()
+        {
+            if (_body.HasPlayerRider())
+            {
+                Player player = _body.GetPlayerRider();
+                if (player != null)
+                {
+                    Vector2 dir;
+                    if (player.Bottom <= _body.Top)
+                    {
+                        dir = -Vector2.UnitY;
+                        SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.BottomCenter, Vector2.UnitX * 4f, direction: dir.Angle());
+                    }
+                    else if (player.Right <= _body.Left)
+                    {
+                        dir = -Vector2.UnitX;
+                        SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.CenterRight, Vector2.UnitY * 4f, direction: dir.Angle());
+                    }
+                    else if (player.Left >= _body.Right)
+                    {
+                        dir = Vector2.UnitX;
+                        SceneAs<Level>().ParticlesFG.Emit(P_Steam, 10, player.CenterLeft, Vector2.UnitY * 4f, direction: dir.Angle());
+                    }
+                    else
+                    {
+                        dir = Vector2.Zero;
+                    }
+                    _body.GetPlayerRider().Die(dir);
+                }
             }
         }
 
@@ -394,12 +443,19 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void UpdatePosition()
+        private void UpdatePosition(bool methodMove = true)
         {
             Vector2 posDisplacement;
             var start = MovingForward ? _startPos : _endPos;
             var end = MovingForward ? _endPos : _startPos;
-            _head.MoveTo(Vector2.Lerp(end, start, Ease.SineIn(Percent)));
+            if (methodMove)
+            {
+                _head.MoveTo(Vector2.Lerp(end, start, Ease.SineIn(Percent)));
+            }
+            else
+            {
+                _head.Position = Vector2.Lerp(end, start, Ease.SineIn(Percent));
+            }
             switch (_direction)
             {
                 default:
@@ -412,7 +468,7 @@ namespace FactoryHelper.Entities
                     _body.Y = Math.Min(_head.Y, _base.Y) + 8;
                     _body.Collider.Height = heightAfter;
 
-                    if (_body.HasPlayerClimbing())
+                    if (methodMove && _body.HasPlayerClimbing())
                     {
                         Player player = _body.GetPlayerClimbing();
                         if (player != null)
@@ -437,7 +493,7 @@ namespace FactoryHelper.Entities
                     _body.X = Math.Min(_head.X, _base.X) + 8;
                     _body.Collider.Width = widthAfter;
 
-                    if (_body.HasPlayerOnTop())
+                    if (methodMove && _body.HasPlayerOnTop())
                     {
                         Player player = _body.GetPlayerOnTop();
                         if (player != null)

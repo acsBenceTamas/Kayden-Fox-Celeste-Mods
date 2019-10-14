@@ -27,8 +27,8 @@ namespace FactoryHelper.Components
 
         public Action OnTurnOn = null;
         public Action OnTurnOff = null;
-        public Action OnStartOn = null;
-        public Action OnStartOff = null;
+        public Action<Scene> OnStartOn = null;
+        public Action<Scene> OnStartOff = null;
 
         public FactoryActivatorComponent() : base(true, true)
         {
@@ -84,11 +84,11 @@ namespace FactoryHelper.Components
             }
             if (IsOn)
             {
-                OnStartOn?.Invoke();
+                OnStartOn?.Invoke(scene);
             }
             else
             {
-                OnStartOff?.Invoke();
+                OnStartOff?.Invoke(scene);
             }
         }
     }

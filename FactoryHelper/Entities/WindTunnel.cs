@@ -119,12 +119,12 @@ namespace FactoryHelper.Entities
             {
                 _speedingUp = false;
             };
-            Activator.OnStartOff = () =>
+            Activator.OnStartOff = (scene) =>
             {
                 _percent = 0f;
                 _speedingUp = false;
             };
-            Activator.OnStartOn = () =>
+            Activator.OnStartOn = (scene) =>
             {
                 _percent = 1f;
                 _speedingUp = true;

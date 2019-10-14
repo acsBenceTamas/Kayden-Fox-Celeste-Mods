@@ -40,8 +40,10 @@ namespace FactoryHelper.Entities
             Add(Activator = new FactoryActivatorComponent());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
-            Activator.OnStartOn = Activator.OnTurnOn = PowerUp;
-            Activator.OnStartOff = Activator.OnTurnOff = PowerDown;
+            Activator.OnStartOn = PowerUp;
+            Activator.OnStartOff = PowerDown;
+            Activator.OnTurnOn = PowerUp;
+            Activator.OnTurnOff = PowerDown;
 
             _cornerPoints = new Node[nodes.Length + 1];
             _cornerPoints[0] = new Node(position);
@@ -66,12 +68,17 @@ namespace FactoryHelper.Entities
             base.Awake(scene);
             CheckConnections();
             PlaceLineSegments();
-            Activator.Added(scene);
         }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
+            Activator.Added(scene);
+        }
+
+        private void PowerUp(Scene scene)
+        {
+            PowerUp();
         }
 
         private void PowerUp()
@@ -80,6 +87,11 @@ namespace FactoryHelper.Entities
             {
                 sprite.SetAnimationFrame(0);
             }
+        }
+
+        private void PowerDown(Scene scene)
+        {
+            PowerDown();
         }
 
         private void PowerDown()

@@ -139,7 +139,7 @@ namespace FactoryHelper.Entities
             Fizzle();
         }
 
-        private void OnStartOn()
+        private void OnStartOn(Scene scene)
         {
             foreach (var sprite in _turretSprites)
             {
@@ -147,7 +147,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void OnStartOff()
+        private void OnStartOff(Scene scene)
         {
             foreach (var sprite in _turretSprites)
             {
