@@ -1,0 +1,7 @@
+﻿- Name: Rusty
+  Version: 0.1.0
+  Dependencies:
+    - Name: Everest
+      Version: 1.1051.0
+    - Name: FactoryHelper
+      Version: 1.0.0
