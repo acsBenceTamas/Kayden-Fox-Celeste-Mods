@@ -196,7 +196,16 @@ namespace FactoryHelper.Entities
 
         private bool IsRiding(Solid solid)
         {
-            return CollideCheck(solid);
+            bool riding = false;
+            foreach (Solid turret in _turretSolids)
+            {
+                if (turret.CollideCheck(solid, turret.Position - Vector2.UnitY))
+                {
+                    riding = true;
+                    break;
+                }
+            }
+            return riding;
         }
     }
 }
