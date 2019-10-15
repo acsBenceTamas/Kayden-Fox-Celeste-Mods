@@ -23,7 +23,7 @@ namespace FactoryHelper.Entities
         {
             public BoomCollider(Vector2 position) : base(position)
             {
-                Collider = new Circle(32f, 0, 0);
+                Collider = new Circle(40f, 0, 0);
             }
         }
 
