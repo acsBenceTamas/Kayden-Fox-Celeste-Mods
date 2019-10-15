@@ -151,7 +151,7 @@ namespace FactoryHelper.Entities
                 }
                 Add(image);
             }
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
         }
 
         public override void Update()

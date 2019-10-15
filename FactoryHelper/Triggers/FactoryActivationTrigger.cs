@@ -61,7 +61,7 @@ namespace FactoryHelper.Triggers
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
 
         }
 

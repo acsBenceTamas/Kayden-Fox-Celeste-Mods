@@ -89,7 +89,7 @@ namespace FactoryHelper.Entities
             {
                 scene.Add(solid);
             }
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
         }
 
         public override void Removed(Scene scene)
@@ -139,7 +139,7 @@ namespace FactoryHelper.Entities
             Fizzle();
         }
 
-        private void OnStartOn(Scene scene)
+        private void OnStartOn()
         {
             foreach (var sprite in _turretSprites)
             {
@@ -147,7 +147,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void OnStartOff(Scene scene)
+        private void OnStartOff()
         {
             foreach (var sprite in _turretSprites)
             {

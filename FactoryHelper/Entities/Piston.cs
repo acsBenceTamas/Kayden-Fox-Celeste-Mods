@@ -275,31 +275,17 @@ namespace FactoryHelper.Entities
             _body.Add(new LightOcclude(0.2f));
         }
 
-        private void OnStartOff(Scene scene)
+        private void OnStartOff()
         {
             MovingForward = false;
-            UpdatePosition(false);
         }
 
-        private void OnStartOn(Scene scene)
+        private void OnStartOn()
         {
+            MovingForward = false;
             if (InitialDelay > ((MoveTime + PauseTime) * 2))
             {
-                InitialDelay = InitialDelay % ((MoveTime + PauseTime) * 2);
-            }
-            if (InitialDelay >= PauseTime + MoveTime)
-            {
-                InitialDelay -= PauseTime + MoveTime;
-                MovingForward = !MovingForward;
-            }
-            if (InitialDelay >= MoveTime)
-            {
-                InitialDelay -= MoveTime;
-            }
-            else
-            {
-                Percent = 1-(InitialDelay / MoveTime);
-                InitialDelay = 0;
+                InitialDelay %= ((MoveTime + PauseTime) * 2);
             }
         }
 
@@ -443,19 +429,12 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void UpdatePosition(bool methodMove = true)
+        private void UpdatePosition()
         {
             Vector2 posDisplacement;
             var start = MovingForward ? _startPos : _endPos;
             var end = MovingForward ? _endPos : _startPos;
-            if (methodMove)
-            {
-                _head.MoveTo(Vector2.Lerp(end, start, Ease.SineIn(Percent)));
-            }
-            else
-            {
-                _head.Position = Vector2.Lerp(end, start, Ease.SineIn(Percent));
-            }
+            _head.MoveTo(Vector2.Lerp(end, start, Ease.SineIn(Percent)));
             switch (_direction)
             {
                 default:
@@ -468,7 +447,7 @@ namespace FactoryHelper.Entities
                     _body.Y = Math.Min(_head.Y, _base.Y) + 8;
                     _body.Collider.Height = heightAfter;
 
-                    if (methodMove && _body.HasPlayerClimbing())
+                    if (_body.HasPlayerClimbing())
                     {
                         Player player = _body.GetPlayerClimbing();
                         if (player != null)
@@ -493,7 +472,7 @@ namespace FactoryHelper.Entities
                     _body.X = Math.Min(_head.X, _base.X) + 8;
                     _body.Collider.Width = widthAfter;
 
-                    if (methodMove && _body.HasPlayerOnTop())
+                    if (_body.HasPlayerOnTop())
                     {
                         Player player = _body.GetPlayerOnTop();
                         if (player != null)
@@ -518,7 +497,13 @@ namespace FactoryHelper.Entities
             scene.Add(_head);
             scene.Add(_base);
             scene.Add(_body);
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
+        }
+
+        public override void Awake(Scene scene)
+        {
+            base.Awake(scene);
+            UpdatePosition();
         }
 
         public override void Removed(Scene scene)

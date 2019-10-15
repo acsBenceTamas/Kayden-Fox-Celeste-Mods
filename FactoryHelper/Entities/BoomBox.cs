@@ -83,13 +83,13 @@ namespace FactoryHelper.Entities
             Add(new LightOcclude(0.2f));
         }
 
-        private void OnStartOn(Scene scene)
+        private void OnStartOn()
         {
             _sprite.Play("active", true);
             _canGetAngry = true;
         }
 
-        private void OnStartOff(Scene scene)
+        private void OnStartOff()
         {
             _sprite.Play("idle", true);
             _canGetAngry = false;
@@ -144,7 +144,7 @@ namespace FactoryHelper.Entities
         {
             base.Added(scene);
             scene.Add(_boomCollider);
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
         }
 
         public override void Update()

@@ -36,7 +36,7 @@ namespace FactoryHelper.Triggers
             }
             foreach (var activator in _activators)
             {
-                activator.Added(scene);
+                activator.HandleStartup(scene);
                 if (activator.Activated)
                 {
                     _shouldStayPermanent.Add(activator.ActivationId);

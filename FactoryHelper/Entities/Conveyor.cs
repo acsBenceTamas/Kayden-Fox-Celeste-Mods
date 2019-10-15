@@ -77,9 +77,9 @@ namespace FactoryHelper.Entities
                 Add(new Coroutine(Sparks()));
                 ReverseConveyorDirection();
             };
-            Activator.OnStartOff = (scene) => 
+            Activator.OnStartOff = () => 
             {
-                StartAnimation(scene);
+                StartAnimation();
                 ReverseConveyorDirection();
             };
             Activator.OnTurnOn = () =>
@@ -127,7 +127,7 @@ namespace FactoryHelper.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
         }
 
         private IEnumerator Sparks()
@@ -140,7 +140,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private void StartAnimation(Scene scene)
+        private void StartAnimation()
         {
             PlayAnimationInArray(_midSprites);
             PlayAnimationInArray(_edgeSprites);

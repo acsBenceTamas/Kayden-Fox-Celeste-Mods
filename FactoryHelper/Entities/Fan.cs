@@ -45,12 +45,12 @@ namespace FactoryHelper.Entities
             {
                 _speedingUp = false;
             };
-            Activator.OnStartOff = (scene) =>
+            Activator.OnStartOff = () =>
             {
                 _percent = 0f;
                 _speedingUp = false;
             };
-            Activator.OnStartOn = (scene) =>
+            Activator.OnStartOn = () =>
             {
                 _percent = 1f;
                 _speedingUp = true;
@@ -125,7 +125,7 @@ namespace FactoryHelper.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
         }
     }
 }

@@ -1,10 +1,6 @@
 ﻿using Celeste;
 using Monocle;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FactoryHelper.Components
 {
@@ -27,8 +23,8 @@ namespace FactoryHelper.Components
 
         public Action OnTurnOn = null;
         public Action OnTurnOff = null;
-        public Action<Scene> OnStartOn = null;
-        public Action<Scene> OnStartOff = null;
+        public Action OnStartOn = null;
+        public Action OnStartOff = null;
 
         public FactoryActivatorComponent() : base(true, true)
         {
@@ -71,7 +67,7 @@ namespace FactoryHelper.Components
             }
         }
 
-        public void Added(Scene scene)
+        public void HandleStartup(Scene scene)
         {
             if (ActivationId == null)
             {
@@ -84,11 +80,11 @@ namespace FactoryHelper.Components
             }
             if (IsOn)
             {
-                OnStartOn?.Invoke(scene);
+                OnStartOn?.Invoke();
             }
             else
             {
-                OnStartOff?.Invoke(scene);
+                OnStartOff?.Invoke();
             }
         }
     }

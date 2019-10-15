@@ -75,10 +75,10 @@ namespace FactoryHelper.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            Activator.Added(scene);
+            Activator.HandleStartup(scene);
         }
 
-        private void OnStartOn(Scene scene)
+        private void OnStartOn()
         {
             _startedOn = true;
             _initialDelay = 0f;
@@ -87,7 +87,7 @@ namespace FactoryHelper.Entities
             SetStrobePattern(_strobePatternString);
         }
 
-        private void OnStartOff(Scene scene)
+        private void OnStartOff()
         {
             _startedOn = false;
             SetLightLevel(0f);
