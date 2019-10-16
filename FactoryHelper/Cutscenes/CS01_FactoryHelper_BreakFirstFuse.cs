@@ -26,6 +26,7 @@ namespace FactoryHelper.Cutscenes
 
         private IEnumerator Cutscene(Level level)
         {
+            _player.StateMachine.State = 11;
             while (!_player.OnGround())
             {
                 yield return null;
@@ -35,9 +36,9 @@ namespace FactoryHelper.Cutscenes
             yield return 0.5f;
             Add(new Coroutine(WaklLeftLookUp()));
             yield return 0.5f;
-            yield return PanCamera(level.Bounds.Top, 0.25f);
+            yield return PanCameraY(level.Bounds.Top, 0.25f);
             yield return 0.5f;
-            yield return PanCamera(_player.CameraTarget.Y, 0.6f);
+            yield return PanCameraY(_player.CameraTarget.Y, 0.6f);
             EndCutscene(level);
         }
 
@@ -45,19 +46,19 @@ namespace FactoryHelper.Cutscenes
         {
             float target = _player.X - 64f;
             Coroutine walk;
+            _player.StateMachine.State = 0;
             Add(walk = new Coroutine(_player.DummyWalkTo(target, speedMultiplier: 1.2f)));
             while (_player.Center.X > target + 3f)
             {
                 yield return null;
             }
-            _player.StateMachine.State = 11;
-            _player.StateMachine.Locked = true;
+            Remove(walk);
+            yield return null;
             _player.DummyAutoAnimate = false;
             _player.Sprite.Play("lookUp");
-            Remove(walk);
         }
 
-        private IEnumerator PanCamera(float to, float speed)
+        private IEnumerator PanCameraY(float to, float speed)
         {
             float from = Level.Camera.Y;
             for (float p = 0f; p < 1f; p += Engine.DeltaTime * speed)
@@ -69,7 +70,6 @@ namespace FactoryHelper.Cutscenes
 
         public override void OnEnd(Level level)
         {
-            _player.StateMachine.Locked = false;
             _player.StateMachine.State = 0;
             _player.DummyAutoAnimate = true;
             _player.Speed = Vector2.Zero;
