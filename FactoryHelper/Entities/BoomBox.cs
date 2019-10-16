@@ -231,7 +231,8 @@ namespace FactoryHelper.Entities
             _boomSprite.Play("boom");
             _boomSprite.Visible = true;
             Player player = Scene.Tracker.GetEntity<Player>();
-            if (player != null && player.CollideCheck(_boomCollider))
+            Collidable = false;
+            if (player != null && player.CollideCheck(_boomCollider) && !Scene.CollideCheck<Solid>(player.Center, Center))
             {
                 if (player.Bottom < Top && player.Top > Bottom)
                 {
@@ -242,6 +243,7 @@ namespace FactoryHelper.Entities
                     player.ExplodeLaunch(Center, false, false);
                 }
             }
+            Collidable = true;
         }
     }
 }
