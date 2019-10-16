@@ -316,6 +316,44 @@ namespace FactoryHelper.Entities
             {
                 DisplacePlayerOnTop(_base);
             }
+            if (_direction == Directions.Left || _direction == Directions.Right)
+            {
+                PlacePlayerOnTop();
+            }
+        }
+
+        private void PlacePlayerOnTop()
+        {
+            Player player = Scene.Tracker.GetEntity<Player>();
+            if (player != null && _body.CollideCheck(player, _body.Position - Vector2.UnitY))
+            {
+                if (_direction == Directions.Left)
+                {
+                    if (_head.CollideCheck(player, _head.Position + Vector2.UnitX) && player.Speed.X < 0)
+                    {
+                        player.MoveH(-1f);
+                        player.Bottom = _head.Top;
+                    }
+                    else if (_base.CollideCheck(player, _base.Position - Vector2.UnitX) && player.Speed.X > 0)
+                    {
+                        player.MoveH(1f);
+                        player.Bottom = _base.Top;
+                    }
+                }
+                else if (_direction == Directions.Right)
+                {
+                    if (_head.CollideCheck(player, _head.Position - Vector2.UnitX) && player.Speed.X > 0)
+                    {
+                        player.MoveH(1f);
+                        player.Bottom = _head.Top;
+                    }
+                    else if (_base.CollideCheck(player, _base.Position + Vector2.UnitX) && player.Speed.X < 0)
+                    {
+                        player.MoveH(-1f);
+                        player.Bottom = _base.Top;
+                    }
+                }
+            }
         }
 
         private void EmitSteamAtBase()
