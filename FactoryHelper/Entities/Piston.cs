@@ -417,7 +417,7 @@ namespace FactoryHelper.Entities
 
         private void TryEvaporatePlayer()
         {
-            if (_body.HasPlayerRider())
+            if (_body.HasPlayerRider() && !SaveData.Instance.Assists.Invincible)
             {
                 Player player = _body.GetPlayerRider();
                 if (player != null)
