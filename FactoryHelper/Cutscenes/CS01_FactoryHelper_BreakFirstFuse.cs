@@ -48,7 +48,6 @@ namespace FactoryHelper.Cutscenes
             Add(walk = new Coroutine(_player.DummyWalkTo(target, speedMultiplier: 1.2f)));
             while (_player.Center.X > target + 3f)
             {
-                Console.WriteLine($"Target: {target} | Player: {_player.Center.X}");
                 yield return null;
             }
             _player.StateMachine.State = 11;
