@@ -55,6 +55,7 @@ namespace FactoryHelper.Entities
         private uint _edgeSeed;
         private float _particleEmittionPeriod;
         private float _baseParticleEmittionPeriod;
+        private LedgeBlocker _ledgeBlocker;
 
         public ElectrifiedWall(EntityData data, Vector2 offset, Directions dir)
             : this(data.Position + offset, GetSize(data, dir), dir, data.Attr("activationId", ""), data.Bool("startActive", true))
@@ -73,6 +74,12 @@ namespace FactoryHelper.Entities
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
             Activator.OnTurnOff = Activator.OnTurnOn = SwapState;
+            Activator.OnStartOff = () => {
+                if (_ledgeBlocker != null)
+                {
+                    _ledgeBlocker.Blocking = false;
+                }
+            };
 
             _start = Vector2.Zero;
             Vector2 offset;
@@ -98,7 +105,7 @@ namespace FactoryHelper.Entities
             {
                 case Directions.Up:
                     base.Collider = new Hitbox(size, 6f, 0f, -3f);
-                    Add(new LedgeBlocker());
+                    Add(_ledgeBlocker = new LedgeBlocker());
                     break;
                 case Directions.Down:
                     base.Collider = new Hitbox(size, 6f, 0f, -3f);
@@ -106,7 +113,7 @@ namespace FactoryHelper.Entities
                 case Directions.Left:
                 case Directions.Right:
                     base.Collider = new Hitbox(6f, size, -3f);
-                    Add(new LedgeBlocker());
+                    Add(_ledgeBlocker = new LedgeBlocker());
                     break;
             }
         }
@@ -114,6 +121,10 @@ namespace FactoryHelper.Entities
         private void SwapState()
         {
             Sparkle(size/4);
+            if (_ledgeBlocker != null)
+            {
+                _ledgeBlocker.Blocking = !_ledgeBlocker.Blocking;
+            }
         }
 
         private void SetParticleEmittionPeriod()
