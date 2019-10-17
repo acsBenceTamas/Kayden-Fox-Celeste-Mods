@@ -37,6 +37,9 @@ namespace FactoryHelper.Entities
         private ParticleEmitter _shimmerParticles;
         private Vector2 _starterPosition;
         private bool _unspecializeOnRemove = true;
+        private bool _tutorial;
+        private BirdTutorialGui _tutorialCarry;
+        private BirdTutorialGui _tutorialPutDown;
 
         public static ParticleType P_Impact { get; } = new ParticleType
         {
@@ -51,12 +54,12 @@ namespace FactoryHelper.Entities
             LifeMax = 0.8f
         };
 
-        public ThrowBox(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("isMetal", false), data.Bool("isSpecial", false))
+        public ThrowBox(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("isMetal", false), data.Bool("tutorial", false), data.Bool("isSpecial", false))
         {
             _levelName = data.Level.Name;
         }
 
-        public ThrowBox(Vector2 position, bool isMetal, bool isSpecial = false) : base(position)
+        public ThrowBox(Vector2 position, bool isMetal, bool tutorial = false, bool isSpecial = false) : base(position)
         {
             IgnoreJumpThrus = true;
             Position -= DISPLACEMENT;
@@ -65,6 +68,7 @@ namespace FactoryHelper.Entities
             Collider = new Hitbox(8f, 10f, 4f + DISPLACEMENT.X, 6f + DISPLACEMENT.Y);
             _isMetal = isMetal;
             IsSpecial = isSpecial;
+            _tutorial = tutorial; 
             string pathString = isMetal ? "crate_metal" : "crate";
 
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/crate/"));
@@ -194,22 +198,25 @@ namespace FactoryHelper.Entities
                         Top = _level.Bounds.Top - 4;
                         Speed.Y = 0;
                     }
+                    else if (Bottom > _level.Bounds.Bottom + 4)
+                    {
+                        Shatter();
+                    }
                 }
                 if (Left > _level.Bounds.Right + 8 || Right < _level.Bounds.Left - 8 || Top > _level.Bounds.Bottom + 8 || Bottom < _level.Bounds.Top - 8)
                 {
-                    if (IsSpecial && Top > _level.Bounds.Bottom + 8)
-                    {
-                        _unspecializeOnRemove = true;
-                    }
-                    else
-                    {
-                        RemoveSelf();
-                    }
+                    RemoveSelf();
                 }
             }
             if (Collidable)
             {
                 Hold.CheckAgainstColliders();
+            }
+            if (_tutorial && OnGround(4) && !ConveyorMover.IsOnConveyor && _tutorialCarry == null)
+            {
+                _tutorialCarry = new BirdTutorialGui(this, new Vector2(0f, -24f), Dialog.Clean("tutorial_carry"), Dialog.Clean("tutorial_hold"), Input.Grab);
+                _tutorialCarry.Open = true;
+                Scene.Add(_tutorialCarry);
             }
         }
 
@@ -271,8 +278,8 @@ namespace FactoryHelper.Entities
                 if (spring.Orientation == Spring.Orientations.Floor && Speed.Y >= 0f)
                 {
                     Speed.X *= 0.5f;
-                    Speed.Y = -160f;
-                    _noGravityTimer = 0.15f;
+                    Speed.Y = -200f;
+                    _noGravityTimer = 0.3f;
                     return true;
                 }
                 if (spring.Orientation == Spring.Orientations.WallLeft && Speed.X <= 0f)
@@ -309,6 +316,10 @@ namespace FactoryHelper.Entities
             {
                 _noGravityTimer = 0.1f;
             }
+            if (_tutorialPutDown != null)
+            {
+                _tutorialPutDown.Open = false;
+            }
         }
 
         private void OnPickup()
@@ -330,6 +341,20 @@ namespace FactoryHelper.Entities
                 Add(_shimmerParticles = new ParticleEmitter(particlesFG, Key.P_Shimmer, Vector2.UnitY * -6, new Vector2(6f, 6f), 1, 0.2f));
                 _shimmerParticles.SimulateCycle();
             }
+            if (_tutorialCarry != null)
+            {
+                _tutorialCarry.Open = false;
+            }
+            if (_tutorial && _tutorialPutDown == null)
+            {
+                _tutorialPutDown = new BirdTutorialGui(this, new Vector2(0f, -24f), Dialog.Clean("tutorial_drop"), Dialog.Clean("tutorial_hold"), new Vector2(0f, 1f), "+ ", Dialog.Clean("tutorial_release"), Input.Grab);
+                Scene.Add(_tutorialPutDown);
+            }
+            if (_tutorialPutDown != null)
+            {
+                _tutorialPutDown.Open = true;
+            }
+
         }
 
         private void OnCollideV(CollisionData data)

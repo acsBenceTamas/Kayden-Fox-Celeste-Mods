@@ -20,19 +20,21 @@ namespace FactoryHelper.Entities
         private bool _isRandom;
         private HashSet<ThrowBox> _boxes = new HashSet<ThrowBox>();
         private bool _fromTop;
+        private bool _tutorial;
 
         public ThrowBoxSpawner(EntityData data, Vector2 offset) 
-            : this(data.Position + offset, data.Float("delay", 5f), data.Int("maximum", 0), data.Bool("isMetal", false), data.Bool("isRandom",false), data.Bool("fromTop", true))
+            : this(data.Position + offset, data.Float("delay", 5f), data.Int("maximum", 0), data.Bool("isMetal", false), data.Bool("isRandom",false), data.Bool("fromTop", true), data.Bool("tutorial", false))
         {
         }
 
-        public ThrowBoxSpawner(Vector2 position, float delay, int maximum, bool isMetal, bool isRandom, bool fromTop) : base(position)
+        public ThrowBoxSpawner(Vector2 position, float delay, int maximum, bool isMetal, bool isRandom, bool fromTop, bool tutorial) : base(position)
         {
             _maximum = maximum;
             _delay = delay;
             _isMetal = isMetal;
             _isRandom = isRandom;
             _fromTop = fromTop;
+            _tutorial = tutorial;
         }
 
         public override void Update()
@@ -52,7 +54,8 @@ namespace FactoryHelper.Entities
                 float posX = _fromTop ? Position.X : GetClosestPositionH();
                 ThrowBox crate = new ThrowBox(
                     position: new Vector2(posX, posY),
-                    isMetal: _isRandom ? Calc.Random.Chance(0.5f) : _isMetal
+                    isMetal: _isRandom ? Calc.Random.Chance(0.5f) : _isMetal,
+                    tutorial: _tutorial
                     );
                 Scene.Add(crate);
                 _boxes.Add(crate);
