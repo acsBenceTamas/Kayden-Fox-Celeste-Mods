@@ -2,8 +2,8 @@ module FactoryHelperThrowBox
 
 using ..Ahorn, Maple
 
-@mapdef Entity "FactoryHelper/ThrowBox" ThrowBox(x::Integer, y::Integer, isMetal::Bool=false)
-@mapdef Entity "FactoryHelper/ThrowBoxSpawner" ThrowBoxSpawner(x::Integer, y::Integer, delay::Real=1.0, maximum::Integer=0, isMetal::Bool=false, isRandom::Bool=false, fromTop::Bool=true)
+@mapdef Entity "FactoryHelper/ThrowBox" ThrowBox(x::Integer, y::Integer, isMetal::Bool=false, tutorial::Bool=false)
+@mapdef Entity "FactoryHelper/ThrowBoxSpawner" ThrowBoxSpawner(x::Integer, y::Integer, delay::Real=1.0, maximum::Integer=0, isMetal::Bool=false, isRandom::Bool=false, fromTop::Bool=true, tutorial::Bool=false)
 
 const placements = Ahorn.PlacementDict(
     "ThrowBox (FactoryHelper)" => Ahorn.EntityPlacement(
