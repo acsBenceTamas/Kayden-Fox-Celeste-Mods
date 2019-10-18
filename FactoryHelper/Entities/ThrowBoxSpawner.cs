@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Celeste;
 using Celeste.Mod.Entities;
+using System.Collections;
 
 namespace FactoryHelper.Entities
 {
@@ -35,13 +36,19 @@ namespace FactoryHelper.Entities
             _isRandom = isRandom;
             _fromTop = fromTop;
             _tutorial = tutorial;
+            Add(new Coroutine(SpawnSequence()));
         }
 
         public override void Update()
         {
             base.Update();
-            if (Scene.OnInterval(_delay))
+        }
+
+        private IEnumerator SpawnSequence()
+        {
+            while(true)
             {
+                yield return _delay;
                 TrySpawnThrowBox();
             }
         }
