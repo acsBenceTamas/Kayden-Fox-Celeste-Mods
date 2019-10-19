@@ -9,8 +9,9 @@ namespace Celeste.Mod.AdventureHelper.Entities
 {
     public class LinkedZipMover : Solid
     {
-        public LinkedZipMover(Vector2 position, int width, int height, Vector2 target, string colorCode): base(position, (float) width, (float) height, false)
+        public LinkedZipMover(Vector2 position, int width, int height, Vector2 target, string colorCode, float speedMultiplier): base(position, (float) width, (float) height, false)
         {
+            this.speedMultiplier = speedMultiplier;
             this.edges = new MTexture[3, 3];
             this.innerCogs = GFX.Game.GetAtlasSubtextures("objects/zipmover/innercog");
             this.temp = new MTexture();
@@ -42,7 +43,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
             this.SurfaceSoundIndex = 7;
         }
 
-        public LinkedZipMover(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Attr("colorCode","000000"))
+        public LinkedZipMover(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Attr("colorCode","000000"), data.Float("speedMultiplier", 1f))
         {
         }
 
@@ -273,7 +274,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
                 while (at < 1f)
                 {
                     yield return null;
-                    at = Calc.Approach(at, 1f, 2f * Engine.DeltaTime);
+                    at = Calc.Approach(at, 1f, 2f * Engine.DeltaTime * speedMultiplier);
                     this.percent = Ease.SineIn(at);
                     Vector2 to = Vector2.Lerp(start, this.target, this.percent);
                     this.ScrapeParticlesCheck(to);
@@ -296,7 +297,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
                 while (at2 < 1f)
                 {
                     yield return null;
-                    at2 = Calc.Approach(at2, 1f, 0.5f * Engine.DeltaTime);
+                    at2 = Calc.Approach(at2, 1f, 0.5f * Engine.DeltaTime * speedMultiplier);
                     this.percent = 1f - Ease.SineIn(at2);
                     Vector2 to2 = Vector2.Lerp(this.target, start, Ease.SineIn(at2));
                     this.MoveTo(to2);
@@ -329,7 +330,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
         public static ParticleType P_Sparks = ZipMover.P_Sparks;
 
         private List<LinkedZipMover> linkedZipMovers;
-
+        private float speedMultiplier;
         private MTexture[,] edges;
 
         private Sprite streetlight;

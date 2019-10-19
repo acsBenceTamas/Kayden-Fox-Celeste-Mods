@@ -8,8 +8,9 @@ namespace Celeste.Mod.AdventureHelper.Entities
 {
     public class ZipMoverNoReturn : Solid
     {
-        public ZipMoverNoReturn(Vector2 position, int width, int height, Vector2 target) : base(position, (float)width, (float)height, false)
+        public ZipMoverNoReturn(Vector2 position, int width, int height, Vector2 target, float speedMultiplier) : base(position, (float)width, (float)height, false)
         {
+            this.speedMultiplier = speedMultiplier;
             this.edges = new MTexture[3, 3];
             this.innerCogs = GFX.Game.GetAtlasSubtextures("objects/AdventureHelper/noreturnzipmover/innercog");
             this.temp = new MTexture();
@@ -41,7 +42,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
             base.Add(this.sfx);
         }
 
-        public ZipMoverNoReturn(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset)
+        public ZipMoverNoReturn(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Float("speedMultiplier", 1f))
         {
         }
 
@@ -267,7 +268,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
                 while (at < 1f)
                 {
                     yield return null;
-                    at = Calc.Approach(at, 1f, 2f * Engine.DeltaTime);
+                    at = Calc.Approach(at, 1f, 2f * Engine.DeltaTime * speedMultiplier);
                     this.percent = Ease.SineIn(at);
                     Vector2 to;
                     if (firstDirection)
@@ -310,6 +311,8 @@ namespace Celeste.Mod.AdventureHelper.Entities
             ZipMoverNoReturn.ropeColor = Calc.HexToColor("d1d1d1");
             ZipMoverNoReturn.ropeLightColor = Calc.HexToColor("9e9e9e");
         }
+
+        private float speedMultiplier;
 
         private MTexture[,] edges;
 

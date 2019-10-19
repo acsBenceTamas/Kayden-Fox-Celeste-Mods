@@ -8,8 +8,9 @@ namespace Celeste.Mod.AdventureHelper.Entities
 {
     public class LinkedZipMoverNoReturn : Solid
     {
-        public LinkedZipMoverNoReturn(Vector2 position, int width, int height, Vector2 target, string colorCode) : base(position, (float)width, (float)height, false)
+        public LinkedZipMoverNoReturn(Vector2 position, int width, int height, Vector2 target, string colorCode, float speedMultiplier) : base(position, (float)width, (float)height, false)
         {
+            this.speedMultiplier = speedMultiplier;
             this.edges = new MTexture[3, 3];
             this.innerCogs = GFX.Game.GetAtlasSubtextures("objects/AdventureHelper/noreturnzipmover/innercog");
             this.temp = new MTexture();
@@ -44,7 +45,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
             base.Add(sfx);
         }
 
-        public LinkedZipMoverNoReturn(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Attr("colorCode", "000000"))
+        public LinkedZipMoverNoReturn(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Attr("colorCode", "000000"), data.Float("speedMultiplier", 1f))
         {
         }
 
@@ -276,7 +277,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
                 while (at < 1f)
                 {
                     yield return null;
-                    at = Calc.Approach(at, 1f, 2f * Engine.DeltaTime);
+                    at = Calc.Approach(at, 1f, 2f * Engine.DeltaTime * speedMultiplier);
                     this.percent = Ease.SineIn(at);
                     Vector2 to;
                     if (firstDirection)
@@ -347,6 +348,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
         private bool firstDirection;
 
         private string syncFlagCode;
+        private float speedMultiplier;
 
         private bool SyncFlag
         {
