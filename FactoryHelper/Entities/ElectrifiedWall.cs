@@ -211,19 +211,18 @@ namespace FactoryHelper.Entities
         {
             if (Activator.IsOn)
             {
+                Vector2 dir;
                 switch (Direction)
                 {
                     case Directions.Up:
-                        player.Die(new Vector2(0f, -1f));
-                        break;
                     case Directions.Down:
-                        player.Die(new Vector2(0f, 1f));
+                        dir = player.Center.Y < Center.Y ? -Vector2.UnitY : Vector2.UnitY;
+                        player.Die(dir);
                         break;
                     case Directions.Left:
-                        player.Die(new Vector2(-1f, 0f));
-                        break;
                     case Directions.Right:
-                        player.Die(new Vector2(1f, 0f));
+                        dir = player.Center.X < Center.X ? -Vector2.UnitX : Vector2.UnitX;
+                        player.Die(dir);
                         break;
                 }
             }

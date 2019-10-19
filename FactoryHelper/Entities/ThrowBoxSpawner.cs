@@ -1,35 +1,38 @@
 ﻿using Monocle;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Celeste;
 using Celeste.Mod.Entities;
 using System.Collections;
+using FactoryHelper.Components;
 
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/ThrowBoxSpawner")]
     class ThrowBoxSpawner : Entity
     {
-        private Random _rnd = new Random();
-        private float _delay;
-        private int _maximum;
-        private bool _isMetal;
-        private bool _isRandom;
-        private HashSet<ThrowBox> _boxes = new HashSet<ThrowBox>();
-        private bool _fromTop;
-        private bool _tutorial;
+        public FactoryActivatorComponent Activator;
+
+        private readonly float _delay;
+        private readonly int _maximum;
+        private readonly bool _isMetal;
+        private readonly bool _isRandom;
+        private readonly HashSet<ThrowBox> _boxes = new HashSet<ThrowBox>();
+        private readonly bool _fromTop;
+        private readonly bool _tutorial;
 
         public ThrowBoxSpawner(EntityData data, Vector2 offset) 
-            : this(data.Position + offset, data.Float("delay", 5f), data.Int("maximum", 0), data.Bool("isMetal", false), data.Bool("isRandom",false), data.Bool("fromTop", true), data.Bool("tutorial", false))
+            : this(data.Position + offset, data.Float("delay", 5f), data.Int("maximum", 0), data.Attr("activationId"), data.Bool("isMetal", false), data.Bool("isRandom",false), data.Bool("fromTop", true), data.Bool("tutorial", false), data.Bool("startActive", true))
         {
         }
 
-        public ThrowBoxSpawner(Vector2 position, float delay, int maximum, bool isMetal, bool isRandom, bool fromTop, bool tutorial) : base(position)
+        public ThrowBoxSpawner(Vector2 position, float delay, int maximum, string activationId, bool isMetal, bool isRandom, bool fromTop, bool tutorial, bool startActive) : base(position)
         {
+            Add(Activator = new FactoryActivatorComponent());
+            Activator.ActivationId = activationId == string.Empty ? null : activationId;
+            Activator.StartOn = startActive;
+
             _maximum = maximum;
             _delay = delay;
             _isMetal = isMetal;
@@ -39,17 +42,25 @@ namespace FactoryHelper.Entities
             Add(new Coroutine(SpawnSequence()));
         }
 
-        public override void Update()
+        public override void Added(Scene scene)
         {
-            base.Update();
+            base.Added(scene);
+            Activator.HandleStartup(scene);
         }
 
         private IEnumerator SpawnSequence()
         {
             while(true)
             {
-                yield return _delay;
-                TrySpawnThrowBox();
+                if (Activator.IsOn)
+                {
+                    yield return _delay;
+                    TrySpawnThrowBox();
+                }
+                else
+                {
+                    yield return null;
+                }
             }
         }
 
