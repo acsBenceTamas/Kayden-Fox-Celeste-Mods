@@ -76,6 +76,7 @@
     <Compile Include="Entities\RustyJumpthruPlatform.cs" />
     <Compile Include="Entities\RustyLamp.cs" />
     <Compile Include="Entities\RustySpike.cs" />
+    <Compile Include="Entities\SteamWall.cs" />
     <Compile Include="Entities\ThrowBox.cs" />
     <Compile Include="Entities\ThrowBoxSpawner.cs" />
     <Compile Include="Entities\WindTunnel.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="ScreenWipes\GearWipe.cs" />
     <Compile Include="Triggers\FactoryActivationTrigger.cs" />
     <Compile Include="Triggers\PremanentActivationTrigger.cs" />
+    <Compile Include="Triggers\SpawnSteamWall.cs" />
     <Compile Include="Triggers\SpecialBoxDeactivationTrigger.cs" />
   </ItemGroup>
   <ItemGroup>
