@@ -79,7 +79,7 @@ namespace FactoryHelper
         private static void ctor(On.Celeste.Player.orig_ctor orig, Player self, Vector2 position, PlayerSpriteMode spriteMode)
         {
             orig(self, position, spriteMode);
-            var conveyorMover = new ConveyorMoverComponent();
+            var conveyorMover = new ConveyorMover();
             conveyorMover.OnMove = (amount) => self.MoveH(amount * Engine.DeltaTime);
             self.Add(conveyorMover);
         }

@@ -5,7 +5,7 @@ using System;
 namespace FactoryHelper.Components
 {
     [Tracked]
-    class FactoryActivatorComponent : Component
+    class FactoryActivator : Component
     {
         public bool Activated => ActivationCount > 0;
         public int ActivationCount { get; private set; } = 0;
@@ -26,7 +26,7 @@ namespace FactoryHelper.Components
         public Action OnStartOn = null;
         public Action OnStartOff = null;
 
-        public FactoryActivatorComponent() : base(true, true)
+        public FactoryActivator() : base(true, true)
         {
         }
 

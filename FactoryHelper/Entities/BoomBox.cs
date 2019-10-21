@@ -45,7 +45,7 @@ namespace FactoryHelper.Entities
         private bool _canGetAngry = false;
         private Coroutine _sequence;
 
-        public FactoryActivatorComponent Activator { get; }
+        public FactoryActivator Activator { get; }
 
         public BoomBox(EntityData data, Vector2 offest) : this(data.Position + offest, data.Attr("activationId", ""), data.Float("initialDelay", 0f), data.Bool("startActive", false))
         {
@@ -53,7 +53,7 @@ namespace FactoryHelper.Entities
 
         public BoomBox(Vector2 position, string activationId, float initialDelay, bool startActive) : base(position, 24, 24, true)
         {
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.StartOn = startActive;
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.OnStartOn = OnStartOn;

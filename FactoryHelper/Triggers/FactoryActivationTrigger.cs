@@ -11,7 +11,7 @@ namespace FactoryHelper.Triggers
     [CustomEntity("FactoryHelper/FactoryActivationTrigger")]
     class FactoryActivationTrigger : Trigger
     {
-        public FactoryActivatorComponent Activator { get; }
+        public FactoryActivator Activator { get; }
 
         private readonly bool _resetOnLeave;
         private readonly bool _persistent;
@@ -24,7 +24,7 @@ namespace FactoryHelper.Triggers
 
             _persistent = data.Bool("persistent", false);
             _resetOnLeave = _persistent ? false : data.Bool("resetOnLeave", false);
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = data.Attr("ownActivationId") == string.Empty ? null : data.Attr("ownActivationId");
             Activator.StartOn = Activator.ActivationId == null;
 
@@ -67,7 +67,7 @@ namespace FactoryHelper.Triggers
 
         private void SendOutSignals(bool activating = true)
         {
-            foreach (FactoryActivatorComponent activator in Scene.Tracker.GetComponents<FactoryActivatorComponent>())
+            foreach (FactoryActivator activator in Scene.Tracker.GetComponents<FactoryActivator>())
             {
                 if (_activationIds.Contains(activator.ActivationId))
                 {

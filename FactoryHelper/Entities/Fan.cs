@@ -22,7 +22,7 @@ namespace FactoryHelper.Entities
             Vertical
         }
 
-        public FactoryActivatorComponent Activator;
+        public FactoryActivator Activator;
 
         private Sprite _fanSprite;
         private float _percent;
@@ -34,7 +34,7 @@ namespace FactoryHelper.Entities
 
         public Fan(Vector2 position, float width, float height, Directions direction, string activationId, bool startActive) : base(position, width, height, false)
         {
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId != string.Empty ? activationId : null;
             Activator.StartOn = startActive;
             Activator.OnTurnOn = () =>

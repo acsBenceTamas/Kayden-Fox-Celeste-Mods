@@ -12,7 +12,7 @@ namespace FactoryHelper.Entities
     [Tracked]
     class PowerLine : Entity
     {
-        public FactoryActivatorComponent Activator;
+        public FactoryActivator Activator;
 
         private enum Direction
         {
@@ -37,7 +37,7 @@ namespace FactoryHelper.Entities
         public PowerLine(Vector2 position, Vector2 offset, Vector2[] nodes, string activationId, bool startActive)
         {
             Position = offset;
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
             Activator.OnStartOn = PowerUp;

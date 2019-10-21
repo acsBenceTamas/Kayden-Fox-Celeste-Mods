@@ -12,7 +12,7 @@ namespace FactoryHelper.Entities
     {
         public static readonly Color Color = Color.Lerp(Color.White, Color.Orange, 0.5f);
 
-        public FactoryActivatorComponent Activator { get; }
+        public FactoryActivator Activator { get; }
 
         private float _initialDelay;
         private readonly Sprite _sprite;
@@ -38,7 +38,7 @@ namespace FactoryHelper.Entities
             Depth = 10000 - 1;
             Position = position + offset;
 
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
             Activator.OnTurnOff = OnTurnOff;

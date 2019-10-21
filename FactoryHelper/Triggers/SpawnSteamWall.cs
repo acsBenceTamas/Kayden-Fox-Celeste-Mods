@@ -19,7 +19,8 @@ namespace FactoryHelper.Triggers
             base.OnEnter(player);
             if (!_spawned)
             {
-                Scene.Add(new SteamWall());
+                Level level = Scene as Level;
+                level.Add(new SteamWall(level.Camera.Left - level.Bounds.Left));
                 _spawned = true;
             }
         }

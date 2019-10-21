@@ -30,7 +30,7 @@ namespace FactoryHelper.Entities
 
         public static ParticleType P_WorkSteam = ParticleTypes.Steam;
 
-        public FactoryActivatorComponent Activator { get; }
+        public FactoryActivator Activator { get; }
 
         public float MoveTime { get; } = 0.2f;
 
@@ -167,7 +167,7 @@ namespace FactoryHelper.Entities
             PauseTime = pauseTime;
             InitialDelay = initialDelay;
 
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.StartOn = startActive;
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.OnStartOn = OnStartOn;

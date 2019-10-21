@@ -124,7 +124,7 @@ namespace FactoryHelper.Entities
 
         private void SendOutSignals()
         {
-            foreach (FactoryActivatorComponent activator in Scene.Tracker.GetComponents<FactoryActivatorComponent>())
+            foreach (FactoryActivator activator in Scene.Tracker.GetComponents<FactoryActivator>())
             {
                 if (_activationIds.Contains(activator.ActivationId))
                 {

@@ -22,7 +22,7 @@ namespace FactoryHelper.Entities
         public static Entity LoadRight(Level level, LevelData levelData, Vector2 offset, EntityData data) => new ElectrifiedWall(data, offset, Directions.Right);
 
 
-        public FactoryActivatorComponent Activator { get; }
+        public FactoryActivator Activator { get; }
 
         public float Fade { get; private set; } = 0f;
         
@@ -70,7 +70,7 @@ namespace FactoryHelper.Entities
             _baseParticleEmittionPeriod = size / 8 * 0.2f;
             SetParticleEmittionPeriod();
 
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
             Activator.OnTurnOff = Activator.OnTurnOn = SwapState;

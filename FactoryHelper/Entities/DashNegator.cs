@@ -10,7 +10,7 @@ namespace FactoryHelper.Entities
     [CustomEntity("FactoryHelper/DashNegator")]
     class DashNegator : Entity
     {
-        public FactoryActivatorComponent Activator;
+        public FactoryActivator Activator;
 
         private Sprite[] _turretSprites;
         private Solid[] _turretSolids;
@@ -42,7 +42,7 @@ namespace FactoryHelper.Entities
 
         public DashNegator(Vector2 position, int width, int height, string activationId, bool startActive) : base(position)
         {
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
             Activator.OnStartOff = OnStartOff;

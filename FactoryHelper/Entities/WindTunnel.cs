@@ -10,7 +10,7 @@ namespace FactoryHelper.Entities
     [CustomEntity("FactoryHelper/WindTunnel")]
     class WindTunnel : Entity
     {
-        public FactoryActivatorComponent Activator { get; }
+        public FactoryActivator Activator { get; }
 
         private class AmbienceTrigger : Trigger
         {
@@ -108,7 +108,7 @@ namespace FactoryHelper.Entities
             _loopWidth = width;
             _loopHeight = height;
 
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
             Activator.OnTurnOn = () =>

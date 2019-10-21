@@ -14,7 +14,7 @@ namespace FactoryHelper.Entities
     {
         public const float ConveyorMoveSpeed = 40.0f;
 
-        public FactoryActivatorComponent Activator { get; }
+        public FactoryActivator Activator { get; }
         public bool IsMovingLeft { get { return Activator.IsOn; } }
 
         private const string _spriteRoot = "objects/FactoryHelper/conveyor/";
@@ -69,7 +69,7 @@ namespace FactoryHelper.Entities
 
         public Conveyor(Vector2 position, float width, bool startLeft, string activationId) : base(position, width, 16, false)
         {
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.StartOn = startLeft;
             Activator.ActivationId = activationId;
             Activator.OnTurnOff = () =>

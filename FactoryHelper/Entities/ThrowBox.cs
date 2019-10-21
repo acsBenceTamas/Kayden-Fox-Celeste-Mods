@@ -12,7 +12,7 @@ namespace FactoryHelper.Entities
     {
         public Vector2 Speed;
         public Holdable Hold;
-        public ConveyorMoverComponent ConveyorMover;
+        public ConveyorMover ConveyorMover;
         public Action OnRemoved;
         public bool IsSpecial;
 
@@ -88,7 +88,7 @@ namespace FactoryHelper.Entities
             Hold.OnHitSpinner = OnHitSpinner;
             Hold.SpeedGetter = (() => Speed);
 
-            Add(ConveyorMover = new ConveyorMoverComponent());
+            Add(ConveyorMover = new ConveyorMover());
             ConveyorMover.OnMove = MoveOnConveyor;
 
             LiftSpeedGraceTime = 0.1f;

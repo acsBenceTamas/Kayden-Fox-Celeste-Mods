@@ -12,7 +12,7 @@ namespace FactoryHelper.Entities
     [CustomEntity("FactoryHelper/ThrowBoxSpawner")]
     class ThrowBoxSpawner : Entity
     {
-        public FactoryActivatorComponent Activator;
+        public FactoryActivator Activator;
 
         private readonly float _delay;
         private readonly int _maximum;
@@ -29,7 +29,7 @@ namespace FactoryHelper.Entities
 
         public ThrowBoxSpawner(Vector2 position, float delay, int maximum, string activationId, bool isMetal, bool isRandom, bool fromTop, bool tutorial, bool startActive) : base(position)
         {
-            Add(Activator = new FactoryActivatorComponent());
+            Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
 

@@ -11,17 +11,17 @@ namespace FactoryHelper.Triggers
     [CustomEntity("FactoryHelper/PermanentActivationTrigger")]
     class PremanentActivationTrigger : Trigger
     {
-        private readonly FactoryActivatorComponent[] _activators;
+        private readonly FactoryActivator[] _activators;
         private readonly HashSet<string> _shouldStayPermanent = new HashSet<string>();
         private Level _level;
 
         public PremanentActivationTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
             string [] _activationIds = data.Attr("activationIds").Split(',');
-            _activators = new FactoryActivatorComponent[_activationIds.Length];
+            _activators = new FactoryActivator[_activationIds.Length];
             for(int i = 0; i < _activationIds.Length; i++)
             {
-                Add(_activators[i] = new FactoryActivatorComponent());
+                Add(_activators[i] = new FactoryActivator());
                 _activators[i].ActivationId = _activationIds[i];
             }
         }
