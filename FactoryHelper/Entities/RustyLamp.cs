@@ -4,6 +4,7 @@ using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System.Collections;
+using System;
 
 namespace FactoryHelper.Entities
 {
@@ -21,6 +22,7 @@ namespace FactoryHelper.Entities
         private Coroutine _strobePattern;
         private string _strobePatternString;
         private bool _startedOn;
+        private SteamCollider _steamCollider;
 
         public RustyLamp(EntityData data, Vector2 offset) : 
             this (
@@ -38,6 +40,8 @@ namespace FactoryHelper.Entities
             Depth = 10000 - 1;
             Position = position + offset;
 
+            Collider = new Hitbox(12, 12, 2, 2);
+
             Add(Activator = new FactoryActivator());
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
@@ -45,6 +49,8 @@ namespace FactoryHelper.Entities
             Activator.OnTurnOn = OnTurnOn;
             Activator.OnStartOff = OnStartOff;
             Activator.OnStartOn = OnStartOn;
+
+            Add(_steamCollider = new SteamCollider(OnSteamWall));
 
             _initialDelay = initialDelay;
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/rustyLamp/rustyLamp"));
@@ -76,6 +82,11 @@ namespace FactoryHelper.Entities
         {
             base.Added(scene);
             Activator.HandleStartup(scene);
+        }
+
+        private void OnSteamWall(SteamWall steamWall)
+        {
+            Activator.ForceDeactivate();
         }
 
         private void OnStartOn()

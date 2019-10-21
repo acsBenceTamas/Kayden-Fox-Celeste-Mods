@@ -130,6 +130,8 @@ namespace FactoryHelper.Entities
                 _speedingUp = true;
             };
 
+            Add(new SteamCollider(OnSteamWall));
+
             Collider = new Hitbox(width, height);
             _strength = strength;
             Enum.TryParse(direction, out _direction);
@@ -157,6 +159,11 @@ namespace FactoryHelper.Entities
             {
                 Reset(i, Calc.Random.NextFloat(_baseAlpha));
             }
+        }
+
+        private void OnSteamWall(SteamWall obj)
+        {
+            Activator.ForceDeactivate();
         }
 
         public override void Added(Scene scene)

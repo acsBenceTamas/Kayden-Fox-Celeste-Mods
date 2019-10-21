@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="Components\ConveyorMover.cs" />
     <Compile Include="Components\FactoryActivator.cs" />
+    <Compile Include="Components\SteamCollider.cs" />
     <Compile Include="Cutscenes\CS01_FactoryHelper_BreakFirstFuse.cs" />
     <Compile Include="Entities\Battery.cs" />
     <Compile Include="Entities\BatteryBox.cs" />

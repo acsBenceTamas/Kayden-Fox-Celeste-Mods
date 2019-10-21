@@ -56,6 +56,8 @@ namespace FactoryHelper.Entities
                 _speedingUp = true;
             };
 
+            Add(new SteamCollider(OnSteamWall));
+
             Add(_fanSprite = FactoryHelperModule.SpriteBank.Create("fan"));
             _fanSprite.CenterOrigin();
             _fanSprite.Position = new Vector2(width / 2, height / 2);
@@ -106,6 +108,11 @@ namespace FactoryHelper.Entities
             }
             SurfaceSoundIndex = 7;
             Add(new LightOcclude(0.5f));
+        }
+
+        private void OnSteamWall(SteamWall obj)
+        {
+            Activator.ForceDeactivate();
         }
 
         public override void Update()

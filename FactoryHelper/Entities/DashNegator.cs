@@ -50,6 +50,8 @@ namespace FactoryHelper.Entities
             Activator.OnTurnOff = OnTurnOff;
             Activator.OnTurnOn = OnTurnOn;
 
+            Add(new SteamCollider(OnSteamWall));
+
             Collider = new Hitbox(width - 4, height, 2, 0);
 
             width = 16 * (width / 16);
@@ -80,6 +82,11 @@ namespace FactoryHelper.Entities
             }
 
             _particleSpanPeriod =  256f / (width * height);
+        }
+
+        private void OnSteamWall(SteamWall obj)
+        {
+            Activator.ForceDeactivate();
         }
 
         public override void Added(Scene scene)

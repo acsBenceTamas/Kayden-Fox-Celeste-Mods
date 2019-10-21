@@ -30,7 +30,7 @@ namespace FactoryHelper.Components
             bool foundConveyor = false;
             foreach (Conveyor conveyor in Scene.Tracker.GetEntities<Conveyor>())
             {
-                if (Collide.Check(conveyor, Entity, conveyor.Position - Vector2.UnitY))
+                if (!conveyor.IsBrokenDown && Collide.Check(conveyor, Entity, conveyor.Position - Vector2.UnitY))
                 {
                     foundConveyor = true;
                     Move(conveyor.IsMovingLeft ? -Conveyor.ConveyorMoveSpeed: Conveyor.ConveyorMoveSpeed);

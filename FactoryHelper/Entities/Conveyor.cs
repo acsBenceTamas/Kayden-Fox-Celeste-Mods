@@ -16,6 +16,7 @@ namespace FactoryHelper.Entities
 
         public FactoryActivator Activator { get; }
         public bool IsMovingLeft { get { return Activator.IsOn; } }
+        public bool IsBrokenDown { get; private set; } = false;
 
         private const string _spriteRoot = "objects/FactoryHelper/conveyor/";
         private const float _beltFrequency = 0.025f;
@@ -77,7 +78,7 @@ namespace FactoryHelper.Entities
                 Add(new Coroutine(Sparks()));
                 ReverseConveyorDirection();
             };
-            Activator.OnStartOff = () => 
+            Activator.OnStartOff = () =>
             {
                 StartAnimation();
                 ReverseConveyorDirection();
@@ -88,31 +89,46 @@ namespace FactoryHelper.Entities
                 ReverseConveyorDirection();
             };
             Activator.OnStartOn = StartAnimation;
+            
+            Add(new SteamCollider(OnSteamWall));
 
+            SetupSprites();
+
+            Add(new LightOcclude(0.2f));
+            Add(_sfx = new SoundSource() { Position = new Vector2(Width / 2, Height / 2) });
+        }
+
+        private void OnSteamWall(SteamWall obj)
+        {
+            Add(new Coroutine(Sparks()));
+            StopAnimation();
+            IsBrokenDown = true;
+        }
+
+        private void SetupSprites()
+        {
             for (int i = 0; i < 2; i++)
             {
                 Add(_edgeSprites[i] = new Sprite(GFX.Game, _spriteRoot));
                 _edgeSprites[i].Add("left", "belt_edge", _beltFrequency, "left");
-                _edgeSprites[i].Position = new Vector2((width - 16) * i, 0);
+                _edgeSprites[i].Position = new Vector2((Width - 16) * i, 0);
 
                 Add(_gearSprites[i] = new Sprite(GFX.Game, _spriteRoot));
                 _gearSprites[i].Add("left", "gear", _gearFrequency, "left");
-                _gearSprites[i].Position = new Vector2((width - 16) * i, 0);
+                _gearSprites[i].Position = new Vector2((Width - 16) * i, 0);
             }
-            
-            _edgeSprites[1].Rotation = (float)Math.PI;
-            _edgeSprites[1].Position += new Vector2(16,16);
 
-            _midSprites = new Sprite[(int)width / 8 - 4];
-            
+            _edgeSprites[1].Rotation = (float)Math.PI;
+            _edgeSprites[1].Position += new Vector2(16, 16);
+
+            _midSprites = new Sprite[(int)Width / 8 - 4];
+
             for (int i = 0; i < _midSprites.Length; i++)
             {
                 Add(_midSprites[i] = new Sprite(GFX.Game, _spriteRoot));
                 _midSprites[i].Add("left", "belt_mid", _beltFrequency, "left");
                 _midSprites[i].Position = new Vector2(16 + 8 * i, 0);
             }
-            Add(new LightOcclude(0.2f));
-            Add(_sfx = new SoundSource() { Position = new Vector2(Width/2,Height/2)});
         }
 
         public override void Update()
@@ -148,6 +164,13 @@ namespace FactoryHelper.Entities
             _edgeSprites[1].SetAnimationFrame(4);
         }
 
+        private void StopAnimation()
+        {
+            StopAnimationInArray(_midSprites);
+            StopAnimationInArray(_edgeSprites);
+            StopAnimationInArray(_gearSprites);
+        }
+
         private void ReverseConveyorDirection()
         {
             ReverseAnimationInArray(_midSprites);
@@ -168,6 +191,14 @@ namespace FactoryHelper.Entities
             foreach (Sprite sprite in array)
             {
                 sprite.Play("left");
+            }
+        }
+
+        private void StopAnimationInArray(Sprite[] array)
+        {
+            foreach (Sprite sprite in array)
+            {
+                sprite.Stop();
             }
         }
     }

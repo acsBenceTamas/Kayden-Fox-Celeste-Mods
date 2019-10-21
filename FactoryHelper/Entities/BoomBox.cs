@@ -4,6 +4,7 @@ using Monocle;
 using FactoryHelper.Components;
 using System.Collections;
 using Celeste.Mod.Entities;
+using System;
 
 namespace FactoryHelper.Entities
 {
@@ -61,6 +62,8 @@ namespace FactoryHelper.Entities
             Activator.OnTurnOn = OnTurnOn;
             Activator.OnTurnOff = OnTurnOff;
 
+            Add(new SteamCollider(OnSteamWall));
+
             _initialDelay = initialDelay;
 
             Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/boomBox/"));
@@ -81,6 +84,11 @@ namespace FactoryHelper.Entities
             Add(_sfx = new SoundSource());
             _sfx.Position = new Vector2(Width / 2, Height / 2);
             Add(new LightOcclude(0.2f));
+        }
+
+        private void OnSteamWall(SteamWall obj)
+        {
+            Activator.ForceActivate();
         }
 
         private void OnStartOn()

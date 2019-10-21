@@ -33,6 +33,8 @@ namespace FactoryHelper.Entities
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.StartOn = startActive;
 
+            Collider = new Hitbox(16, 16);
+
             _maximum = maximum;
             _delay = delay;
             _isMetal = isMetal;
@@ -40,6 +42,13 @@ namespace FactoryHelper.Entities
             _fromTop = fromTop;
             _tutorial = tutorial;
             Add(new Coroutine(SpawnSequence()));
+
+            Add(new SteamCollider(OnSteamWall));
+        }
+
+        private void OnSteamWall(SteamWall steamWall)
+        {
+            Activator.ForceDeactivate();
         }
 
         public override void Added(Scene scene)

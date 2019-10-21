@@ -91,9 +91,16 @@ namespace FactoryHelper.Entities
             Add(ConveyorMover = new ConveyorMover());
             ConveyorMover.OnMove = MoveOnConveyor;
 
+            Add(new SteamCollider(OnSteamWall));
+
             LiftSpeedGraceTime = 0.1f;
 
             Add(new LightOcclude(0.2f));
+        }
+
+        private void OnSteamWall(SteamWall steamWall)
+        {
+            Shatter();
         }
 
         private void OnHitSpinner(Entity spinner)

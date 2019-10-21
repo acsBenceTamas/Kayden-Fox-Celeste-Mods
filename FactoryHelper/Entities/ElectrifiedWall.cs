@@ -81,6 +81,8 @@ namespace FactoryHelper.Entities
                 }
             };
 
+            Add(new SteamCollider(OnSteamWall));
+
             _start = Vector2.Zero;
             Vector2 offset;
             switch (direction)
@@ -116,6 +118,11 @@ namespace FactoryHelper.Entities
                     Add(_ledgeBlocker = new LedgeBlocker());
                     break;
             }
+        }
+
+        private void OnSteamWall(SteamWall obj)
+        {
+            Activator.ForceDeactivate();
         }
 
         private void SwapState()

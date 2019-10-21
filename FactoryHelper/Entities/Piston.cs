@@ -167,6 +167,8 @@ namespace FactoryHelper.Entities
             PauseTime = pauseTime;
             InitialDelay = initialDelay;
 
+            Collider = new Hitbox(0, 0);
+
             Add(Activator = new FactoryActivator());
             Activator.StartOn = startActive;
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
@@ -273,6 +275,13 @@ namespace FactoryHelper.Entities
             _base.Add(new LightOcclude(0.2f));
             _head.Add(new LightOcclude(0.2f));
             _body.Add(new LightOcclude(0.2f));
+
+            _body.Add(new SteamCollider(OnSteamWall));
+        }
+
+        private void OnSteamWall(SteamWall obj)
+        {
+            Activator.ForceDeactivate();
         }
 
         private void OnStartOff()
