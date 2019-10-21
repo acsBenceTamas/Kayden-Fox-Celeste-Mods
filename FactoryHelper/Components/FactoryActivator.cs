@@ -33,6 +33,7 @@ namespace FactoryHelper.Components
         public void ForceActivate()
         {
             bool wasOn = IsOn;
+            StartOn = true;
             ActivationCount = ActivationId == null ? 0 : 1;
             HandleOnOff(wasOn);
             StateIsLocked = true;
@@ -41,6 +42,7 @@ namespace FactoryHelper.Components
         public void ForceDeactivate()
         {
             bool wasOn = IsOn;
+            StartOn = true;
             ActivationCount = ActivationId == null ? 1 : 0;
             HandleOnOff(wasOn);
             StateIsLocked = true;

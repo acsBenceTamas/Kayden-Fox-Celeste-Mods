@@ -45,6 +45,7 @@ namespace FactoryHelper.Entities
         private bool _angryMode = false;
         private bool _canGetAngry = false;
         private Coroutine _sequence;
+        private bool _steamAnger = false;
 
         public FactoryActivator Activator { get; }
 
@@ -88,6 +89,14 @@ namespace FactoryHelper.Entities
 
         private void OnSteamWall(SteamWall obj)
         {
+            _steamAnger = true;
+            if (Activator.IsOn)
+            {
+                _canGetAngry = false;
+                _angryMode = false;
+                _sprite.Play("angry", true);
+                Explode();
+            }
             Activator.ForceActivate();
         }
 
@@ -133,10 +142,19 @@ namespace FactoryHelper.Entities
         {
             _canGetAngry = false;
             _sprite.Play("activating", true);
-            yield return _initialDelay;
-            yield return _startupTime;
-            _sprite.Play("resetting", true);
-            _canGetAngry = true;
+            yield return _initialDelay * (_steamAnger ? 0 : 1);
+            yield return _startupTime * (_steamAnger ? 0.5 : 1);
+            if (_steamAnger)
+            {
+                _sprite.Play("angry", true);
+                yield return _angryShootTime * 0.5;
+                Explode();
+            }
+            else
+            {
+                _sprite.Play("resetting", true);
+                _canGetAngry = true;
+            }
         }
 
         private IEnumerator WindDownSequence()
@@ -163,7 +181,7 @@ namespace FactoryHelper.Entities
                 _sfx.Play("event:/env/local/09_core/conveyor_idle");
             }
 
-            if(_canGetAngry)
+            if(!_steamAnger && _canGetAngry)
             {
                 HandleAngryMode();
             }
@@ -175,7 +193,7 @@ namespace FactoryHelper.Entities
             {
                 SceneAs<Level>().ParticlesFG.Emit(P_Steam, 1, Center, new Vector2(8f, 8f));
             }
-            else if (_angryMode && Scene.OnInterval(_angryPuffTime))
+            else if ((_angryMode || _steamAnger) && Scene.OnInterval(_angryPuffTime))
             {
                 SceneAs<Level>().ParticlesFG.Emit(P_SteamAngry, 3, Center, new Vector2(8f, 8f), direction:Calc.Random.NextAngle());
             }
