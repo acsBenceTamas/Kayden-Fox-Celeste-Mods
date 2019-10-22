@@ -70,6 +70,7 @@
     <Compile Include="Entities\FactorySpike.cs" />
     <Compile Include="Entities\Fan.cs" />
     <Compile Include="Entities\KillerDebris.cs" />
+    <Compile Include="Entities\MachineHeart.cs" />
     <Compile Include="Entities\PowerLine.cs" />
     <Compile Include="Entities\PressurePlate.cs" />
     <Compile Include="Entities\RustBerry.cs" />

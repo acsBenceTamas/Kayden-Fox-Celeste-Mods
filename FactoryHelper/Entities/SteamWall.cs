@@ -48,7 +48,7 @@ namespace FactoryHelper.Entities
             Add(new PlayerCollider(OnPlayer));
             Add(new LightOcclude(0.8f));
             Add(_loopSfx = new SoundSource());
-            Depth = -10000;
+            Depth = -100000;
             Collider = new Hitbox(16 + startPosition, 0f);
             Add(new Coroutine(SteamPoofSpawnSequence()));
             Add(new Coroutine(ThrowDebrisSequence()));
