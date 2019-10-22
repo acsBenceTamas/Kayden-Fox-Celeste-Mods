@@ -92,7 +92,7 @@ namespace FactoryHelper.ScreenWipes
             }
             else if (_hasDrawn)
             {
-                Draw.SpriteBatch.Draw((RenderTarget2D)Celeste.Celeste.WipeTarget, new Vector2(-1f, -1f), Color.White);
+                Draw.SpriteBatch.Draw(Celeste.Celeste.WipeTarget, new Vector2(-1f, -1f), Color.White);
             }
             Draw.SpriteBatch.End();
         }

@@ -77,6 +77,7 @@
     <Compile Include="Entities\RustyJumpthruPlatform.cs" />
     <Compile Include="Entities\RustyLamp.cs" />
     <Compile Include="Entities\RustySpike.cs" />
+    <Compile Include="Entities\SteamPoof.cs" />
     <Compile Include="Entities\SteamWall.cs" />
     <Compile Include="Entities\ThrowBox.cs" />
     <Compile Include="Entities\ThrowBoxSpawner.cs" />
