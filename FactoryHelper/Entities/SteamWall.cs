@@ -7,6 +7,7 @@ using System.Collections;
 
 namespace FactoryHelper.Entities
 {
+    [Tracked(false)]
     class SteamWall : Entity
     {
         public static ParticleType P_FlyingDebris = new ParticleType
@@ -33,6 +34,8 @@ namespace FactoryHelper.Entities
             DirectionRange = (float)Math.PI / 8,
         };
 
+        public bool Halted = false;
+
         private const float _speed = 22f;
         private float _delay;
         private bool _canMoveNormally = true;
@@ -53,6 +56,12 @@ namespace FactoryHelper.Entities
             Add(new Coroutine(SteamPoofSpawnSequence()));
             Add(new Coroutine(ThrowDebrisSequence()));
             Add(new DisplacementRenderHook(RenderDisplacement));
+        }
+
+        internal void AdvanceToCamera()
+        {
+            Level level = Scene as Level;
+            Collider.Width = Math.Max(level.Camera.Left - level.Bounds.Left, Collider.Width);
         }
 
         private void RenderDisplacement()
@@ -146,7 +155,7 @@ namespace FactoryHelper.Entities
             base.Update();
             _delay -= Engine.DeltaTime;
             
-            if (_canMoveNormally)
+            if (_canMoveNormally && !Halted)
             {
                 Collider.Width += _speed * Engine.DeltaTime;
                 _loopSfx.Param("rising", 1f);

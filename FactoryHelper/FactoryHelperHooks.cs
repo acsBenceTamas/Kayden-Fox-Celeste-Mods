@@ -17,6 +17,22 @@ namespace FactoryHelper
             On.Celeste.Player.Die += PlayerDie;
             On.Celeste.LevelExit.Routine += RespawnRoutine;
             On.Celeste.Player.Pickup += Pickup;
+            On.Celeste.Lookout.LookRoutine += LookRoutine;
+        }
+
+        private static IEnumerator LookRoutine(On.Celeste.Lookout.orig_LookRoutine orig, Lookout self, Player player)
+        {
+            SteamWall steamWall = self.Scene.Tracker.GetEntity<SteamWall>();
+            if (steamWall != null)
+            {
+                steamWall.Halted = true;
+            }
+            yield return orig(self, player);
+            if (steamWall != null)
+            {
+                steamWall.Halted = false;
+            }
+
         }
 
         private static bool Pickup(On.Celeste.Player.orig_Pickup orig, Player self, Holdable pickup)
