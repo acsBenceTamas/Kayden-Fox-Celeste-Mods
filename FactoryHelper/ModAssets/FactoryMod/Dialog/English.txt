@@ -1,0 +1,42 @@
+	KaydenFox_FactoryMod=	Shrouded Thoughts
+	KaydenFox_FactoryMod_1_Factory=	Old Factory
+	KaydenFox_FactoryMod_1_Factory_2_01=	Venting
+	KaydenFox_FactoryMod_1_Factory_3_01_exterior=	Underpowered
+	KaydenFox_FactoryMod_1_Factory_4_01=	Discarded Products
+	KaydenFox_FactoryMod_1_Factory_5_01=	Clearing The Mind
+
+	POEM_KaydenFox_NewAdventure_1_Factory_A=	The Back of Your Mind
+
+	KaydenFox_FactoryMod_1_Factory_A_Intro=
+		[THEO right serious]
+			Are you absolutely sure about this {+MADELINE}?
+
+		[MADELINE_PHONE left distracted]
+			I need to know where she went. I can't go on like this.
+
+		[THEO right serious]
+			I know {+PART_OF_YOU} is important to you. I get you.
+			But also consider that most people do not have talking goth doppelgangers.
+			You have been away from the mountain for a while now.
+			It is only natural that the effects are wearing off.
+
+		[MADELINE_PHONE left sad]
+			I need her. With {+GRANNY} gone, she is the only one who can really help me.
+
+		[THEO right serious]
+			I may not be {+PART_OF_YOU} but we can talk through this.
+			No need to do anything rushed.
+
+		[MADELINE_PHONE left angry]
+			You do not understand! A literal {+PART_OF_ME} is gone.
+
+		[MADELINE_PHONE left sad]
+			I am incomplete. {0.7}Broken.
+
+		[THEO right serious]
+			{+MADELINE}, don't say such things.
+			You are just under a lot of stress right now.
+
+		[MADELINE_PHONE left distracted]
+			I need to do this. I will call you later.
+			Goodbye.
