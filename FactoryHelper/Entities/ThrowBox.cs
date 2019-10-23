@@ -25,8 +25,6 @@ namespace FactoryHelper.Entities
         private Sprite _sprite;
         private float _noGravityTimer;
         private Vector2 _prevLiftSpeed;
-        private Vector2 _previousPosition;
-        private float _swatTimer;
         private Level _level;
         private bool _shattered;
         private bool _isMetal;
@@ -96,6 +94,7 @@ namespace FactoryHelper.Entities
             LiftSpeedGraceTime = 0.1f;
 
             Add(new LightOcclude(0.2f));
+            Add(new MirrorReflection());
         }
 
         private void OnSteamWall(SteamWall steamWall)
@@ -124,10 +123,6 @@ namespace FactoryHelper.Entities
             if (_soundTimerY > 0f)
             {
                 _soundTimerY -= Engine.DeltaTime;
-            }
-            if (_swatTimer > 0f)
-            {
-                _swatTimer -= Engine.DeltaTime;
             }
             if (Hold.IsHeld)
             {
@@ -185,7 +180,6 @@ namespace FactoryHelper.Entities
                         Speed.Y = Calc.Approach(Speed.Y, 300f, accY * Engine.DeltaTime);
                     }
                 }
-                _previousPosition = base.ExactPosition;
                 MoveH(Speed.X * Engine.DeltaTime, OnCollideH);
                 MoveV(Speed.Y * Engine.DeltaTime, OnCollideV);
                 if (IsSpecial)
@@ -361,7 +355,6 @@ namespace FactoryHelper.Entities
             {
                 _tutorialPutDown.Open = true;
             }
-
         }
 
         private void OnCollideV(CollisionData data)

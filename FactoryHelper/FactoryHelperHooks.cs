@@ -16,6 +16,16 @@ namespace FactoryHelper
             On.Celeste.Level.LoadLevel += LoadLevel;
             On.Celeste.Player.Die += PlayerDie;
             On.Celeste.LevelExit.Routine += RespawnRoutine;
+            On.Celeste.Player.Pickup += Pickup;
+        }
+
+        private static bool Pickup(On.Celeste.Player.orig_Pickup orig, Player self, Holdable pickup)
+        {
+            if (self.Holding == null)
+            {
+                return orig(self, pickup);
+            }
+            return false;
         }
 
         private static IEnumerator RespawnRoutine(On.Celeste.LevelExit.orig_Routine orig, LevelExit self)

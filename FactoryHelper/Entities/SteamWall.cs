@@ -33,7 +33,7 @@ namespace FactoryHelper.Entities
             DirectionRange = (float)Math.PI / 8,
         };
 
-        private const float _speed = 10f;
+        private const float _speed = 22f;
         private float _delay;
         private bool _canMoveNormally = true;
         private Tween _tween;
