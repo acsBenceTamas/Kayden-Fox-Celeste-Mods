@@ -58,6 +58,7 @@
     <Compile Include="Components\FactoryActivator.cs" />
     <Compile Include="Components\SteamCollider.cs" />
     <Compile Include="Cutscenes\CS01_FactoryHelper_BreakFirstFuse.cs" />
+    <Compile Include="Cutscenes\CS01_FactoryHelper_Intro.cs" />
     <Compile Include="Entities\Battery.cs" />
     <Compile Include="Entities\BatteryBox.cs" />
     <Compile Include="Entities\BoomBox.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScreenWipes\GearWipe.cs" />
     <Compile Include="Triggers\FactoryActivationTrigger.cs" />
+    <Compile Include="Triggers\FactoryEventTrigger.cs" />
     <Compile Include="Triggers\PremanentActivationTrigger.cs" />
     <Compile Include="Triggers\SpawnSteamWall.cs" />
     <Compile Include="Triggers\SpecialBoxDeactivationTrigger.cs" />
