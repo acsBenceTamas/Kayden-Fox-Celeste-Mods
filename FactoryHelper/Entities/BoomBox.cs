@@ -53,7 +53,7 @@ namespace FactoryHelper.Entities
         {
         }
 
-        public BoomBox(Vector2 position, string activationId, float initialDelay, bool startActive) : base(position, 24, 24, true)
+        public BoomBox(Vector2 position, string activationId, float initialDelay, bool startActive) : base(position, 24, 24, false)
         {
             Add(Activator = new FactoryActivator());
             Activator.StartOn = startActive;
