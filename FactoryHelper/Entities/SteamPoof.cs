@@ -27,7 +27,7 @@ namespace FactoryHelper.Entities
         {
             for (int i = 0; i < count; i++)
             {
-                // scene.Add(new SteamPoof(new Vector2(position.X - range.X / 2 + Calc.Random.NextFloat(range.X), position.Y - range.Y / 2 + Calc.Random.NextFloat(range.Y))));
+                scene.Add(new SteamPoof(new Vector2(position.X - range.X / 2 + Calc.Random.NextFloat(range.X), position.Y - range.Y / 2 + Calc.Random.NextFloat(range.Y))));
             }
         }
 
