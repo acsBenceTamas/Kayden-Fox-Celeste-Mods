@@ -20,7 +20,15 @@ namespace FactoryHelper.Triggers
             if (!_spawned)
             {
                 Level level = Scene as Level;
-                level.Add(new SteamWall(level.Camera.Left - level.Bounds.Left));
+                SteamWall steamWall = level.Tracker.GetEntity<SteamWall>();
+                if (steamWall == null)
+                {
+                    level.Add(new SteamWall(level.Camera.Left - level.Bounds.Left));
+                }
+                else
+                {
+                    steamWall.AdvanceToCamera();
+                }
                 _spawned = true;
             }
         }

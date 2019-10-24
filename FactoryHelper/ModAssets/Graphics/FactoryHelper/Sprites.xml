@@ -52,5 +52,23 @@
 		<Anim id="collect" path="gear_" delay=".07" frames="4-6"/>
 		<Anim id="collectGhost" path="gear_ghost" delay=".07" frames="4-6"/>
 	</rustBerryGear>
+    
+    <machineHeart_front path="objects/FactoryHelper/machineHeart/" start="idle">
+        <Center />
+        
+        <Loop id="idle" path="front" delay="1" frames="0" />
+        <Anim id="break" path="front" delay="0.1" frames="0-8" />
+        
+    </machineHeart_front>
+    
+    <machineHeart_back path="objects/FactoryHelper/machineHeart/" start="idle">
+        <Center />
+        
+        <Loop id="idle" path="inside" delay="0.1" frames="0-6,0-6,0-6,7-13" />
+        <Anim id="break" path="break" delay="0.02" frames="0-3" goto="break1" />
+        <Anim id="break1" path="break" delay="0.2" frames="4-7" />
+        <Loop id="destroyed" path="break" delay="1" frames="7" />
+        
+    </machineHeart_back>
 
 </Sprites>

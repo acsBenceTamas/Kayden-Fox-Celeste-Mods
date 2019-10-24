@@ -8,6 +8,7 @@ using System;
 
 namespace FactoryHelper.Entities
 {
+    [Tracked(false)]
     [CustomEntity("FactoryHelper/RustyLamp")]
     class RustyLamp : Entity
     {
