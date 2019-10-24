@@ -5,7 +5,7 @@
 	KaydenFox_FactoryMod_1_Factory_4_01=	Discarded Products
 	KaydenFox_FactoryMod_1_Factory_5_01=	Clearing The Mind
 
-	POEM_KaydenFox_NewAdventure_1_Factory_A=	The Back of Your Mind
+	POEM_KaydenFox_FactoryMod_1_Factory_A=	The Back of Your Mind
 
 	KaydenFox_FactoryMod_1_Factory_A_Intro=
 		[THEO right serious]
