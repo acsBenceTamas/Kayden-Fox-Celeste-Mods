@@ -11,7 +11,7 @@ namespace FactoryHelper.Entities
 
         public SteamPoof(Vector2 position) : base(position)
         {
-            Depth = -10001;
+            Depth = -100001;
             string type = Calc.Random.Chance(0.1f) ? "b" : "a";
             Add(_sprite = new Sprite(GFX.Game, "danger/FactoryHelper/steamWall/"));
             _sprite.Add("poof", "poof_" + type, 0.07f);
