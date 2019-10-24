@@ -76,7 +76,7 @@ namespace FactoryHelper.Entities
 
             Add(_boomSprite = new Sprite(GFX.Game, "objects/FactoryHelper/boomBox/"));
             _boomSprite.Add("boom", "boom", 0.04f);
-            _boomSprite.Color = new Color(Color.White, 0.5f);
+            _boomSprite.Color = Color.White * 0.5f;
             _boomSprite.Visible = false;
             _boomSprite.CenterOrigin();
             _boomSprite.Position = new Vector2(Width / 2, Height / 2);
