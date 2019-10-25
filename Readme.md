@@ -29,6 +29,7 @@ of slow, normal and fast these spinners come with customizable `moveTime` and `p
 These work like regular zip movers for the most part, except upon reaching their end point they do not 
 immediately return to their origin, but rather wait until the player is riding them again (or still if you never
 let go). They are not customizable, you can only resize and position them.
+- **speedMultiplier**: Determines movement speed. 1.0 is default, 0.5 is half speed (double travel time) 2.0 is double speed (half travel time).
 
 #### Linked zip movers
 These come in both returning and non-returning varieties. Each linked zip mover has its own `colorCode` which
@@ -37,6 +38,18 @@ whenever they launch to notify all other zip movers of the same `colorCode` to l
 is already on its way somewhere it will ignore the signal. When riding a non-returning zip mover continuously
 you can make about 3 whole back and forth cycles before a regular zip mover returns to its origin.
 - **colorCode**: Determines the zipline color of the zip mover as well as what other zip movers it is linked with.
+- **speedMultiplier**: Determines movement speed. 1.0 is default, 0.5 is half speed (double travel time) 2.0 is double speed (half travel time).
+
+#### Custom crystal hearts
+With these you can have a crystal heart from any chapter or even custom colored or 
+- **color**: Determines the glow and particle color of the heart as well as its tint if no sprite path is set.
+- **path**: If set it determines what sprite will be used for the heart. The hitbox is not altered! If not set, the
+fake heart's white heart will be tinted. The sprites of the default 4 hearts are treated differently and they will take
+the behavior of those. They are the following: 
+  * `heartgem0`, A-side, Blue
+  * `heartgem1`, B-side, Red
+  * `heartgem2`, C-side, Gold
+  * `heartgem3`, Farewell, White
 
 ### <a name=downloads>Downloads
 #### Adventure Helper Download
