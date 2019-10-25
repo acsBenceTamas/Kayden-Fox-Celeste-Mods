@@ -267,6 +267,7 @@ namespace FactoryHelper.Entities
             _doorSprite.SetAnimationFrame(4);
             _doorSprite.Visible = true;
             SetBustedCollider();
+            Add(new Coroutine(SparkleSequence()));
         }
 
         private void SetBustedCollider()
