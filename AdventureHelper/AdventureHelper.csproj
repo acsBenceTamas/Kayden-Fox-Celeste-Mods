@@ -71,9 +71,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdventureHelperHooks.cs" />
     <Compile Include="AdventureHelperModule.cs" />
+    <Compile Include="AdventureHelperSession.cs" />
+    <Compile Include="AdventureHelperSettings.cs" />
     <Compile Include="Entities\BladeTrackSpinnerMultinode.cs" />
     <Compile Include="Entities\CustomCrystalHeart.cs" />
+    <Compile Include="Entities\DreamBlockCombiner.cs" />
     <Compile Include="Entities\DustTrackSpinnerMultinode.cs" />
     <Compile Include="Entities\LinkedZipMover.cs" />
     <Compile Include="Entities\MultipleNodeTrackSpinner.cs" />
