@@ -12,16 +12,18 @@
 			Are you absolutely sure about this {+MADELINE}?
 
 		[MADELINE_PHONE left distracted]
-			I need to know where she went. I can't go on like this.
+			I need to know where she went.
+			I can't go on like this.
 
 		[THEO right serious]
 			I know {+PART_OF_YOU} is important to you. I get you.
-			But also consider that most people do not have talking goth doppelgangers.
-			You have been away from the mountain for a while now.
-			It is only natural that the effects are wearing off.
+			But also consider that most people do not{n}have talking {+ST_BAD}goth doppelgängers{+END_BAD}.
+			You have been away from{n}the {+MOUNTAIN} for a while now.
+			It is only natural that the{n}effects are wearing off.
 
 		[MADELINE_PHONE left sad]
-			I need her. With {+GRANNY} gone, she is the only one who can really help me.
+			I need her.
+			With {+GRANNY} gone, she is the{n}only one who can really help me.
 
 		[THEO right serious]
 			I may not be {+PART_OF_YOU} but we can talk through this.
@@ -30,7 +32,7 @@
 		[MADELINE_PHONE left angry]
 			You do not understand! A literal {+PART_OF_ME} is gone.
 
-		[MADELINE_PHONE left sad]
+		[MADELINE_PHONE left distracted]
 			I am incomplete. {0.7}Broken.
 
 		[THEO right serious]
@@ -40,3 +42,80 @@
 		[MADELINE_PHONE left distracted]
 			I need to do this. I will call you later.
 			Goodbye.
+
+	KaydenFox_FactoryMod_1_Factory_A_OnTheWay=
+		[MADELINE left distracted]
+			The darkness is getting thicker...
+
+	KaydenFox_FactoryMod_1_Factory_A_Entrance=
+		[MADELINE left distracted]
+			This must be the place all this smoke is coming from.
+			{trigger 0 Madeline turns around, waits then goes to the left}
+			It is covering the {+MOUNTAIN} side.
+			{trigger 1 Madeline turns back towards the entrance}
+
+		[MADELINE left sad]
+			If I shut it down, maybe things will go back to normal.
+
+	KaydenFox_FactoryMod_1_Factory_A_MidWay=
+		{anchor bottom}
+		[MADELINE left sadder]
+			This place is so big.
+			Can I really do this alone?
+
+			{trigger 0 Madeline walks forward, camera pans down}
+
+		[MADELINE left sadder]
+			This would be so much{n}easier if she was here...
+
+			{trigger 1 Camera pans back}
+
+	KaydenFox_FactoryMod_1_Factory_A_MachineHeart=
+		{anchor bottom}
+		[MADELINE left surprised]
+			This must be it!
+
+		[MADELINE left upset]
+			If I get rid of its core, the smoke will go away!
+
+		[MADELINE left determined]
+			And when it does, the {+MOUNTAIN} will breathe again!
+
+		[MADELINE left sadder]
+			I just hope this brings her back...
+
+		[MADELINE left sad]
+			I got this far, no stopping me now!
+
+	KaydenFox_FactoryMod_1_Factory_A_Ending=
+		{anchor bottom}
+		[MADELINE left surprised]
+			I did it!
+
+		[MADELINE left peaceful]
+			I did it.
+
+		[MADELINE left sad]
+			I did on my own.
+			But I did it!
+			{trigger 0 Madeline stands up, walks left}
+
+		[MADELINE left distracted]
+			I could do it alone.
+
+		[MADELINE left sad]
+			It was hard, but I could do it.
+			Maybe. {0.5} Maybe I can do this.
+			If I could do all this alone{n}then maybe I can move on.
+
+		[MADELINE left distracted]
+			She could not have disappeared forever.
+			{trigger 1 Wait a bit}
+		
+		[MADELINE left surprised]
+			{+THEO}!
+			He must be so worried about me!
+
+		[MADELINE left distracted]
+			I need to find a pay phone somewhere.
+			{trigger 2 walk right, roll credits}
