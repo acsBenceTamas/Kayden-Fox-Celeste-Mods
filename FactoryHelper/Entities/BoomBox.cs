@@ -256,6 +256,7 @@ namespace FactoryHelper.Entities
             Audio.Play("event:/new_content/game/10_farewell/puffer_splode", Position);
             _boomSprite.Play("boom");
             _boomSprite.Visible = true;
+            (Scene as Level).Displacement.AddBurst(Center, 0.35f, 4f, 64f, 0.5f);
             Player player = Scene.Tracker.GetEntity<Player>();
             Collidable = false;
             if (player != null && player.CollideCheck(_boomCollider) && !Scene.CollideCheck<Solid>(player.Center, Center))

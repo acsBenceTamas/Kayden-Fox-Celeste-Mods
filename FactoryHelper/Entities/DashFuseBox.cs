@@ -165,6 +165,7 @@ namespace FactoryHelper.Entities
                 _doorSprite.Active = true;
                 _doorSprite.Visible = true;
                 _mainSprite.Play("chaos", true, true);
+                (Scene as Level).Displacement.AddBurst(Center, 0.35f, 8f, 32f, 0.25f);
                 SetBustedCollider();
 
                 Audio.Play("event:/new_content/game/10_farewell/fusebox_hit_2", Position);

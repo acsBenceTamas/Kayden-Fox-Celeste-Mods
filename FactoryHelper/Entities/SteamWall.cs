@@ -35,8 +35,9 @@ namespace FactoryHelper.Entities
         };
 
         public bool Halted = false;
+        public float Speed = 22f;
+        public float Fade = 1f;
 
-        private const float _speed = 22f;
         private float _delay;
         private bool _canMoveNormally = true;
         private Tween _tween;
@@ -135,7 +136,7 @@ namespace FactoryHelper.Entities
             while (true)
             {
                 yield return 0.3f / Height + Calc.Random.NextFloat(0.01f / Height);
-                SteamPoof.Create(Scene, new Vector2(Right - 8, _steamPoofPoints[index]), new Vector2(16, 6), 1);
+                SteamPoof.Create(Scene, new Vector2(Right - 8, _steamPoofPoints[index]), new Vector2(16, 6), 1, Fade);
                 index = (index + 1) % _steamPoofPoints.Length;
             }
         }
@@ -157,7 +158,7 @@ namespace FactoryHelper.Entities
             
             if (_canMoveNormally && !Halted)
             {
-                Collider.Width += _speed * Engine.DeltaTime;
+                Collider.Width += Speed * Engine.DeltaTime;
                 _loopSfx.Param("rising", 1f);
             }
             foreach(SteamCollider steamCollider in Scene.Tracker.GetComponents<SteamCollider>())
@@ -180,19 +181,32 @@ namespace FactoryHelper.Entities
         public override void Render()
         {
             base.Render();
-            Level level = (Scene as Level);
-            float width = Right - 32 - level.Camera.Left;
             DrawGradient(Left, (int)Right - 32, new Color(1f, 1f, 1f) * 1f, new Color(1f, 1f, 1f) * 0.8f);
             DrawGradient((int)Right - 32, (int)Right + 16, new Color(1f, 1f, 1f) * 0.8f, new Color(1f, 1f, 1f) * 0.0f);
         }
 
         public void DrawGradient(float from, float to, Color colorFrom, Color colorTo)
         {
+            Level level = Scene as Level;
+            float gradientFade = 1;
+            if (level.Camera.Top < level.Bounds.Top)
+            {
+                gradientFade = Math.Abs(level.Camera.Top - level.Bounds.Top) / Math.Abs(level.Camera.Bottom - level.Camera.Top);
+            }
+            else if (level.Camera.Bottom > level.Bounds.Bottom)
+            {
+                gradientFade = Math.Abs(level.Camera.Bottom - level.Bounds.Bottom) / Math.Abs(level.Camera.Bottom - level.Camera.Top);
+            }
+            if (gradientFade < 0.01f)
+            {
+                RemoveSelf();
+            }
+
             for (float x = from; x < to; x ++)
             {
                 float percent = (x - from) / (to - from);
-                Color columnColor = Color.Lerp(colorFrom, colorTo, Ease.CubeIn(percent));
-                Draw.Line(x, Top, x, Bottom, columnColor);
+                Color columnColor = Color.Lerp(colorFrom, colorTo, Ease.CubeIn(percent)) * gradientFade * Fade;
+                Draw.Line(x, level.Camera.Top, x, level.Camera.Bottom, columnColor);
             }
         }
     }

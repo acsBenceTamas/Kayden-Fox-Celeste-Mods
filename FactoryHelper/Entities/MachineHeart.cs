@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace FactoryHelper.Entities
 {
+    [Tracked(false)]
     [CustomEntity("FactoryHelper/MachineHeart")]
     class MachineHeart : Solid
     {
@@ -93,10 +94,18 @@ namespace FactoryHelper.Entities
                 }
                 _backSprite.Play("break");
                 Audio.Play("event:/new_content/game/10_farewell/fusebox_hit_2", Position);
+                Add(new Coroutine(CrystalBreakSound()));
                 _bloom.Visible = false;
             }
             _stage++;
             return DashCollisionResults.Rebound;
+        }
+
+        private IEnumerator CrystalBreakSound()
+        {
+            _firstHitSfx.Play("event:/game/02_old_site/sequence_mirror");
+            yield return 2f;
+            _firstHitSfx.Stop();
         }
 
         public override void Update()
@@ -111,7 +120,6 @@ namespace FactoryHelper.Entities
             {
                 _stage++;
                 CrystalDebris.Burst(Position, Color.DarkRed, false, 16);
-                Audio.Play("event:/game/06_reflection/fall_spike_smash", Position);
                 Collidable = false;
                 _light.Visible = false;
                 Depth = 8000;
@@ -120,6 +128,7 @@ namespace FactoryHelper.Entities
                 level.Session.SetFlag("Machine_Heart_Destroyed");
                 level.Session.Audio.Music.Event = "event:/music/lvl2/chase";
                 level.Session.Audio.Apply(forceSixteenthNoteHack: false);
+                level.Displacement.AddBurst(Position, 1f, 8f, 256f, 0.5f);
                 foreach (DashBlock dashBlock in level.Tracker.GetEntities<DashBlock>())
                 {
                     dashBlock.Break(dashBlock.CenterLeft, Vector2.UnitX, true);

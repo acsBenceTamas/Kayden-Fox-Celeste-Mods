@@ -12,6 +12,8 @@ namespace FactoryHelper.Cutscenes
 {
     class CS01_FactoryHelper_Intro : CutsceneEntity
     {
+        private SoundSource ringtone;
+
         public CS01_FactoryHelper_Intro()
         {
             Depth = Depths.Top*2;
@@ -20,13 +22,21 @@ namespace FactoryHelper.Cutscenes
         public override void OnBegin(Level level)
         {
             Add(new Coroutine(Cutscene(level)));
+            Add(ringtone = new SoundSource());
+            ringtone.Position = level.Tracker.GetEntity<Player>().Position;
         }
 
         private IEnumerator Cutscene(Level level)
         {
-            yield return 2f;
+            ringtone.Play("event:/game/02_old_site/sequence_phone_ring_loop");
+            yield return 4f;
+            ringtone.Param("end", 1f);
+            Audio.Play("event:/game/02_old_site/sequence_phone_pickup");
+            yield return 1f;
             yield return Textbox.Say("KaydenFox_FactoryMod_1_Factory_A_Intro");
-            yield return 2f;
+            yield return 0.5f;
+            Audio.Play("event:/game/02_old_site/sequence_phone_pickup");
+            yield return 1f;
             EndCutscene(level);
         }
 

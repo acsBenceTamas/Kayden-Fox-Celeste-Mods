@@ -12,7 +12,7 @@ namespace FactoryHelper.Cutscenes
 {
     class CS01_FactoryHelper_BreakFirstFuse : CutsceneEntity
     {
-        Player _player;
+        private readonly Player _player;
 
         public CS01_FactoryHelper_BreakFirstFuse (Player player)
         {
@@ -38,7 +38,9 @@ namespace FactoryHelper.Cutscenes
             yield return 0.5f;
             yield return PanCameraY(level.Bounds.Top, 0.25f);
             yield return 0.5f;
+            _player.DummyAutoAnimate = true;
             yield return PanCameraY(_player.CameraTarget.Y, 0.6f);
+            yield return null;
             EndCutscene(level);
         }
 
