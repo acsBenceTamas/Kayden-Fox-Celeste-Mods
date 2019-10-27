@@ -27,5 +27,14 @@ namespace FactoryHelper.Triggers
                 (item as ThrowBox).StopBeingSpecial();
             }
         }
+
+        public override void OnEnter(Player player)
+        {
+            base.OnEnter(player);
+            if (player.Holding.Entity is ThrowBox)
+            {
+                (player.Holding.Entity as ThrowBox).StopBeingSpecial();
+            }
+        }
     }
 }
