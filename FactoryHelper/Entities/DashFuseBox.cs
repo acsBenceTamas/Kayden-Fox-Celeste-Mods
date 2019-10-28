@@ -154,12 +154,12 @@ namespace FactoryHelper.Entities
 
         public DashCollisionResults OnDashed(Player player, Vector2 direction)
         {
-            if (_startCutscene)
-            {
-                Scene.Add(new CS01_FactoryHelper_BreakFirstFuse(player));
-            }
             if (!_activated && (direction == _pressDirection))
             {
+                if (_startCutscene)
+                {
+                    Scene.Add(new CS01_FactoryHelper_BreakFirstFuse(player));
+                }
                 _activated = true;
 
                 _doorSprite.Active = true;

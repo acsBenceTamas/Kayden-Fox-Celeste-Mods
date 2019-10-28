@@ -124,6 +124,14 @@ namespace FactoryHelper.Entities
             if (Visible && Activator.IsOn)
             {
                 Draw.Rect(Collider, color);
+
+                Player player = Scene.Tracker.GetEntity<Player>();
+                if (player != null)
+                {
+                    float left = Math.Min(Math.Max(Left, player.Left - 2f), Right);
+                    float right = Math.Max(Math.Min(Right, player.Right + 2f), left);
+                    Draw.Rect(left, Top, right - left, Height, Color.Red * 0.3f);
+                }
             }
             base.Render();
         }

@@ -38,6 +38,7 @@ namespace FactoryHelper.Entities
         private bool _tutorial;
         private BirdTutorialGui _tutorialCarry;
         private BirdTutorialGui _tutorialPutDown;
+        private bool _isCrucial;
 
         public static ParticleType P_Impact { get; } = new ParticleType
         {
@@ -52,20 +53,20 @@ namespace FactoryHelper.Entities
             LifeMax = 0.8f
         };
 
-        public ThrowBox(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("isMetal", false), data.Bool("tutorial", false), data.Bool("isSpecial", false))
+        public ThrowBox(EntityData data, Vector2 offset) : this(data.Position + offset, data.Bool("isMetal", false), data.Bool("tutorial", false), data.Bool("isSpecial", false), data.Bool("isCrucial", false))
         {
             _levelName = data.Level.Name;
         }
 
-        public ThrowBox(Vector2 position, bool isMetal, bool tutorial = false, bool isSpecial = false) : base(position)
+        public ThrowBox(Vector2 position, bool isMetal, bool tutorial = false, bool isSpecial = false, bool isCrucial = false) : base(position)
         {
-            IgnoreJumpThrus = true;
             Position -= DISPLACEMENT;
             _starterPosition = Position;
             Depth = 100;
             Collider = new Hitbox(8f, 10f, 4f + DISPLACEMENT.X, 6f + DISPLACEMENT.Y);
             _isMetal = isMetal;
             IsSpecial = isSpecial;
+            _isCrucial = isCrucial;
             _tutorial = tutorial; 
             string pathString = isMetal ? "crate_metal" : "crate";
 
@@ -203,6 +204,10 @@ namespace FactoryHelper.Entities
                     {
                         Shatter();
                     }
+                }
+                if (_isCrucial && Bottom > _level.Bounds.Bottom + 4)
+                {
+                    Shatter();
                 }
                 if (Left > _level.Bounds.Right + 8 || Right < _level.Bounds.Left - 8 || Top > _level.Bounds.Bottom + 8 || Bottom < _level.Bounds.Top - 8)
                 {
@@ -492,9 +497,10 @@ namespace FactoryHelper.Entities
                         }
                     }
                 }
-                if (IsSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxPosition != null)
+                Player player;
+                player = Scene.Tracker.GetEntity<Player>();
+                if ((IsSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxPosition != null) || _isCrucial)
                 {
-                    Player player = Scene.Tracker.GetEntity<Player>();
                     if (player != null)
                     {
                         player.Die(-(Position - player.Position).SafeNormalize());

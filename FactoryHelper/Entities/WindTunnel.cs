@@ -4,6 +4,7 @@ using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
+using System.Collections.Generic;
 
 namespace FactoryHelper.Entities
 {
@@ -28,13 +29,13 @@ namespace FactoryHelper.Entities
             public override void OnStay(Player player)
             {
                 base.OnEnter(player);
-                _parent.SetAmbience();
+                //_parent.SetAmbience();
             }
 
             public override void OnLeave(Player player)
             {
                 base.OnLeave(player);
-                _parent.SetAmbience(false);
+                //_parent.SetAmbience(false);
             }
         }
 
@@ -56,13 +57,16 @@ namespace FactoryHelper.Entities
         }
 
         private static readonly float _baseAlpha = 0.7f;
+        private float _windUpTime = 0.5f;
+        private float _windDownTime = 0.5f;
         private static readonly Color[] _colors = new Color[3]
             {
                 Calc.HexToColor("808080"),
                 Calc.HexToColor("545151"),
                 Calc.HexToColor("ada5a5")
             };
-
+        
+        private Dictionary<WindMover, float> _componentPercentages = new Dictionary<WindMover, float>();
         private Vector2 _scale = Vector2.One;
         private float _percent;
         private bool _speedingUp;
@@ -190,7 +194,22 @@ namespace FactoryHelper.Entities
             {
                 if (component.Entity.CollideCheck(this))
                 {
-                    component.Move(_actualWindSpeed * 0.1f * Engine.DeltaTime);
+                    if (_componentPercentages.ContainsKey(component))
+                    {
+                        _componentPercentages[component] = Calc.Approach(_componentPercentages[component], 1f, Engine.DeltaTime / _windUpTime);
+                    }
+                    else
+                    {
+                        _componentPercentages.Add(component, 0f);
+                    }
+                    component.Move(_actualWindSpeed * 0.1f * Engine.DeltaTime * Ease.CubeInOut(_componentPercentages[component]));
+                }
+                else
+                {
+                    if (_componentPercentages.ContainsKey(component))
+                    {
+                        _componentPercentages[component] = Calc.Approach(_componentPercentages[component], 0.0f, Engine.DeltaTime / _windDownTime);
+                    }
                 }
             }
         }

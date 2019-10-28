@@ -300,7 +300,6 @@ namespace FactoryHelper.Entities
 
         public override void Update()
         {
-            base.Update();
             if (Activator.IsOn)
             {
                 HandlePistonMovement();
@@ -321,7 +320,7 @@ namespace FactoryHelper.Entities
             {
                 DisplacePlayerOnTop(_head);
             }
-            if (_direction == Directions.Down || _direction == Directions.Up)
+            if ((_direction == Directions.Down || _direction == Directions.Up) && _body.Components.Get<SolidOnInvinciblePlayer>() == null)
             {
                 DisplacePlayerOnTop(_base);
             }
@@ -329,6 +328,7 @@ namespace FactoryHelper.Entities
             {
                 PlacePlayerOnTop();
             }
+            base.Update();
         }
 
         private void PlacePlayerOnTop()
@@ -461,17 +461,18 @@ namespace FactoryHelper.Entities
             if (element.HasPlayerOnTop())
             {
                 Player player = element.GetPlayerOnTop();
+                Vector2 previousPosition = player.Position;
                 if (player != null)
                 {
                     if (player.Right - element.Left < element.Right - player.Left)
                     {
-                        player.Right = element.Left;
+                        player.MoveH(element.Left - player.Right);
                     }
                     else
                     {
-                        player.Left = element.Right;
+                        player.MoveH(element.Right - player.Left);
                     }
-                    player.Y += 1f;
+                    player.MoveV(1f);
                 }
             }
         }
@@ -482,6 +483,7 @@ namespace FactoryHelper.Entities
             var start = MovingForward ? _startPos : _endPos;
             var end = MovingForward ? _endPos : _startPos;
             _head.MoveTo(Vector2.Lerp(end, start, Ease.SineIn(Percent)));
+            Player player;
             switch (_direction)
             {
                 default:
@@ -490,13 +492,21 @@ namespace FactoryHelper.Entities
                     posDisplacement = new Vector2(8, 4);
                     float heightBefore = _body.Collider.Height;
                     float heightAfter = Math.Abs(_base.Y - _head.Y) - 8;
+
+                    bool hadPlayerOnTop = _body.HasPlayerOnTop();
                     
                     _body.Y = Math.Min(_head.Y, _base.Y) + 8;
                     _body.Collider.Height = heightAfter;
 
+
+                    if ((player = _body.CollideFirst<Player>()) != null && hadPlayerOnTop && Components.Get<SolidOnInvinciblePlayer>() != null)
+                    {
+                        player.MoveV(_body.Top - player.Bottom);
+                    }
+
                     if (_body.HasPlayerClimbing())
                     {
-                        Player player = _body.GetPlayerClimbing();
+                        player = _body.GetPlayerClimbing();
                         if (player != null)
                         {
                             float newY = _base.Y + _grabPositionModifier + (player.Y - (_base.Y + _grabPositionModifier)) * heightAfter / heightBefore;
@@ -521,7 +531,7 @@ namespace FactoryHelper.Entities
 
                     if (_body.HasPlayerOnTop())
                     {
-                        Player player = _body.GetPlayerOnTop();
+                        player = _body.GetPlayerOnTop();
                         if (player != null)
                         {
                             float newX = _base.X + _grabPositionModifier + (player.X - (_base.X + _grabPositionModifier)) * widthAfter / widthBefore;
@@ -572,10 +582,6 @@ namespace FactoryHelper.Entities
         private class PistonPart : Solid
         {
             public Image Image;
-
-            public PistonPart(Vector2 position, float width, float height, bool safe) : base(position, width, height, safe)
-            {
-            }
 
             public PistonPart(Vector2 position, float width, float height, string sprite) : base(position, width, height, false)
             {

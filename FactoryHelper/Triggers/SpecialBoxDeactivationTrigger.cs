@@ -31,9 +31,10 @@ namespace FactoryHelper.Triggers
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);
-            if (player.Holding.Entity is ThrowBox)
+            Entity heldItem = player.Holding?.Entity;
+            if (heldItem != null || heldItem is ThrowBox)
             {
-                (player.Holding.Entity as ThrowBox).StopBeingSpecial();
+                (heldItem as ThrowBox).StopBeingSpecial();
             }
         }
     }

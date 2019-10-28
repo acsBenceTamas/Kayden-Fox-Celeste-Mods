@@ -46,6 +46,8 @@ namespace FactoryHelper.Entities
         private float _particleEmittionPeriod;
         private float _baseParticleEmittionPeriod;
         private float _particleEmittionPeriodVariance;
+        private float _transitionFade = 1f;
+        private TransitionListener _transitionListener;
 
         public SteamWall(float startPosition)
         {
@@ -57,6 +59,8 @@ namespace FactoryHelper.Entities
             Add(new Coroutine(SteamPoofSpawnSequence()));
             Add(new Coroutine(ThrowDebrisSequence()));
             Add(new DisplacementRenderHook(RenderDisplacement));
+            Add(_transitionListener = new TransitionListener());
+            _transitionListener.OnOut += FadeOutOnTransition;
         }
 
         internal void AdvanceToCamera()
@@ -185,27 +189,19 @@ namespace FactoryHelper.Entities
             DrawGradient((int)Right - 32, (int)Right + 16, new Color(1f, 1f, 1f) * 0.8f, new Color(1f, 1f, 1f) * 0.0f);
         }
 
+        private void FadeOutOnTransition(float transition)
+        {
+            Console.WriteLine(transition);
+            _transitionFade = 1f - transition;
+        }
+
         public void DrawGradient(float from, float to, Color colorFrom, Color colorTo)
         {
             Level level = Scene as Level;
-            float gradientFade = 1;
-            if (level.Camera.Top < level.Bounds.Top)
-            {
-                gradientFade = Math.Abs(level.Camera.Top - level.Bounds.Top) / Math.Abs(level.Camera.Bottom - level.Camera.Top);
-            }
-            else if (level.Camera.Bottom > level.Bounds.Bottom)
-            {
-                gradientFade = Math.Abs(level.Camera.Bottom - level.Bounds.Bottom) / Math.Abs(level.Camera.Bottom - level.Camera.Top);
-            }
-            if (gradientFade < 0.01f)
-            {
-                RemoveSelf();
-            }
-
             for (float x = from; x < to; x ++)
             {
                 float percent = (x - from) / (to - from);
-                Color columnColor = Color.Lerp(colorFrom, colorTo, Ease.CubeIn(percent)) * gradientFade * Fade;
+                Color columnColor = Color.Lerp(colorFrom, colorTo, Ease.CubeIn(percent)) * _transitionFade * Fade;
                 Draw.Line(x, level.Camera.Top, x, level.Camera.Bottom, columnColor);
             }
         }
