@@ -43,10 +43,13 @@ namespace FactoryHelper.Cutscenes
 
         private IEnumerator Cutscene(Level level)
         {
+            _player.StateMachine.State = 11;
+            _player.StateMachine.Locked = true;
             _player.Drop();
             yield return null;
-            _player.StateMachine.State = 11;
-            Add(_running = new Coroutine(_player.DummyRunTo(level.Bounds.Left + 500)));
+            Add(_running = new Coroutine(_player.DummyRunTo(level.Bounds.Left + 500, true)));
+            yield return null;
+            _player.DummyAutoAnimate = false;
             yield return AwaitStop(level);
             _player.StateMachine.State = 11;
             _player.DummyAutoAnimate = false;

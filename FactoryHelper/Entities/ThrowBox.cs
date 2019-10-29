@@ -39,6 +39,7 @@ namespace FactoryHelper.Entities
         private BirdTutorialGui _tutorialCarry;
         private BirdTutorialGui _tutorialPutDown;
         private bool _isCrucial;
+        private TransitionListener _transitionListener;
 
         public static ParticleType P_Impact { get; } = new ParticleType
         {
@@ -86,6 +87,9 @@ namespace FactoryHelper.Entities
             Hold.OnHitSpring = HitSpring;
             Hold.OnHitSpinner = OnHitSpinner;
             Hold.SpeedGetter = (() => Speed);
+
+            Add(_transitionListener = new TransitionListener());
+            _transitionListener.OnOutBegin = () => _isCrucial = false;
 
             Add(ConveyorMover = new ConveyorMover());
             ConveyorMover.OnMove = MoveOnConveyor;

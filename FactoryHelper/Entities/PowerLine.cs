@@ -23,18 +23,20 @@ namespace FactoryHelper.Entities
         }
 
         private Node[] _cornerPoints;
-        private List<Sprite> _sprites = new List<Sprite>();
+        private List<Image> _images = new List<Image>();
+        private Color _defaultColor;
 
         public PowerLine(EntityData entityData, Vector2 offset) : 
             this(entityData.Position,
                  offset,
                  entityData.Nodes,
                  entityData.Attr("activationId", ""),
+                 entityData.Attr("colorCode", "00dd00"),
                  entityData.Bool("startActive", false))
         {
         }
 
-        public PowerLine(Vector2 position, Vector2 offset, Vector2[] nodes, string activationId, bool startActive)
+        public PowerLine(Vector2 position, Vector2 offset, Vector2[] nodes, string activationId, string colorCode, bool startActive)
         {
             Position = offset;
             Add(Activator = new FactoryActivator());
@@ -44,6 +46,8 @@ namespace FactoryHelper.Entities
             Activator.OnTurnOn = PowerUp;
             Activator.OnStartOff = PowerDown;
             Activator.OnTurnOff = PowerDown;
+
+            _defaultColor = Calc.HexToColor(colorCode);
 
             _cornerPoints = new Node[nodes.Length + 1];
             _cornerPoints[0] = new Node(position);
@@ -73,17 +77,17 @@ namespace FactoryHelper.Entities
 
         private void PowerUp()
         {
-            foreach (var sprite in _sprites)
+            foreach (var sprite in _images)
             {
-                sprite.SetAnimationFrame(0);
+                sprite.Color = _defaultColor * 0.5f;
             }
         }
 
         private void PowerDown()
         {
-            foreach (var sprite in _sprites)
+            foreach (var sprite in _images)
             {
-                sprite.SetAnimationFrame(1);
+                sprite.Color = _defaultColor * 0.1f;
             }
         }
 
@@ -97,8 +101,10 @@ namespace FactoryHelper.Entities
                 if (node.Rendered)
                 {
                     type = GetTypeString(node);
-                    Sprite sprite = AddSpriteWithType(type);
-                    sprite.Position = node.Position;
+                    Image baseImage = AddSpriteWithType(type);
+                    baseImage.Position = node.Position;
+                    Image lightImage = AddSpriteWithType(type, true);
+                    lightImage.Position = node.Position;
                 }
                 if (node.Next != null)
                 {
@@ -133,8 +139,10 @@ namespace FactoryHelper.Entities
 
                     for (int i = 0; i < stepCount; i++)
                     {
-                        Sprite sprite = AddSpriteWithType(type);
-                        sprite.Position = node.Position + step * (i + 1);
+                        Image baseImage = AddSpriteWithType(type);
+                        baseImage.Position = node.Position + step * (i + 1);
+                        Image lightImage = AddSpriteWithType(type, true);
+                        lightImage.Position = node.Position + step * (i + 1);
                     }
 
                     node = node.Next;
@@ -146,20 +154,15 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private Sprite AddSpriteWithType(string type)
+        private Image AddSpriteWithType(string type, bool isLight = false)
         {
-            string path = $"/powerLine_{type}";
-            Sprite sprite = new Sprite(GFX.Game, "objects/FactoryHelper/powerLine");
-            sprite.Add("frames", path);
-            sprite.Play("frames");
-            sprite.Active = false;
-            if (Activator.StartOn)
+            Image image = new Image(GFX.Game[$"objects/FactoryHelper/powerLine/powerLine{(isLight ? "Light" : "")}_{type}"]);
+            if (isLight)
             {
-                sprite.SetAnimationFrame(1);
+                _images.Add(image);
             }
-            _sprites.Add(sprite);
-            Add(sprite);
-            return sprite;
+            Add(image);
+            return image;
         }
 
         private void CheckConnections()

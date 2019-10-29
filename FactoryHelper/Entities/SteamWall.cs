@@ -191,7 +191,6 @@ namespace FactoryHelper.Entities
 
         private void FadeOutOnTransition(float transition)
         {
-            Console.WriteLine(transition);
             _transitionFade = 1f - transition;
         }
 
