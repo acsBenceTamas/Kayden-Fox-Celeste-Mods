@@ -58,7 +58,7 @@ namespace FactoryHelper.Entities
 
         private static readonly float _baseAlpha = 0.7f;
         private float _windUpTime = 0.5f;
-        private float _windDownTime = 0.5f;
+        private float _windDownTime = 0.2f;
         private static readonly Color[] _colors = new Color[3]
             {
                 Calc.HexToColor("808080"),
@@ -180,7 +180,6 @@ namespace FactoryHelper.Entities
 
         public override void Update()
         {
-            base.Update();
             if (_speedingUp && (_percent < 1f))
             {
                 _percent = Calc.Approach(_percent, 1f, Engine.DeltaTime / 1f);
@@ -202,16 +201,27 @@ namespace FactoryHelper.Entities
                     {
                         _componentPercentages.Add(component, 0f);
                     }
-                    component.Move(_actualWindSpeed * 0.1f * Engine.DeltaTime * Ease.CubeInOut(_componentPercentages[component]));
                 }
                 else
                 {
                     if (_componentPercentages.ContainsKey(component))
                     {
                         _componentPercentages[component] = Calc.Approach(_componentPercentages[component], 0.0f, Engine.DeltaTime / _windDownTime);
+                        if (_componentPercentages[component] == 0f)
+                        {
+                            _componentPercentages.Remove(component);
+                        }
                     }
                 }
             }
+            foreach (WindMover component in _componentPercentages.Keys)
+            {
+                if (component != null && component.Entity != null && component.Entity.Scene != null)
+                {
+                    component.Move(_actualWindSpeed * 0.1f * Engine.DeltaTime * Ease.CubeInOut(_componentPercentages[component]));
+                }
+            }
+            base.Update();
         }
 
         private void SetAmbience(bool turnOn = true)
