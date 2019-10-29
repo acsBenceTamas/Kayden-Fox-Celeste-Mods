@@ -2,7 +2,7 @@ module FactoryHelperPowerLine
 
 using ..Ahorn, Maple
 
-@mapdef Entity "FactoryHelper/PowerLine" PowerLine(x::Integer, y::Integer, activationId::String="", startActive::Bool=false, initialDelay::Real=0.0)
+@mapdef Entity "FactoryHelper/PowerLine" PowerLine(x::Integer, y::Integer, activationId::String="", colorCode::String="00dd00", startActive::Bool=false, initialDelay::Real=0.0)
 
 const placements = Ahorn.PlacementDict(
     "PowerLine (FactoryHelper)" => Ahorn.EntityPlacement(
@@ -15,7 +15,7 @@ const placements = Ahorn.PlacementDict(
     )
 )
 
-sprite = "objects/FactoryHelper/powerLine/powerLine_c0"
+sprite = "objects/FactoryHelper/powerLine/powerLine_c"
 color = (0.7, 0.7, 0.7, 1.0)
 activeColor = (0.2, 0.7, 0.2, 1.0)
 
