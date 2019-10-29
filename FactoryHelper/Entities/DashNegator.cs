@@ -126,7 +126,7 @@ namespace FactoryHelper.Entities
                 Draw.Rect(Collider, color);
 
                 Player player = Scene.Tracker.GetEntity<Player>();
-                if (player != null)
+                if (player != null && !(player.Top - 4f > Bottom || player.Bottom < Top))
                 {
                     float left = Math.Min(Math.Max(Left, player.Left - 2f), Right);
                     float right = Math.Max(Math.Min(Right, player.Right + 2f), left);
