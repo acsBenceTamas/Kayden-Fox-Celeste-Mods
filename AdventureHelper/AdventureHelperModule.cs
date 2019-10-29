@@ -17,7 +17,7 @@ namespace Celeste.Mod.AdventureHelper
         public override Type SettingsType => typeof(AdventureHelperSettings);
         public static AdventureHelperSettings Settings => (AdventureHelperSettings)Instance._Settings;
         public override Type SessionType => typeof(AdventureHelperSession);
-        public static AdventureHelperSession Session => (AdventureHelperSession)Instance._Settings;
+        public static AdventureHelperSession Session => (AdventureHelperSession)Instance._Session;
 
         public override void Load()
         {
