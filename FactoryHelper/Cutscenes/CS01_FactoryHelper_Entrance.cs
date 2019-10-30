@@ -16,6 +16,7 @@ namespace FactoryHelper.Cutscenes
 
         public override void OnBegin(Level level)
         {
+            level.Remove(level.Tracker.GetEntity<MiniTextbox>().);
             Add(new Coroutine(Cutscene(level)));
         }
 

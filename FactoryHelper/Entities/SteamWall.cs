@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Monocle;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace FactoryHelper.Entities
 {
@@ -48,6 +49,7 @@ namespace FactoryHelper.Entities
         private float _particleEmittionPeriodVariance;
         private float _transitionFade = 1f;
         private TransitionListener _transitionListener;
+        private List<SteamPoof> _steamPoofs = new List<SteamPoof>();
 
         public SteamWall(float startPosition)
         {
@@ -63,7 +65,7 @@ namespace FactoryHelper.Entities
             _transitionListener.OnOut += FadeOutOnTransition;
         }
 
-        internal void AdvanceToCamera()
+        public void AdvanceToCamera()
         {
             Level level = Scene as Level;
             Collider.Width = Math.Max(level.Camera.Left - level.Bounds.Left, Collider.Width);
@@ -87,14 +89,14 @@ namespace FactoryHelper.Entities
                     _tween = Tween.Set(this, Tween.TweenMode.Oneshot, 0.4f, Ease.CubeOut, 
                         delegate (Tween t)
                         {
-                            Collider.Width = MathHelper.Lerp(from, to, t.Eased);
+                            AdvanceWall(MathHelper.Lerp(from, to, t.Eased));
                         }, 
                         delegate (Tween t) 
                         {
                             _canMoveNormally = true;
                         });
                     _tween.Start();
-                    _delay = 0.5f;
+                    _delay = 0.3f;
                     Audio.Play("event:/game/general/assist_screenbottom", player.Position);
                 }
             }
@@ -129,6 +131,15 @@ namespace FactoryHelper.Entities
             SetParticleEmittionPeriod();
         }
 
+        public override void Removed(Scene scene)
+        {
+            foreach (SteamPoof poof in _steamPoofs)
+            {
+                scene.Remove(poof);
+            }
+            base.Removed(scene);
+        }
+
         private void SetParticleEmittionPeriod()
         {
             _particleEmittionPeriod = Math.Max(_baseParticleEmittionPeriod - _particleEmittionPeriodVariance / 2 + Calc.Random.NextFloat(_particleEmittionPeriodVariance), 0.05f);
@@ -140,9 +151,14 @@ namespace FactoryHelper.Entities
             while (true)
             {
                 yield return 0.3f / Height + Calc.Random.NextFloat(0.01f / Height);
-                SteamPoof.Create(Scene, new Vector2(Right - 8, _steamPoofPoints[index]), new Vector2(16, 6), 1, Fade);
+                _steamPoofs.AddRange(SteamPoof.Create(Scene, new Vector2(Right - 8, _steamPoofPoints[index]), new Vector2(16, 6), 1, Fade, RemovePoof));
                 index = (index + 1) % _steamPoofPoints.Length;
             }
+        }
+
+        private void RemovePoof(SteamPoof poof)
+        {
+            _steamPoofs.Remove(poof);
         }
 
         private IEnumerator ThrowDebrisSequence()
@@ -162,7 +178,7 @@ namespace FactoryHelper.Entities
             
             if (_canMoveNormally && !Halted)
             {
-                Collider.Width += Speed * Engine.DeltaTime;
+                AdvanceWall(Collider.Width + Speed * Engine.DeltaTime);
                 _loopSfx.Param("rising", 1f);
             }
             foreach(SteamCollider steamCollider in Scene.Tracker.GetComponents<SteamCollider>())
@@ -173,6 +189,17 @@ namespace FactoryHelper.Entities
                 }
             }
             _loopSfx.Position.X = Width;
+        }
+
+        private void AdvanceWall(float to)
+        {
+
+            float widthBefore = Collider.Width;
+            Collider.Width = to;
+            foreach (SteamPoof poof in _steamPoofs)
+            {
+                poof.Position.X += (Collider.Width - widthBefore);
+            }
         }
 
         private void ThrowDebris()

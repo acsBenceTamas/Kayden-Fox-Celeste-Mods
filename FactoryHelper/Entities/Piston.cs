@@ -30,6 +30,23 @@ namespace FactoryHelper.Entities
 
         public static ParticleType P_WorkSteam = ParticleTypes.Steam;
 
+        public static ParticleType P_HeatSteam = new ParticleType(ParticleTypes.Steam) { Color = Calc.HexToColor("592e2e") };
+
+        public static ParticleType P_Sparks = new ParticleType
+        {
+            Size = 1f,
+            Color = Calc.HexToColor("ffd342"),
+            Color2 = Calc.HexToColor("fc7521"),
+            ColorMode = ParticleType.ColorModes.Blink,
+            FadeMode = ParticleType.FadeModes.Late,
+            SpeedMin = 5f,
+            SpeedMax = 30f,
+            Acceleration = Vector2.UnitY * 10f,
+            DirectionRange = (float)Math.PI / 2f,
+            LifeMin = 0.2f,
+            LifeMax = 0.4f
+        };
+
         public FactoryActivator Activator { get; }
 
         public float MoveTime { get; } = 0.2f;
@@ -174,6 +191,7 @@ namespace FactoryHelper.Entities
             Activator.ActivationId = activationId == string.Empty ? null : activationId;
             Activator.OnStartOn = OnStartOn;
             Activator.OnStartOff = OnStartOff;
+            
 
             _direction = direction;
             
@@ -198,8 +216,8 @@ namespace FactoryHelper.Entities
 
                 length = Math.Max(Math.Abs(_basePos.Y - _endPos.Y), Math.Abs(_basePos.Y - _startPos.Y));
 
-                _base = new PistonPart(_basePos + new Vector2(2, 0), 12, 8, "objects/FactoryHelper/piston/base00");
-                _head = new PistonPart(_startPos, 16, 8, "objects/FactoryHelper/piston/head00");
+                _base = new PistonPart(_basePos + new Vector2(2, 0), 12, 8, $"objects/FactoryHelper/piston/base00");
+                _head = new PistonPart(_startPos, 16, 8, $"objects/FactoryHelper/piston/head00");
                 _body = new Solid(new Vector2(_basePos.X + 3, Math.Min(_startPos.Y, _basePos.Y) + 8), 10, 0, false);
             }
             else if (_direction == Directions.Left || _direction == Directions.Right)
@@ -220,19 +238,13 @@ namespace FactoryHelper.Entities
 
                 length = Math.Max(Math.Abs(_basePos.X - _endPos.X), Math.Abs(_basePos.X - _startPos.X));
 
-                _base = new PistonPart(_basePos + new Vector2(0, 2), 8, 12, "objects/FactoryHelper/piston/base00");
-                _head = new PistonPart(_startPos, 8, 16, "objects/FactoryHelper/piston/head00");
+                _base = new PistonPart(_basePos + new Vector2(0, 2), 8, 12, $"objects/FactoryHelper/piston/base00");
+                _head = new PistonPart(_startPos, 8, 16, $"objects/FactoryHelper/piston/head00");
                 _body = new Solid(new Vector2(Math.Min(_startPos.X, _basePos.X) + 8, _basePos.Y + 3), Math.Abs(_base.X - _head.X) - 8, 10, false);
             }
 
             _base.Image.Rotation += _rotationModifier;
             _head.Image.Rotation += _rotationModifier;
-
-            if (Heated)
-            {
-                _base.Image.Color = new Color(1.0f, 0.8f, 0.8f);
-                _head.Image.Color = new Color(1.0f, 0.8f, 0.8f);
-            }
 
             _bodyPartCount = (int)Math.Ceiling(length / 8);
             _bodyImages = new Image[_bodyPartCount];
@@ -248,7 +260,7 @@ namespace FactoryHelper.Entities
                 {
                     bodyPosition = new Vector2(i * (_basePos.X - (_head.X + _headPositionModifier)) / (_bodyPartCount) + _bodyPositionModifier, -3);
                 }
-                string bodyImage = $"objects/FactoryHelper/piston/body0{_rnd.Next(_bodyVariantCount)}";
+                string bodyImage = $"objects/FactoryHelper/piston/body{(Heated ? "_h" : "")}0{_rnd.Next(_bodyVariantCount)}";
 
                 _body.Add(_bodyImages[i] = new Image(GFX.Game[bodyImage])
                 {
@@ -257,10 +269,6 @@ namespace FactoryHelper.Entities
                 _bodyImages[i].CenterOrigin();
                 _bodyImages[i].Rotation += _rotationModifier;
                 _bodyImages[i].Position = _direction == Directions.Down || _direction == Directions.Up ? new Vector2(8, 4) : new Vector2(4, 8);
-                if (Heated)
-                {
-                    _bodyImages[i].Color = new Color(1.0f, 0.5f, 0.5f);
-                }
             }
 
             _base.Depth = -8010;
@@ -307,6 +315,10 @@ namespace FactoryHelper.Entities
                 {
                     EmitSteamAtBase();
                 }
+                if (Heated && Scene.OnInterval(_steamReleaseInterval/2))
+                {
+                    EmitSteamOnBody();
+                }
             }
             else if (_sfx.Playing)
             {
@@ -329,6 +341,12 @@ namespace FactoryHelper.Entities
                 PlacePlayerOnTop();
             }
             base.Update();
+        }
+
+        private void EmitSteamOnBody()
+        {
+            int count = (int)Math.Floor(_body.Width * _body.Height / 128f);
+            SceneAs<Level>().ParticlesFG.Emit(P_WorkSteam, count, _body.Center, new Vector2(_body.Width, _body.Height), direction: Calc.Up);
         }
 
         private void PlacePlayerOnTop()
@@ -420,8 +438,43 @@ namespace FactoryHelper.Entities
                 PauseTimer = PauseTime;
                 Percent = 0f;
                 MovingForward = !MovingForward;
+                TryHitSolid();
             }
             UpdatePosition();
+        }
+
+        private void TryHitSolid()
+        {
+            if (!_head.CollideCheck<CrystalStaticSpinner>() && !_head.CollideCheck<KillerDebris>())
+            {
+                switch (_direction)
+                {
+                    case Directions.Up:
+                        if (_head.CollideCheck<Solid>(_head.Position - Vector2.UnitY))
+                        {
+                            SceneAs<Level>().ParticlesFG.Emit(P_Sparks, 6, _head.TopCenter, Vector2.UnitX * 8f, direction: Calc.Up);
+                        }
+                        break;
+                    case Directions.Down:
+                        if (_head.CollideCheck<Solid>(_head.Position + Vector2.UnitY))
+                        {
+                            SceneAs<Level>().ParticlesFG.Emit(P_Sparks, 6, _head.BottomCenter, Vector2.UnitX * 8f, direction: Calc.Down);
+                        }
+                        break;
+                    case Directions.Left:
+                        if (_head.CollideCheck<Solid>(_head.Position - Vector2.UnitX))
+                        {
+                            SceneAs<Level>().ParticlesFG.Emit(P_Sparks, 6, _head.CenterLeft, Vector2.UnitY * 8f, direction: Calc.Left);
+                        }
+                        break;
+                    case Directions.Right:
+                        if (_head.CollideCheck<Solid>(_head.Position + Vector2.UnitX))
+                        {
+                            SceneAs<Level>().ParticlesFG.Emit(P_Sparks, 6, _head.CenterRight, Vector2.UnitY * 8f, direction: Calc.Right);
+                        }
+                        break;
+                }
+            }
         }
 
         private void TryEvaporatePlayer()

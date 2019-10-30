@@ -2,11 +2,13 @@
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
+using System.Collections.Generic;
 
 namespace FactoryHelper.Entities
 {
     public class SteamPoof : Entity
     {
+        public Action<SteamPoof> OnRemoved;
         private Sprite _sprite;
 
         public SteamPoof(Vector2 position, float fade) : base(position)
@@ -23,12 +25,17 @@ namespace FactoryHelper.Entities
             _sprite.CenterOrigin();
         }
 
-        public static void Create(Scene scene, Vector2 position, Vector2 range, int count=1, float fade=1f)
+        public static IEnumerable<SteamPoof> Create(Scene scene, Vector2 position, Vector2 range, int count=1, float fade=1f, Action<SteamPoof> onRemoved = null)
         {
+            SteamPoof[] poofs = new SteamPoof[count];
             for (int i = 0; i < count; i++)
             {
-                scene.Add(new SteamPoof(new Vector2(position.X - range.X / 2 + Calc.Random.NextFloat(range.X), position.Y - range.Y / 2 + Calc.Random.NextFloat(range.Y)), fade));
+                SteamPoof poof = new SteamPoof(new Vector2(position.X - range.X / 2 + Calc.Random.NextFloat(range.X), position.Y - range.Y / 2 + Calc.Random.NextFloat(range.Y)), fade);
+                scene.Add(poof);
+                poofs[i] = poof;
+                poof.OnRemoved = onRemoved;
             }
+            return poofs;
         }
 
         public override void Update()
@@ -38,6 +45,12 @@ namespace FactoryHelper.Entities
             {
                 RemoveSelf();
             }
+        }
+
+        public override void Removed(Scene scene)
+        {
+            OnRemoved?.Invoke(this);
+            base.Removed(scene);
         }
     }
 }
