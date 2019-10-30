@@ -119,3 +119,8 @@
 		[MADELINE left distracted]
 			I need to find a pay phone somewhere.
 			{trigger 2 walk right, roll credits}
+
+	KaydenFox_FactoryMod_1_Factory_A_Dav=
+		-- T(D)S STATUE --
+		To Lugia, The Guardian
+		Of our Peace of Mind
