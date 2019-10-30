@@ -63,7 +63,7 @@ namespace FactoryHelper.Entities
             Add(_light = new VertexLight(Color.LightSeaGreen, 1f, 32, 48));
             _light.Visible = false;
 
-            Depth = 9000;
+            Depth = 8499;
         }
 
         public override void Render()

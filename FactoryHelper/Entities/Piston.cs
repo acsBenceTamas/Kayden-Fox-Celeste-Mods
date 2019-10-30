@@ -315,10 +315,10 @@ namespace FactoryHelper.Entities
                 {
                     EmitSteamAtBase();
                 }
-                if (Heated && Scene.OnInterval(_steamReleaseInterval/2))
-                {
-                    EmitSteamOnBody();
-                }
+            }
+            if (Heated && Scene.OnInterval(_steamReleaseInterval / 2))
+            {
+                EmitSteamOnBody();
             }
             else if (_sfx.Playing)
             {

@@ -64,7 +64,7 @@ namespace FactoryHelper.Entities
                 node.CheckNeighbors();
             }
 
-            Depth = 8500;
+            Depth = 8999;
         }
 
         public override void Awake(Scene scene)

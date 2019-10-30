@@ -23,7 +23,7 @@ namespace FactoryHelper.Entities
         public DoorRusty(EntityData data, Vector2 offset)
             : base(data.Position + offset)
         {
-            base.Depth = 8998;
+            base.Depth = 8499;
             Add(sprite = FactoryHelperModule.SpriteBank.Create("rusty_metal_door"));
             openSfx = "event:/game/03_resort/door_metal_open";
             closeSfx = "event:/game/03_resort/door_metal_close";

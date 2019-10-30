@@ -76,7 +76,7 @@ namespace FactoryHelper.Entities
 
             _door = new Entity(Position)
             {
-                Depth = 10000 - 10
+                Depth = 8490
             };
             _door.Add(_doorSprite = new Sprite(GFX.Game, "objects/FactoryHelper/dashFuseBox/"));
             _doorSprite.Add("busted", "busted", 0.05f);
