@@ -78,7 +78,7 @@ namespace FactoryHelper.Entities
                 _turretSprites[i].Add("active", "turret", 0.05f, "rest");
                 _turretSprites[i].Position = new Vector2(-2 + 16 * i, -2);
 
-                _turretSolids[i] = new Solid(position + new Vector2(2 + 16 * i, 0), 12, 8, false);
+                _turretSolids[i] = new Solid(position + new Vector2(16 * i, 0), 16, 4, false);
             }
 
             _particleSpanPeriod =  256f / (width * height);

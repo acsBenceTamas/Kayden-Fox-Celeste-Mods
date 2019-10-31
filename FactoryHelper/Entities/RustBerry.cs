@@ -193,12 +193,7 @@ namespace FactoryHelper.Entities
             bool flag = Scene is Level;
             Tag = Tags.TransitionUpdate;
             Depth = -2000010;
-            int color = 3;
-            if (_isGhostBerry)
-            {
-                color = 1;
-            }
-            Audio.Play("event:/game/general/strawberry_get", Position, "colour", color);
+            Audio.Play("event:/game/general/strawberry_get", Position, "colour", 3);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             _sprite.Play("collect" + (_isGhostBerry ? "Ghost" : ""));
             _gearSprite.Play("collect" + (_isGhostBerry ? "Ghost" : ""));

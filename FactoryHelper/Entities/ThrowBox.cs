@@ -22,7 +22,8 @@ namespace FactoryHelper.Entities
         private const float SOUND_RELOAD_TIME = 0.2f;
         private static readonly Vector2 DISPLACEMENT = new Vector2(-8f, -16f);
 
-        private Sprite _sprite;
+        private Image _image;
+        private Image _warningImage;
         private float _noGravityTimer;
         private Vector2 _prevLiftSpeed;
         private Level _level;
@@ -69,14 +70,17 @@ namespace FactoryHelper.Entities
             IsSpecial = isSpecial;
             _isCrucial = isCrucial;
             _tutorial = tutorial; 
-            string pathString = isMetal ? "crate_metal" : "crate";
+            string pathString = isMetal ? "crate_metal0" : "crate0";
 
-            Add(_sprite = new Sprite(GFX.Game, "objects/FactoryHelper/crate/"));
-            _sprite.Add("idle", pathString);
-            _sprite.Play("idle");
-            _sprite.Visible = true;
-            _sprite.Active = true;
-            _sprite.Position += DISPLACEMENT;
+            Add(_image = new Image(GFX.Game[$"objects/FactoryHelper/crate/{pathString}"]));
+            _image.Position += DISPLACEMENT;
+
+            if (_isCrucial)
+            {
+                Console.WriteLine("Is Crucial. Adding warning");
+                Add(_warningImage = new Image(GFX.Game["objects/FactoryHelper/crate/crucial"]));
+                _warningImage.Position += DISPLACEMENT;
+            }
 
             Add(Hold = new Holdable(0.1f));
             Hold.PickupCollider = new Hitbox(16f, 16f, DISPLACEMENT.X, DISPLACEMENT.Y);
@@ -385,6 +389,10 @@ namespace FactoryHelper.Entities
             {
                 Shatter();
             }
+            else if (CollideCheck<PressurePlate.Button>())
+            {
+                Speed = Vector2.Zero;
+            }
             else if (Math.Abs(Speed.Y) > 40f)
             {
                 Speed.Y *= -0.25f;
@@ -478,7 +486,7 @@ namespace FactoryHelper.Entities
             if (!_shattered && !Hold.IsHeld)
             {
                 _shattered = true;
-                _sprite.Visible = false;
+                _image.Visible = false;
                 if (_isMetal)
                 {
                     Audio.Play("event:/game/general/wall_break_ice", Position);

@@ -22,7 +22,8 @@ namespace FactoryHelper.Entities
         private bool _currentButtonState = false;
         private bool _previousButtonState = false;
 
-        private class Button : Entity
+        [Tracked]
+        public class Button : Entity
         {
             public Image Image { get; private set; }
 
