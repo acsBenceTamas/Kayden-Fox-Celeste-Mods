@@ -25,7 +25,7 @@ namespace FactoryHelper
         private static void LevelEnterGo(On.Celeste.LevelEnter.orig_Go orig, Session session, bool fromSaveData)
         {
             Console.WriteLine("Levelset: " + session.Area.GetLevelSet());
-            if (session.Area.GetLevelSet() == "KaydenFox/FactoryMod")
+            if (!fromSaveData && session.StartedFromBeginning && session.Area.GetLevelSet() == "KaydenFox/FactoryMod")
             {
                 Console.WriteLine("We are inside");
                 Engine.Scene = new FactoryIntroVignette(session);
