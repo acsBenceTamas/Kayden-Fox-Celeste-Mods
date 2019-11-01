@@ -87,6 +87,7 @@ namespace FactoryHelper.Cutscenes
             Level.Add(badeline = new BadelineDummy(_player.Position - new Vector2(250f, 24f)));
             badeline.FloatSpeed = 20f;
             yield return badeline.FloatTo(badeline.Position + Vector2.UnitX * 48f);
+            yield return 1.5f;
             EndCutscene(Level);
         }
 

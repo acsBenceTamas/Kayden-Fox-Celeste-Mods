@@ -176,7 +176,7 @@ namespace FactoryHelper.Entities
             base.Update();
             _delay -= Engine.DeltaTime;
             
-            if (_canMoveNormally && !Halted)
+            if (_canMoveNormally && !Halted && Scene.Tracker.GetEntity<Player>() != null)
             {
                 AdvanceWall(Collider.Width + Speed * Engine.DeltaTime);
                 _loopSfx.Param("rising", 1f);

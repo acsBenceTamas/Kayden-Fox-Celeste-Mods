@@ -5,6 +5,7 @@ using Monocle;
 using FactoryHelper.Entities;
 using System;
 using System.Collections;
+using FactoryHelper.Cutscenes;
 
 namespace FactoryHelper
 {
@@ -18,6 +19,21 @@ namespace FactoryHelper
             On.Celeste.LevelExit.Routine += RespawnRoutine;
             On.Celeste.Player.Pickup += Pickup;
             On.Celeste.Lookout.LookRoutine += LookRoutine;
+            On.Celeste.LevelEnter.Go += LevelEnterGo;
+        }
+
+        private static void LevelEnterGo(On.Celeste.LevelEnter.orig_Go orig, Session session, bool fromSaveData)
+        {
+            Console.WriteLine("Levelset: " + session.Area.GetLevelSet());
+            if (session.Area.GetLevelSet() == "KaydenFox/FactoryMod")
+            {
+                Console.WriteLine("We are inside");
+                Engine.Scene = new FactoryIntroVignette(session);
+            }
+            else
+            {
+                orig(session, fromSaveData);
+            }
         }
 
         private static IEnumerator LookRoutine(On.Celeste.Lookout.orig_LookRoutine orig, Lookout self, Player player)

@@ -17,16 +17,6 @@ namespace FactoryHelper.Triggers
             _eventName = data.Attr("event");
         }
 
-        public override void Awake(Scene scene)
-        {
-            base.Awake(scene);
-            if (_eventName == "factory_phone_intro")
-            {
-                Scene.Add(new CS01_FactoryHelper_Intro());
-                RemoveSelf();
-            }
-        }
-
         public override void OnEnter(Player player)
         {
             base.OnEnter(player);

@@ -38,7 +38,7 @@ namespace FactoryHelper.Entities
 
         public RustyLamp(Vector2 position, Vector2 offset, string activationId, float initialDelay, string strobePattern, bool startActive) : base()
         {
-            Depth = 8499;
+            Depth = 8500;
             Position = position + offset;
 
             Collider = new Hitbox(12, 12, 2, 2);
