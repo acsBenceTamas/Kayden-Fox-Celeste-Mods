@@ -25,23 +25,20 @@ function Ahorn.renderAbs(ctx::Ahorn.Cairo.CairoContext, entity::PowerLine, room:
     x, y = Ahorn.position(entity)
     nodes = get(entity.data, "nodes", ())
     trueColor = Tuple{Real,Real,Real,Real}
-    usedSprite = String
     
     if get(entity.data, "startActive", false)
         trueColor = activeColor
-        usedSprite = "$(sprite)0"
     else
         trueColor = color
-        usedSprite = "$(sprite)1"
     end
     
-    Ahorn.drawSprite(ctx, usedSprite, x+4, y+4)
+    Ahorn.drawSprite(ctx, sprite, x+4, y+4)
 
     px, py = x, y
     for node in nodes
         nx, ny = Int.(node)
 
-        Ahorn.drawSprite(ctx, usedSprite, nx+4, ny+4)
+        Ahorn.drawSprite(ctx, sprite, nx+4, ny+4)
         Ahorn.drawArrow(ctx, px+4, py+4, nx+4, ny+4, trueColor, headLength=0)
 
         px, py = nx, ny
