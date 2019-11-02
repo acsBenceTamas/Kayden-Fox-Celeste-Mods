@@ -1,0 +1,25 @@
+Icon: areas/KaydenFox/factory
+
+Mountain:
+    Idle:
+        Position: [ 5.560, 3.950, 8.952 ]
+        Target: [ 4.232, 3.170, 7.675 ]
+    Select:
+        Position: [ 3.312, 1.863, 5.417 ]
+        Target: [ 1.407, 1.513, 4.919 ]
+    Zoom:
+        Position: [ 2.282, 1.692, 5.295 ]
+        Target: [ 0.558, 0.677, 5.296 ]
+    Cursor: [ 1.436, 1.230, 5.042 ]
+    State: 0
+CompleteScreen:
+    Atlas: "Endscreens/KaydenFox/Factory"
+    Start: [ 0.0, 0.0 ]
+    Center: [ 0.0, 0.0 ]
+    Offset: [ 0.0, 0.0 ]
+    Layers:
+      - Type: "layer"
+        Images: [ "0" ]
+        Position: [ 0.0, 0.0 ]
+        Scroll: [ 0.0 ]
+      - Type: "ui"
