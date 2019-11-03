@@ -126,8 +126,6 @@ namespace FactoryHelper.Entities
                 Add(new Coroutine(SpawnSteam()));
                 Level level = Scene as Level;
                 level.Session.SetFlag("Machine_Heart_Destroyed");
-                level.Session.Audio.Music.Event = "event:/music/lvl2/chase";
-                level.Session.Audio.Apply(forceSixteenthNoteHack: false);
                 level.Displacement.AddBurst(Position, 1f, 8f, 256f, 0.5f);
                 foreach (DashBlock dashBlock in level.Tracker.GetEntities<DashBlock>())
                 {
@@ -139,6 +137,8 @@ namespace FactoryHelper.Entities
         private IEnumerator SpawnSteam()
         {
             Level level = Scene as Level;
+            level.Session.Audio.Music.Event = "event:/music/factory/escape";
+            level.Session.Audio.Apply(forceSixteenthNoteHack: false);
             yield return 2f;
             level.Add(new SteamWall(level.Camera.Left - level.Bounds.Left));
         }
