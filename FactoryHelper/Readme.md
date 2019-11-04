@@ -18,7 +18,7 @@ section of the official Celeste Discord server!
 - [Special thanks](#thanks)
 
 ### <a name=features>Features
-#### Piston
+#### __Piston__
 This entity consists of 3 distinct parts: the head, the base and the body. The base is static, the head moves between a 
 start and end node point and the body extends and contracts to fit the space between the base and the head. The move 
 and wait times of this entity can be set to any number. They provide momentum to the player. There is an option to
@@ -37,7 +37,7 @@ initially be moving. Defaults to `true`.
 - **activationId**: String value of the piston's Activation Id. When a factory activator with this Id is turned on
 the piston will toggle state.
 
-#### Boom Box
+#### __Boom Box__
 This 3x3 tile entity serves as a launcher for the player. When active, if the player grabs it or stands on it, it will
 launch the player after 0.5 seconds, after which it goes into a dormant state for 2.0 seconds. After activated, it takes
 1.5 seconds before it can launch the player for the first time.
@@ -50,7 +50,7 @@ be active from the start.
 - **startActive**: Boolean value that dtermines what the default state of the boom box is. If `true` the boom box will
 start ready to launch the player. Defaults to `false`.
 
-#### Dash Negator
+#### __Dash Negator__
 This entity has a minimum size and size increment of 2 tiles (16 units) wide and 4 tiles (32 units) tall. The turrets on
 top are thin solids. The sprite size is not representative of the hitbox size. If the player initiates a dash inside
 the red area cast by the turrets they will be shot by a laser and immediately killed.
@@ -60,7 +60,7 @@ the dash negator will swap its active state immediately.
 - **startActive**: Bollean value that determines the default state of the dash negator. If `true` the dash negator
 will start with its negator field active. Defautls to `true`.
 
-#### Wind Tunnel
+#### __Wind Tunnel__
 Localized wind that can blow in any of the four cardinal directions with arbitrary strength. Visually the stronger the wind
 the longer the particle effects of the tunnel will be and the faster they move. When entered, the wind strength will affect
 the player gradually over 0.5 seconds and will stop affecting the player after leaving over 0.2 seconds. Works on any entity
@@ -80,7 +80,7 @@ Some familiar values from the base game are:
 - **startActive**: Bollean value that determines the default state of the wind tunnel. If `true` the wind tunnel 
 will be active on start. Defaults to `false`.
 
-#### Fan
+#### __Fan__
 Purely aesthetic solid entity. Minimum size is 2x3 or 3x2 depending on orientation. Comes in Horizontal and Vertical variations.
 Used in conjunction with Wind Tunnels.
 
@@ -89,7 +89,7 @@ Defaults to `false`.
 - **activationId**: String value of the fan's Activation Id. When a factory activator with this Id is turned on the fan will
 start speeding up over 1.5 seconds or slowing down over 1.0 seconds, depending on the initial state.
 
-#### Electrified Wall
+#### __Electrified Wall__
 Generally acts like spikes, but can be toggled by factory activators. Unlike regular spikes they are omnidirectional, meaning
 they will kill the player regardless of which direction they are coming from.
 
@@ -98,7 +98,7 @@ the wall will immediatels swap its state.
 - **startActive**: Boolean value that determines the default state of the electrified wall. If `true` the wall will start active.
 Defaults to `true`.
 
-#### Conveyor Belt
+#### __Conveyor Belt__
 A horizontal conveyor belt that moves entities with the ConveyorMover Component (currently the Player and ThrowBox classes). It 
 can move these entities left or right, depending on the state of the belt.
 
@@ -107,7 +107,7 @@ direction of the conveyor belt is swapped immediately.
 - **startLeft**: Boolean value that determines the initial direction of the belt. When `true` the conveyor belt will move 
 towards the left. Defautls to `true`.
 
-#### Crate
+#### __Crate__
 A holdable crate made of either wood or metal. Metal crates are only destroyed if they hit spinners or debris. Wooden crates
 are destroyed when they hit the ground or a wall too fast. Crates can have two additional properties.
 - **Special**: A crate with this property will return the player to where they first picked it up after either the player dies
@@ -121,7 +121,7 @@ makes the rest of the room impossible.
 - **isSpecia**: Boolean value that determines whether the crate is Special.
 - **isCrucial**: Boolean value that determines whether the crate is Crucial.
 
-#### Crate Spawner
+#### __Crate Spawner__
 This entity is invisible and spawns crates. It has multiple settings for how it behaves. It can spawn a specific type of crate or random.
 It can spawn a set finite number of crates or infinite amounts of them. It is recommended that you never actually spawn an infinite number
 of them however! The spawned crate can also have the tutorial messages. The direction from which the crate is spawned can be also set.
@@ -143,7 +143,7 @@ spawn at the nearest side. Defautls to `true`.
 - **tutorial**: Boolean value that determines whether spawned crates should show the tutorial messages. Defautls to `false`.
 - **startActive**: Boolean value that determines whether the spawner should spawn crates by default. Defaults to `true`.
 
-#### Dash Fuxe Box
+#### __Dash Fuxe Box__
 These fuse boxes are factory activators. When you break one by dashing into it or throwing a holdable at it (like Crates), they bust and
 will activate all Activation Ids they are set up with. They refill the player's dash when busted directly by the player. When all Activation
 Ids are already activated when you enter a room with a dash fuse box it will start busted, whether it was actually busted by the player or not.
@@ -152,31 +152,31 @@ Ids are already activated when you enter a room with a dash fuse box it will sta
 - **persistent**: Boolean value that determines whether the Ids not already persistent that are governed by this box should become
 persistent, meaning they will be active even after leaving the room.
 
-#### Battery Box & Battery
+#### __Battery Box & Battery__
 A battery box is a non-solid entity that, when provided with a battery will activate all Activation Ids that are set for it. Batteries
 act the same way as keys do: they persist if the player dies and they are consumed upon use. The player needs to be in direct line of sight
 with the box's center to insert a battery.
 
 - **activationIds**: A comma separated set of string Ids for all the Activation Ids this box should activate.
 
-#### Pressure Plate
+#### __Pressure Plate__
 A button on the floor that, while pressed by an Actor (i.e: Player, Crate, Theo), will keep all Activation Ids that are set for it active. Once
 there is no Actor on top of the button anymore all Ids not set by other factory activators will deactivate immediately.
 
 - **activationIds**: A comma separated set of string Ids for all the Activation Ids this pressure plate should activate.
 
-#### Machine Heart
+#### __Machine Heart__
 A solid entity that, when dashed into twice, will crumble all Dash Blocks in the room and summon a Steam Wall after 2 seconds at the left
 edge of the screen. It also initiates the Escape music from Shrouded Thoughts.
 
-#### Steam Wall
+#### __Steam Wall__
 Not a directly placable entity. It is spawned by a Spawn Steam Wall Trigger or a Machine Heart. It will move towards the right side of the screen
 at a steady pace, killing the player on touch and affecting all factory activated entities (aside from Power Lines). It disables all activated
 entities except Boom Boxes, which explode immediately, even if they were not previously active. When there is no Steam Wall present in the room,
 a Spawn Steam Wall Trigger will spawn a new one on the left edge of the camera. If there already is one, it will advance the wall to the left edge
 of the screen. A single trigger can only activate once, but multiple can be used to advance the steam faster than its default speed.
 
-#### Power Line
+#### __Power Line__
 These are used to indicate connections between factory activators (Battery Boxes, Fuse Boxes and Pressure Plates) and activated entities. They can
 only be placed in perpendicular lines. If placed in any other way, they will attempt to fix their positions into a state where they will be perpendicular
 probably causing unintended corner positions. When two power lines with the same Activation Id and initial activation state share a node coordinate, they
@@ -191,7 +191,7 @@ of this hex color.
 - **initialDelay**: The time it takes for the power line to switch states after it is activated. Is ignored when entering the room when the Id is
 already active.
 
-#### Rusty Lamp
+#### __Rusty Lamp__
 Light source with different strobe patterns that can be activated or deactivated by factory activators.
 
 - **activationId**: String value of the lamp's Activation Id. When a factory activator with this Id is turned on, the lamp will switch states after the
@@ -205,15 +205,15 @@ initial delay.
 already active.
 - **startActive**: Boolean value that determines whether the lamp should start on or off. Defaults to `false`.
 
-#### Killer Debris
+#### __Killer Debris__
 An entity that visually and mechanically acts like spinners, made of scrap metal. They come in two varieties: Bronze (brown) and Silver (grey).
 Just like spinners they can be attached to solids.
 
-#### Rust Berry
+#### __Rust Berry__
 A special collectible that is not counted towards the total number of berries on the level's OUI card. It functionally serves the same purpose
 as the Moon Berry, except it does not give the WOW achievement.
 
-#### Factory Activator Trigger
+#### __Factory Activator Trigger__
 This trigger lets you activate Activation Ids on entry. Can reset on exit and be permanent. Can also depend on an Id already being set.
 
 - **activationIds**: A comma separated set of string Ids for all the Activation Ids this trigger should activate.
@@ -223,22 +223,22 @@ this field is ignored. Defaults to `false`.
 - **persistent**: Boolean value that determines whether the activation should be persistent even after leaving the room. If set to `true`, resetOnLeave is
 ignored. Defaults to `false`.
 
-#### Permanent Activation Trigger
+#### __Permanent Activation Trigger__
 Place this trigger on the side of a room, extending well beyond it to make it so the ids set in it get persistent after the player leaves through
 that exit. Does not activate Ids on its own, but rather makes already active Ids persistent.
 
 - **activationIds**: A comma separated set of string Ids for all the Activation Ids this trigger should activate.
 
-#### Factory Event Trigger
+#### __Factory Event Trigger__
 Used to initiate cutscenes in **Shrouded Thoughts**. The trigger is removed after activation, so it can only trigger once.
 Cutscenes are specific to their in-level locations so they may result in unexpected behavior when used elsewhere.
 
 - **event**: String Id of the event to be triggered.
 
-#### Special Box Deactivation Trigger
+#### __Special Box Deactivation Trigger__
 Removes the Special property from Crates that enter the trigger, either on their own or in the player's hand.
 
-#### Other
+#### __Other__
 
 - Rusty Spike - Rusty looking spikes.
 - Rusty Door - Rusty looking metal door.
