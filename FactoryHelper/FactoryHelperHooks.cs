@@ -51,7 +51,7 @@ namespace FactoryHelper
 
         private static bool Pickup(On.Celeste.Player.orig_Pickup orig, Player self, Holdable pickup)
         {
-            if (self.Holding == null)
+            if (self.Holding == null || self.Holding.Entity is Glider)
             {
                 return orig(self, pickup);
             }
