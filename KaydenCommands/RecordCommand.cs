@@ -34,8 +34,8 @@ namespace KaydenCommands
             if (recorder != null)
             {
                 recorder.StopRecording();
+                Engine.Commands.Log($"Saved playback as {recorder.Filename}.bin");
             }
-            Engine.Commands.Log($"Saved playback as {recorder.Filename}.bin");
         }
     }
 }

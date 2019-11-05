@@ -1,6 +1,7 @@
 ﻿using Celeste;
 using Celeste.Mod;
 using Monocle;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -24,7 +25,7 @@ namespace KaydenCommands.Entities
         public override void Update()
         {
             base.Update();
-            if (_isRecording)
+            if (_isRecording && _player != null && !_player.Dead)
             {
                 _states.Add(new Player.ChaserState(_player));
             }
