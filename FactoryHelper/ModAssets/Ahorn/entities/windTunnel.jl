@@ -2,19 +2,32 @@ module FactoryHelperWindTunnel
 
 using ..Ahorn, Maple
 
-@mapdef Entity "FactoryHelper/WindTunnel" WindTunnel(x::Integer, y::Integer, width::Integer=16, height::Integer=16, direction::String="Up", activationId::String="", strength::Real=1.0, startActive::Bool=false)
+@mapdef Entity "FactoryHelper/WindTunnel" WindTunnel(x::Integer, y::Integer, width::Integer=16, height::Integer=16, direction::String="Up", activationId::String="", strength::Real=100.0, startActive::Bool=false)
 
 directions = ["Up", "Down", "Left", "Right"]
 
-const placements = Ahorn.PlacementDict(
-    "WindTunnel ($(direction)) (FactoryHelper)" => Ahorn.EntityPlacement(
+const placements = Ahorn.PlacementDict()
+
+for direction in directions
+    placements["Wind Tunnel (Inactive) ($(direction)) (FactoryHelper)"] = Ahorn.EntityPlacement(
         WindTunnel,
         "rectangle",
         Dict{String, Any}(
             "direction" => direction,
         )
-    ) for direction in directions
-)
+    )
+end
+
+for direction in directions
+    placements["Wind Tunnel (Active) ($(direction)) (FactoryHelper)"] = Ahorn.EntityPlacement(
+        WindTunnel,
+        "rectangle",
+        Dict{String, Any}(
+            "direction" => direction,
+            "startActive" => true,
+        )
+    )
+end
 
 function Ahorn.minimumSize(entity::WindTunnel)
     return (16, 16)

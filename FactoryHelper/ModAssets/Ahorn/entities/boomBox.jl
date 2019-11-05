@@ -5,9 +5,16 @@ using ..Ahorn, Maple
 @mapdef Entity "FactoryHelper/BoomBox" BoomBox(x::Integer, y::Integer, activationId::String="", initialDelay::Real=0.0, startActive::Bool=false)
 
 const placements = Ahorn.PlacementDict(
-    "BoomBox (FactoryHelper)" => Ahorn.EntityPlacement(
+    "Boom Box (Inactive) (FactoryHelper)" => Ahorn.EntityPlacement(
         BoomBox,
         "point",
+    ),
+    "Boom Box (Active) (FactoryHelper)" => Ahorn.EntityPlacement(
+        BoomBox,
+        "point",
+        Dict{String, Any}(
+			"startActive" => true
+		),
     ),
 )
 

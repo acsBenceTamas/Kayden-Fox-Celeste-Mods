@@ -42,6 +42,46 @@ const placements = Ahorn.PlacementDict(
             entity.data["nodes"] = [(Int(entity.data["x"]) + 32, Int(entity.data["y"])), (Int(entity.data["x"]) + 16, Int(entity.data["y"]))]
         end
     ),
+    "Piston (Up, Heated) (FactoryHelper)" => Ahorn.EntityPlacement(
+        PistonUp,
+        "point",
+        Dict{String, Any}(
+			"heated" => true
+		),
+        function(entity)
+            entity.data["nodes"] = [(Int(entity.data["x"]), Int(entity.data["y"]) - 32), (Int(entity.data["x"]), Int(entity.data["y"]) - 16)]
+        end
+    ),
+    "Piston (Down, Heated) (FactoryHelper)" => Ahorn.EntityPlacement(
+        PistonDown,
+        "point",
+        Dict{String, Any}(
+			"heated" => true
+		),
+        function(entity)
+            entity.data["nodes"] = [(Int(entity.data["x"]), Int(entity.data["y"]) + 32), (Int(entity.data["x"]), Int(entity.data["y"]) + 16)]
+        end
+    ),
+    "Piston (Left, Heated) (FactoryHelper)" => Ahorn.EntityPlacement(
+        PistonLeft,
+        "point",
+        Dict{String, Any}(
+			"heated" => true
+		),
+        function(entity)
+            entity.data["nodes"] = [(Int(entity.data["x"]) - 32, Int(entity.data["y"])), (Int(entity.data["x"]) - 16, Int(entity.data["y"]))]
+        end
+    ),
+    "Piston (Right, Heated) (FactoryHelper)" => Ahorn.EntityPlacement(
+        PistonRight,
+        "point",
+        Dict{String, Any}(
+			"heated" => true
+		),
+        function(entity)
+            entity.data["nodes"] = [(Int(entity.data["x"]) + 32, Int(entity.data["y"])), (Int(entity.data["x"]) + 16, Int(entity.data["y"]))]
+        end
+    ),
 )
 
 Ahorn.nodeLimits(entity::pistonUnion) = 2, 2

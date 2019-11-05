@@ -8,13 +8,27 @@ using ..Ahorn, Maple
 fanUnion = Union{FanHorizontal, FanVertical}
 
 const placements = Ahorn.PlacementDict(
-    "Fan (Horizontal) (FactoryHelper)" => Ahorn.EntityPlacement(
+    "Fan (Horizontal, Inactive) (FactoryHelper)" => Ahorn.EntityPlacement(
         FanHorizontal,
         "rectangle",
     ),
-    "Fan (Vertical) (FactoryHelper)" => Ahorn.EntityPlacement(
+    "Fan (Vertical, Inactive) (FactoryHelper)" => Ahorn.EntityPlacement(
         FanVertical,
         "rectangle",
+    ),
+    "Fan (Horizontal, Active) (FactoryHelper)" => Ahorn.EntityPlacement(
+        FanHorizontal,
+        "rectangle",
+        Dict{String, Any}(
+			"startActive" => true,
+        )
+    ),
+    "Fan (Vertical, Active) (FactoryHelper)" => Ahorn.EntityPlacement(
+        FanVertical,
+        "rectangle",
+        Dict{String, Any}(
+			"startActive" => true,
+        )
     ),
 )
     

@@ -15,7 +15,7 @@ Ahorn.editingOptions(entity::KillerDebris) = Dict{String, Any}(
 
 for color in debrisColors
     for attached in false:true
-        key = "KillerDebris ($(uppercasefirst(color))$(attached ? ", Attached" : "")) (FactoryHelper)"
+        key = "Killer Debris ($(uppercasefirst(color))$(attached ? ", Attached" : "")) (FactoryHelper)"
         placements[key] = Ahorn.EntityPlacement(
             KillerDebris,
             "point",

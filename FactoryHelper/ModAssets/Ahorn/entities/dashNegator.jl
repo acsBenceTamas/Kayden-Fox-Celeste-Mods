@@ -5,9 +5,16 @@ using ..Ahorn, Maple
 @mapdef Entity "FactoryHelper/DashNegator" DashNegator(x::Integer, y::Integer, width::Integer=16, height::Integer=32, activationId::String="", startActive::Bool=true)
 
 const placements = Ahorn.PlacementDict(
-    "DashNegator (FactoryHelper)" => Ahorn.EntityPlacement(
+    "Dash Negator (Active) (FactoryHelper)" => Ahorn.EntityPlacement(
         DashNegator,
         "rectangle",
+    ),
+    "Dash Negator (Inactive) (FactoryHelper)" => Ahorn.EntityPlacement(
+        DashNegator,
+        "rectangle",
+        Dict{String, Any}(
+			"startActive" => false
+		),
     ),
 )
 

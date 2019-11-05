@@ -5,7 +5,7 @@ using ..Ahorn, Maple
 @mapdef Entity "FactoryHelper/PressurePlate" PressurePlate(x::Integer, y::Integer, activationIds::String="")
 
 const placements = Ahorn.PlacementDict(
-    "PressurePlate (FactoryHelper)" => Ahorn.EntityPlacement(
+    "Pressure Plate (FactoryHelper)" => Ahorn.EntityPlacement(
         PressurePlate,
         "point",
     ),

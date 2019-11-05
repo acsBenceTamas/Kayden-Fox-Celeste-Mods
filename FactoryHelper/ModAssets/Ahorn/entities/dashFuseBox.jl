@@ -21,6 +21,12 @@ const placements = Ahorn.PlacementDict(
     ),
 )
 
+directions = String["Left", "Right"]
+
+Ahorn.editingOptions(entity::DashFuseBox) = Dict{String, Any}(
+    "direction" => directions
+)
+
 Ahorn.nodeLimits(entity::DashFuseBox) = 0, 0
 
 function Ahorn.renderAbs(ctx::Ahorn.Cairo.CairoContext, entity::DashFuseBox, room::Maple.Room)

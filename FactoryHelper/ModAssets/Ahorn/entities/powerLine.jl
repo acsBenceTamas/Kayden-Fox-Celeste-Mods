@@ -5,7 +5,7 @@ using ..Ahorn, Maple
 @mapdef Entity "FactoryHelper/PowerLine" PowerLine(x::Integer, y::Integer, activationId::String="", colorCode::String="00dd00", startActive::Bool=false, initialDelay::Real=0.0)
 
 const placements = Ahorn.PlacementDict(
-    "PowerLine (FactoryHelper)" => Ahorn.EntityPlacement(
+    "Power Line (FactoryHelper)" => Ahorn.EntityPlacement(
         PowerLine,
         "point",
         Dict{String, Any}(),
