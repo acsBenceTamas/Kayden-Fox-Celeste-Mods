@@ -126,7 +126,7 @@ namespace FactoryHelper.Cutscenes
                 menu.RemoveSelf();
                 menu = null;
             }
-            FadeWipe fadeWipe = new FadeWipe(this, wipeIn: false, delegate
+            FadeWipe fadeWipe = new FadeWipe(this, false, delegate
             {
                 Engine.Scene = new LevelLoader(session);
             });
