@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Celeste.Mod.AdventureHelper.Entities
 {
+    [Tracked(false)]
     class DreamBlockCombiner : Entity
     {
         private struct DreamParticle
@@ -21,6 +22,36 @@ namespace Celeste.Mod.AdventureHelper.Entities
             public float TimeOffset;
         }
 
+        private struct Edge
+        {
+            public DreamBlock Parent;
+
+            public bool Visible;
+
+            public Vector2 A;
+
+            public Vector2 B;
+
+            public Vector2 Min;
+
+            public Vector2 Max;
+
+            public Edge(DreamBlock parent, Vector2 a, Vector2 b)
+            {
+                Parent = parent;
+                Visible = true;
+                A = a;
+                B = b;
+                Min = new Vector2(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
+                Max = new Vector2(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
+            }
+
+            public bool InView(ref Rectangle view)
+            {
+                return (float)view.Left < Parent.X + Max.X && (float)view.Right > Parent.X + Min.X && (float)view.Top < Parent.Y + Max.Y && (float)view.Bottom > Parent.Y + Min.Y;
+            }
+        }
+
         private bool playerHasDreamDash;
         private static readonly Color activeBackColor = Color.Black;
         private static readonly Color disabledBackColor = Calc.HexToColor("1f2e2d");
@@ -30,7 +61,8 @@ namespace Celeste.Mod.AdventureHelper.Entities
         private float wobbleTo = Calc.Random.NextFloat((float)Math.PI * 2f);
         private float whiteFill = 0f;
         private float wobbleEase = 0f;
-        private DreamParticle[] particles;
+        private Dictionary<DreamBlock, DreamParticle[]> allParticles = new Dictionary<DreamBlock, DreamParticle[]>();
+        private List<Edge> edges = new List<Edge>();
         private Vector2 shake;
         private float whiteHeight;
         private float animTimer;
@@ -38,8 +70,6 @@ namespace Celeste.Mod.AdventureHelper.Entities
 
         public DreamBlockCombiner()
         {
-            playerHasDreamDash = SceneAs<Level>().Session.Inventory.DreamDash;
-
             particleTextures = new MTexture[4]
             {
             GFX.Game["objects/dreamblock/particles"].GetSubtexture(14, 0, 7, 7),
@@ -47,6 +77,18 @@ namespace Celeste.Mod.AdventureHelper.Entities
             GFX.Game["objects/dreamblock/particles"].GetSubtexture(0, 0, 7, 7),
             GFX.Game["objects/dreamblock/particles"].GetSubtexture(7, 0, 7, 7)
             };
+        }
+
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            playerHasDreamDash = SceneAs<Level>().Session.Inventory.DreamDash;
+        }
+
+        public override void Awake(Scene scene)
+        {
+            base.Awake(scene);
+            Setup();
         }
 
         public override void Update()
@@ -66,46 +108,50 @@ namespace Celeste.Mod.AdventureHelper.Entities
         public override void Render()
         {
             Camera camera = SceneAs<Level>().Camera;
-            if (base.Right < camera.Left || base.Left > camera.Right || base.Bottom < camera.Top || base.Top > camera.Bottom)
+            foreach (DreamBlock block in allParticles.Keys)
             {
-                return;
-            }
-            Draw.Rect(shake.X + base.X, shake.Y + base.Y, base.Width, base.Height, playerHasDreamDash ? activeBackColor : disabledBackColor);
-            Vector2 position = SceneAs<Level>().Camera.Position;
-            for (int i = 0; i < particles.Length; i++)
-            {
-                int layer = particles[i].Layer;
-                Vector2 position2 = particles[i].Position;
-                position2 += position * (0.3f + 0.25f * (float)layer);
-                position2 = PutInside(position2);
-                Color color = particles[i].Color;
-                MTexture mTexture;
-                switch (layer)
+                if (block.Right < camera.Left || block.Left > camera.Right || block.Bottom < camera.Top || block.Top > camera.Bottom)
                 {
-                    case 0:
-                        {
-                            int num2 = (int)((particles[i].TimeOffset * 4f + animTimer) % 4f);
-                            mTexture = particleTextures[3 - num2];
-                            break;
-                        }
-                    case 1:
-                        {
-                            int num = (int)((particles[i].TimeOffset * 2f + animTimer) % 2f);
-                            mTexture = particleTextures[1 + num];
-                            break;
-                        }
-                    default:
-                        mTexture = particleTextures[2];
-                        break;
+                    continue;
                 }
-                if (position2.X >= base.X + 2f && position2.Y >= base.Y + 2f && position2.X < base.Right - 2f && position2.Y < base.Bottom - 2f)
+                Draw.Rect(block.X, block.Y, block.Width, block.Height, playerHasDreamDash ? activeBackColor : disabledBackColor);
+                Vector2 position = SceneAs<Level>().Camera.Position;
+                var particles = allParticles[block];
+                for (int i = 0; i < particles.Length; i++)
                 {
-                    mTexture.DrawCentered(position2 + shake, color);
+                    int layer = particles[i].Layer;
+                    Vector2 position2 = particles[i].Position;
+                    position2 += position * (0.3f + 0.25f * (float)layer);
+                    position2 = PutInside(block, position2);
+                    Color color = particles[i].Color;
+                    MTexture mTexture;
+                    switch (layer)
+                    {
+                        case 0:
+                            {
+                                int num2 = (int)((particles[i].TimeOffset * 4f + animTimer) % 4f);
+                                mTexture = particleTextures[3 - num2];
+                                break;
+                            }
+                        case 1:
+                            {
+                                int num = (int)((particles[i].TimeOffset * 2f + animTimer) % 2f);
+                                mTexture = particleTextures[1 + num];
+                                break;
+                            }
+                        default:
+                            mTexture = particleTextures[2];
+                            break;
+                    }
+                    if (position2.X >= block.X + 2f && position2.Y >= block.Y + 2f && position2.X < block.Right - 2f && position2.Y < block.Bottom - 2f)
+                    {
+                        mTexture.DrawCentered(position2 + shake, color);
+                    }
                 }
-            }
-            if (whiteFill > 0f)
-            {
-                Draw.Rect(base.X + shake.X, base.Y + shake.Y, base.Width, base.Height * whiteHeight, Color.White * whiteFill);
+                if (whiteFill > 0f)
+                {
+                    Draw.Rect(block.X + shake.X, block.Y + shake.Y, block.Width, block.Height * whiteHeight, Color.White * whiteFill);
+                }
             }
             WobbleLine(shake + new Vector2(base.X, base.Y), shake + new Vector2(base.X + base.Width, base.Y), 0f);
             WobbleLine(shake + new Vector2(base.X + base.Width, base.Y), shake + new Vector2(base.X + base.Width, base.Y + base.Height), 0.7f);
@@ -119,26 +165,30 @@ namespace Celeste.Mod.AdventureHelper.Entities
 
         public void Setup()
         {
-            particles = new DreamParticle[(int)(base.Width / 8f * (base.Height / 8f) * 0.7f)];
-            for (int i = 0; i < particles.Length; i++)
+            foreach (DreamBlock block in AdventureHelperModule.Session.DreamBlocksToCombine)
             {
-                particles[i].Position = new Vector2(Calc.Random.NextFloat(base.Width), Calc.Random.NextFloat(base.Height));
-                particles[i].Layer = Calc.Random.Choose(0, 1, 1, 2, 2, 2);
-                particles[i].TimeOffset = Calc.Random.NextFloat();
-                particles[i].Color = Color.LightGray * (0.5f + (float)particles[i].Layer / 2f * 0.5f);
-                if (playerHasDreamDash)
+                var particles = new DreamParticle[(int)(block.Width / 8f * (block.Height / 8f) * 0.7f)];
+                allParticles[block] = particles;
+                for (int i = 0; i < particles.Length; i++)
                 {
-                    switch (particles[i].Layer)
+                    particles[i].Position = new Vector2(Calc.Random.NextFloat(block.Width), Calc.Random.NextFloat(block.Height));
+                    particles[i].Layer = Calc.Random.Choose(0, 1, 1, 2, 2, 2);
+                    particles[i].TimeOffset = Calc.Random.NextFloat();
+                    particles[i].Color = Color.LightGray * (0.5f + (float)particles[i].Layer / 2f * 0.5f);
+                    if (playerHasDreamDash)
                     {
-                        case 0:
-                            particles[i].Color = Calc.Random.Choose(Calc.HexToColor("FFEF11"), Calc.HexToColor("FF00D0"), Calc.HexToColor("08a310"));
-                            break;
-                        case 1:
-                            particles[i].Color = Calc.Random.Choose(Calc.HexToColor("5fcde4"), Calc.HexToColor("7fb25e"), Calc.HexToColor("E0564C"));
-                            break;
-                        case 2:
-                            particles[i].Color = Calc.Random.Choose(Calc.HexToColor("5b6ee1"), Calc.HexToColor("CC3B3B"), Calc.HexToColor("7daa64"));
-                            break;
+                        switch (particles[i].Layer)
+                        {
+                            case 0:
+                                particles[i].Color = Calc.Random.Choose(Calc.HexToColor("FFEF11"), Calc.HexToColor("FF00D0"), Calc.HexToColor("08a310"));
+                                break;
+                            case 1:
+                                particles[i].Color = Calc.Random.Choose(Calc.HexToColor("5fcde4"), Calc.HexToColor("7fb25e"), Calc.HexToColor("E0564C"));
+                                break;
+                            case 2:
+                                particles[i].Color = Calc.Random.Choose(Calc.HexToColor("5b6ee1"), Calc.HexToColor("CC3B3B"), Calc.HexToColor("7daa64"));
+                                break;
+                        }
                     }
                 }
             }
@@ -183,23 +233,23 @@ namespace Celeste.Mod.AdventureHelper.Entities
             return (float)(Math.Sin((double)(seed + index / 16f) + Math.Sin(seed * 2f + index / 32f) * 6.2831854820251465) + 1.0) * 1.5f;
         }
 
-        private Vector2 PutInside(Vector2 pos)
+        private Vector2 PutInside(DreamBlock block, Vector2 pos)
         {
-            while (pos.X < base.X)
+            while (pos.X < block.X)
             {
-                pos.X += base.Width;
+                pos.X += block.Width;
             }
-            while (pos.X > base.X + base.Width)
+            while (pos.X > block.X + block.Width)
             {
-                pos.X -= base.Width;
+                pos.X -= block.Width;
             }
-            while (pos.Y < base.Y)
+            while (pos.Y < block.Y)
             {
-                pos.Y += base.Height;
+                pos.Y += block.Height;
             }
-            while (pos.Y > base.Y + base.Height)
+            while (pos.Y > block.Y + block.Height)
             {
-                pos.Y -= base.Height;
+                pos.Y -= block.Height;
             }
             return pos;
         }
