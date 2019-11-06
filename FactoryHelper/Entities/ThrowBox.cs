@@ -32,7 +32,7 @@ namespace FactoryHelper.Entities
         private float _soundTimerX = 0f;
         private float _soundTimerY = 0f;
         private string _levelName;
-
+        private bool _pickedUp;
         private ParticleEmitter _shimmerParticles;
         private Vector2 _starterPosition;
         private bool _unspecializeOnRemove = true;
@@ -338,6 +338,7 @@ namespace FactoryHelper.Entities
 
         private void OnPickup()
         {
+            _pickedUp = true;
             Collidable = false;
             _unspecializeOnRemove = false;
             Speed = Vector2.Zero;
@@ -511,7 +512,7 @@ namespace FactoryHelper.Entities
                 }
                 Player player;
                 player = Scene.Tracker.GetEntity<Player>();
-                if ((IsSpecial && (FactoryHelperModule.Instance._Session as FactoryHelperSession).SpecialBoxPosition != null) || _isCrucial)
+                if ((IsSpecial && FactoryHelperModule.Session.SpecialBoxPosition != null && FactoryHelperModule.Session.SpecialBoxLevel != SceneAs<Level>().Session.Level) || (_isCrucial && _pickedUp))
                 {
                     if (player != null)
                     {
