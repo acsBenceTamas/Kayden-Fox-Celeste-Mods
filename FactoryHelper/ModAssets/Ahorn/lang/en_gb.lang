@@ -109,9 +109,11 @@ placements.entities.FactoryHelper/ThrowBoxSpawner.tooltips.isMetal=Whether the c
 placements.entities.FactoryHelper/ThrowBoxSpawner.tooltips.isRandom=Whether the spawned crates should have a random material. If set to `true` the `Is Metal` value will be ignored.
 placements.entities.FactoryHelper/ThrowBoxSpawner.tooltips.fromTop=If `true` they will spawn on top, otherwise they will spawn at the nearest side. Defautls to `true`.
 placements.entities.FactoryHelper/ThrowBoxSpawner.tooltips.tutorial=Whether the tutorial messsages should show up.
+placements.entities.FactoryHelper/ThrowBoxSpawner.tooltips.maximum=The maximum number of crate this spawner can spawn. Destroyed crates do not count towards the maximum.
 
 # Dash Fuse Box
 
+placements.entities.FactoryHelper/DashFuseBox.tooltips.direction=The direction the fuse box is facing.
 placements.entities.FactoryHelper/DashFuseBox.tooltips.activationIds=A comma separated set of string Ids for all the Activation Ids this box should activate.
 placements.entities.FactoryHelper/DashFuseBox.tooltips.persistent=Determines whether the Ids not already persistent that are governed by this box should become persistent, meaning they will be active even after leaving the room.
 
@@ -122,6 +124,11 @@ placements.entities.FactoryHelper/BatteryBox.tooltips.activationIds=A comma sepa
 # Pressure Plate
 
 placements.entities.FactoryHelper/PressurePlate.tooltips.activationIds=A comma separated set of string Ids for all the Activation Ids this button should activate.
+
+# Killer Debris
+
+placements.entities.FactoryHelper/KillerDebris.tooltips.color=Color of the debris.
+placements.entities.FactoryHelper/KillerDebris.tooltips.attachToSolid=Whether the debris should attach to moving solid entities.
 
 # Power Line
 
@@ -134,6 +141,7 @@ placements.entities.FactoryHelper/PowerLine.tooltips.initialDelay=The time it ta
 
 placements.entities.FactoryHelper/RustyLamp.tooltips.activationId=String value of the entity's Activation Id. When a factory activator with this Id is turned on the entity will toggle state.
 placements.entities.FactoryHelper/RustyLamp.tooltips.startActive=If `true` the entity will initially be active.
+placements.entities.FactoryHelper/PowerLine.tooltips.initialDelay=The time it takes for the lamp to switch states after it is activated.
 placements.entities.FactoryHelper/RustyLamp.tooltips.strobePattern=The strobe pattern the lamp will use. The possible values are:\n	* None - the lamp will turn on and off immediately. No additional effects.\n	* FlickerOn - the lamp will flicker on and off. No additional effects.\n	* LightFlicker - the lamp will flicker on and off. Periodically it lightly flickers for a short while at random.\n	* TurnOffFlickerOn - the lamp will flicker on and off. Periodically it will flicker off for a short duration then flicker back on at random.
 
 # --- Triggers ---
