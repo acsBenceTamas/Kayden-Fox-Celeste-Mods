@@ -2,12 +2,7 @@
 using FactoryHelper.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FactoryHelper.Cutscenes
 {
@@ -24,6 +19,7 @@ namespace FactoryHelper.Cutscenes
 
         public override void OnBegin(Level level)
         {
+            level.RegisterAreaComplete();
             level.Add(_steamWall = new SteamWall(level.Camera.Left - level.Bounds.Left));
             _steamWall.Speed = 64f;
             Add(new Coroutine(Cutscene(level)));

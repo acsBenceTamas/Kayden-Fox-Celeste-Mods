@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using FactoryHelper.Components;
 using Monocle;
 using FactoryHelper.Entities;
-using System;
 using System.Collections;
 using FactoryHelper.Cutscenes;
 
@@ -24,7 +23,7 @@ namespace FactoryHelper
 
         private static void LevelEnterGo(On.Celeste.LevelEnter.orig_Go orig, Session session, bool fromSaveData)
         {
-            if (!fromSaveData && session.StartedFromBeginning && session.Area.GetLevelSet() == "KaydenFox/FactoryMod")
+            if (!fromSaveData && session.StartedFromBeginning && session.Area.Mode == AreaMode.Normal && session.Area.GetLevelSet() == "KaydenFox/FactoryMod")
             {
                 Engine.Scene = new FactoryIntroVignette(session);
             }
