@@ -519,6 +519,10 @@ namespace FactoryHelper.Entities
                         player.Die(-(Position - player.Position).SafeNormalize());
                     }
                 }
+                else if (IsSpecial)
+                {
+                    StopBeingSpecial();
+                }
                 _unspecializeOnRemove = false;
                 RemoveSelf();
             }
