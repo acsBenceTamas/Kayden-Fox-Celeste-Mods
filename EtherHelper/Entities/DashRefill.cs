@@ -50,7 +50,6 @@ namespace EtherHelper.Entities
             Tag = Tags.TransitionUpdate;
             Collider = new Circle(6f);
             Add(new PlayerCollider(OnPlayer));
-            Console.WriteLine("Nodes Length: " + nodes.Length);
             _static = nodes.Length == 1;
             if (!_static)
             {
@@ -135,7 +134,7 @@ namespace EtherHelper.Entities
                 _respawnTimer -= Engine.DeltaTime;
                 if (_respawnTimer <= 0f)
                 {
-                    Respawn();
+                    Add(new Coroutine(Respawn()));
                 }
             }
             else if (!_broken && Scene.OnInterval(0.1f))
@@ -179,6 +178,11 @@ namespace EtherHelper.Entities
 
         private void UpdateY()
         {
+            if (_broken)
+            {
+                Collider.Position = _dangerSprite.Position = _shineSprite.Position = _gemSprite.Position = Vector2.Zero;
+                return;
+            }
             Vector2 pos = Vector2.Zero;
             if (_hitWiggler != null)
             {
@@ -207,17 +211,29 @@ namespace EtherHelper.Entities
             SlashFx.Burst(Position, angle);
         }
 
-        private void Respawn()
+        private IEnumerator Respawn()
         {
-            if (!Collidable)
+            while (true)
             {
                 Collidable = true;
+                if (!CollideCheck<Player>())
+                {
+                    break;
+                } else
+                {
+                    Collidable = false;
+                    yield return null;
+                }
+            }
+            if (_broken)
+            {
                 _gemSprite.Visible = _shineSprite.Visible = _dangerSprite.Visible = true;
                 _outline.Visible = false;
                 Depth = -100;
                 _wiggler.Start();
                 Audio.Play("event:/game/general/diamond_return", Position);
                 _level.ParticlesFG.Emit(P_Regen, 16, Position, Vector2.One * 4f);
+                _broken = false;
             }
         }
 
@@ -249,8 +265,9 @@ namespace EtherHelper.Entities
 
         private void OnPlayer(Player player)
         {
-            if (player.DashAttacking && player.UseRefill(false))
+            if (player.DashAttacking)
             {
+                player.RefillDash();
                 Audio.Play("event:/game/general/diamond_touch", Position);
                 Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
                 Collidable = false;
