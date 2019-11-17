@@ -59,7 +59,7 @@ namespace FactoryHelper
 
         private static IEnumerator RespawnRoutine(On.Celeste.LevelExit.orig_Routine orig, LevelExit self)
         {
-            FactoryHelperSession factorySession = (FactoryHelperModule.Instance._Session as FactoryHelperSession);
+            FactoryHelperSession factorySession = FactoryHelperModule.Session;
             if (factorySession.SpecialBoxPosition != null)
             {
                 factorySession.OriginalSession.Level = factorySession.SpecialBoxLevel;

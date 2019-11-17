@@ -33,6 +33,7 @@ namespace FactoryHelper.Entities
         private float _soundTimerY = 0f;
         private string _levelName;
         private bool _pickedUp;
+        private Player _player;
         private ParticleEmitter _shimmerParticles;
         private Vector2 _starterPosition;
         private bool _unspecializeOnRemove = true;
@@ -77,7 +78,6 @@ namespace FactoryHelper.Entities
 
             if (_isCrucial)
             {
-                Console.WriteLine("Is Crucial. Adding warning");
                 Add(_warningImage = new Image(GFX.Game["objects/FactoryHelper/crate/crucial"]));
                 _warningImage.Position += DISPLACEMENT;
             }
@@ -318,6 +318,10 @@ namespace FactoryHelper.Entities
 
         private void OnRelease(Vector2 force)
         {
+            if ((_player == null || _player.Dead) && FactoryHelperModule.Session.SpecialBoxLevel == SceneAs<Level>().Session.Level)
+            {
+                StopBeingSpecial();
+            }
             Collidable = true;
             _unspecializeOnRemove = true;
             RemoveTag(Tags.Persistent);
@@ -338,6 +342,7 @@ namespace FactoryHelper.Entities
 
         private void OnPickup()
         {
+            _player = Hold.Holder;
             _pickedUp = true;
             Collidable = false;
             _unspecializeOnRemove = false;
@@ -345,7 +350,7 @@ namespace FactoryHelper.Entities
             AddTag(Tags.Persistent);
             if (IsSpecial)
             {
-                FactoryHelperSession factorySession = (FactoryHelperModule.Instance._Session as FactoryHelperSession);
+                FactoryHelperSession factorySession = FactoryHelperModule.Session;
                 if (factorySession.SpecialBoxPosition == null)
                 {
                     factorySession.SpecialBoxPosition = _starterPosition;
@@ -518,12 +523,13 @@ namespace FactoryHelper.Entities
                     {
                         player.Die(-(Position - player.Position).SafeNormalize());
                     }
+                    _unspecializeOnRemove = false;
                 }
                 else if (IsSpecial)
                 {
                     StopBeingSpecial();
+                    _unspecializeOnRemove = true;
                 }
-                _unspecializeOnRemove = false;
                 RemoveSelf();
             }
         }
