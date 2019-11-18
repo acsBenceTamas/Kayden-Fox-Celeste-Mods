@@ -8,6 +8,8 @@ namespace TrollLand
     {
         public Dictionary<string, int> DeathCountPerLevel = new Dictionary<string, int>();
 
+        public bool InSoftLock = false;
+
         public int DeathCountForLevel(string level)
         {
             if (!DeathCountPerLevel.TryGetValue(level, out int value))

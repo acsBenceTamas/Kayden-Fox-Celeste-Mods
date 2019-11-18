@@ -57,9 +57,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cutscenes\Softlock.cs" />
     <Compile Include="Entities\TrollDashBlock.cs" />
+    <Compile Include="Entities\TrollFakeWall.cs" />
     <Compile Include="Entities\TrollSpring.cs" />
+    <Compile Include="Entities\TrollWall.cs" />
     <Compile Include="Entities\TrollZipper.cs" />
+    <Compile Include="Triggers\SoftlockTrigger.cs" />
+    <Compile Include="Triggers\TrollWallTrigger.cs" />
     <Compile Include="TrollLandHooks.cs" />
     <Compile Include="TrollLandModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

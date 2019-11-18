@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Celeste;
+﻿using Celeste;
 using Microsoft.Xna.Framework;
-using On.Celeste;
+using System;
 
 namespace TrollLand
 {
@@ -14,7 +9,9 @@ namespace TrollLand
         public static void Load()
         {
             On.Celeste.Player.Die += OnDeath;
+            On.Celeste.Dialog.Clean += OnCleanDialogue;
         }
+
         public static void Unload()
         {
             On.Celeste.Player.Die -= OnDeath;
@@ -36,6 +33,23 @@ namespace TrollLand
                 }
             }
             return result;
+        }
+
+        private static string OnCleanDialogue(On.Celeste.Dialog.orig_Clean orig, string name, Language language)
+        {
+            if (TrollLandModule.Session != null)
+            {
+                bool shouldSaySoftlock = false;
+                if (!(shouldSaySoftlock = "MENU_PAUSE_RETRY".Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    shouldSaySoftlock = "MENU_PAUSE_SKIP_CUTSCENE".Equals(name, StringComparison.InvariantCultureIgnoreCase);
+                }
+                if (TrollLandModule.Session.InSoftLock && shouldSaySoftlock)
+                {
+                    return Dialog.Clean("KAYDEN_FOX_TROLL_LAND_STAY_IN_SOFT_LOCK", language);
+                }
+            }
+            return orig(name, language);         
         }
     }
 }
