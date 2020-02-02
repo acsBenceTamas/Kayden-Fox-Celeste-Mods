@@ -30,6 +30,7 @@ These work like regular zip movers for the most part, except upon reaching their
 immediately return to their origin, but rather wait until the player is riding them again (or still if you never
 let go). They are not customizable, you can only resize and position them.
 - **speedMultiplier**: Determines movement speed. 1.0 is default, 0.5 is half speed (double travel time) 2.0 is double speed (half travel time).
+- **spritePath**: Path to custom assets. Leave blank to use default. If a piece is not found it will use the default textures.
 
 #### Linked zip movers
 These come in both returning and non-returning varieties. Each linked zip mover has its own `colorCode` which
@@ -39,6 +40,7 @@ is already on its way somewhere it will ignore the signal. When riding a non-ret
 you can make about 3 whole back and forth cycles before a regular zip mover returns to its origin.
 - **colorCode**: Determines the zipline color of the zip mover as well as what other zip movers it is linked with.
 - **speedMultiplier**: Determines movement speed. 1.0 is default, 0.5 is half speed (double travel time) 2.0 is double speed (half travel time).
+- **spritePath**: Path to custom assets. Leave blank to use default. If a piece is not found it will use the default textures.
 
 #### Custom crystal hearts
 With these you can have a crystal heart from any chapter or even custom colored or 
