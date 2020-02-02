@@ -9,11 +9,24 @@ namespace Celeste.Mod.AdventureHelper.Entities
 {
     public class LinkedZipMover : Solid
     {
-        public LinkedZipMover(Vector2 position, int width, int height, Vector2 target, string colorCode, float speedMultiplier): base(position, (float) width, (float) height, false)
+        public LinkedZipMover(Vector2 position, int width, int height, Vector2 target, string colorCode, float speedMultiplier, string spritePath): base(position, (float) width, (float) height, false)
         {
+            spritePath.Trim('/');
+            spritePath.Trim('\\');
+            this.spritePath = spritePath;
+            if (spritePath == string.Empty) spritePath = defaultPath;
             this.speedMultiplier = speedMultiplier;
             this.edges = new MTexture[3, 3];
-            this.innerCogs = GFX.Game.GetAtlasSubtextures("objects/zipmover/innercog");
+            string path;
+            if (GFX.Game.Has(spritePath + "/block"))
+            {
+                path = spritePath;
+            }
+            else
+            {
+                path = defaultPath;
+            }
+            this.innerCogs = GFX.Game.GetAtlasSubtextures(path + "/innercog");
             this.temp = new MTexture();
             this.percent = 0f;
             base.Depth = -9999;
@@ -25,32 +38,48 @@ namespace Celeste.Mod.AdventureHelper.Entities
             this.ropeLightColor = Calc.HexToColor(this.ColorCode) * 1.1f;
             base.Add(new Coroutine(this.Sequence(), true));
             base.Add(new LightOcclude(1f));
-            base.Add(this.streetlight = new Sprite(GFX.Game, "objects/zipmover/light"));
-            this.streetlight.Add("frames", "", 1f);
+            try
+            {
+                base.Add(this.streetlight = new Sprite(GFX.Game, spritePath + "/light"));
+                this.streetlight.Add("frames", "", 1f);
+            }
+            catch
+            {
+                base.Add(this.streetlight = new Sprite(GFX.Game, "objects/zipmover/light"));
+                this.streetlight.Add("frames", "", 1f);
+            }
             this.streetlight.Play("frames", false, false);
             this.streetlight.Active = false;
             this.streetlight.SetAnimationFrame(1);
             this.streetlight.Position = new Vector2(base.Width / 2f - this.streetlight.Width / 2f, 0f);
             base.Add(this.bloom = new BloomPoint(1f, 6f));
             this.bloom.Position = new Vector2(base.Width / 2f, 4f);
+            if (GFX.Game.Has(spritePath + "/block"))
+            {
+                path = spritePath;
+            }
+            else
+            {
+                path = defaultPath;
+            }
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    this.edges[i, j] = GFX.Game["objects/zipmover/block"].GetSubtexture(i * 8, j * 8, 8, 8, null);
+                    this.edges[i, j] = GFX.Game[path + "/block"].GetSubtexture(i * 8, j * 8, 8, 8, null);
                 }
             }
             this.SurfaceSoundIndex = 7;
         }
 
-        public LinkedZipMover(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Attr("colorCode","000000"), data.Float("speedMultiplier", 1f))
+        public LinkedZipMover(EntityData data, Vector2 offset) : this(data.Position + offset, data.Width, data.Height, data.Nodes[0] + offset, data.Attr("colorCode","000000"), data.Float("speedMultiplier", 1f), data.Attr("spritePath", defaultPath))
         {
         }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
-            scene.Add(this.pathRenderer = new LinkedZipMover.ZipMoverPathRenderer(this));
+            scene.Add(this.pathRenderer = new LinkedZipMover.ZipMoverPathRenderer(this, spritePath));
         }
 
         public override void Removed(Scene scene)
@@ -356,6 +385,8 @@ namespace Celeste.Mod.AdventureHelper.Entities
         public string ColorCode { get; private set; }
 
         private string syncFlagCode;
+        private string spritePath;
+        const string defaultPath = "objects/zipmover";
 
         private bool SyncFlag
         {
@@ -372,9 +403,16 @@ namespace Celeste.Mod.AdventureHelper.Entities
 
         private class ZipMoverPathRenderer : Entity
         {
-            public ZipMoverPathRenderer(LinkedZipMover zipMover) : base()
+            public ZipMoverPathRenderer(LinkedZipMover zipMover, string spritePath) : base()
             {
-                this.cog = GFX.Game["objects/zipmover/cog"];
+                try
+                {
+                    this.cog = GFX.Game[spritePath + "/cog"];
+                }
+                catch
+                {
+                    this.cog = GFX.Game[defaultPath + "/cog"];
+                }
                 base.Depth = 5000;
                 this.ZipMover = zipMover;
                 this.from = this.ZipMover.start + new Vector2(this.ZipMover.Width / 2f, this.ZipMover.Height / 2f);
