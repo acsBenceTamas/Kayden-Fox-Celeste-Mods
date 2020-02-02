@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Sprites>
+	<dash_refill path="objects/EtherHelper/dashRefill/">
+		<Center/>
+		
+		<Loop id="gem" path="gem" delay="0.1" frames="0-7"/>
+		<Anim id="shine" path="shine" delay="0.05" frames="0-7"/>
+		<Loop id="danger" path="danger" delay="0.2" frames="0-3"/>
+	</dash_refill>
+</Sprites>

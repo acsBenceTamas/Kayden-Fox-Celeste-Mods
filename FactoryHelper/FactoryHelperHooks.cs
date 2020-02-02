@@ -5,6 +5,7 @@ using Monocle;
 using FactoryHelper.Entities;
 using System.Collections;
 using FactoryHelper.Cutscenes;
+using System;
 
 namespace FactoryHelper
 {
@@ -23,7 +24,8 @@ namespace FactoryHelper
 
         private static void LevelEnterGo(On.Celeste.LevelEnter.orig_Go orig, Session session, bool fromSaveData)
         {
-            if (!fromSaveData && session.StartedFromBeginning && session.Area.Mode == AreaMode.Normal && session.Area.GetLevelSet() == "KaydenFox/FactoryMod")
+            Console.WriteLine($"Area chapter index: {session.Area.ChapterIndex}");
+            if (!fromSaveData && session.StartedFromBeginning && session.Area.Mode == AreaMode.Normal && session.Area.ChapterIndex == 1 && session.Area.GetLevelSet() == "KaydenFox/FactoryMod")
             {
                 Engine.Scene = new FactoryIntroVignette(session);
             }
