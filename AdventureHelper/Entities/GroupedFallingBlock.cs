@@ -329,21 +329,21 @@ namespace Celeste.Mod.AdventureHelper.Entities
 
 		private bool PlayerFallCheck()
 		{
-			if ( _climbFall )
+			foreach ( GroupedFallingBlock block in Group )
 			{
-				foreach ( GroupedFallingBlock block in Group )
+				if ( block._climbFall )
 				{
 					if ( block.HasPlayerRider() )
 					{
 						return true;
 					}
 				}
-			}
-			foreach ( GroupedFallingBlock block in Group )
-			{
-				if ( block.HasPlayerOnTop() )
+				else
 				{
-					return true;
+					if ( block.HasPlayerOnTop() )
+					{
+						return true;
+					}
 				}
 			}
 			foreach ( JumpThru jp in Jumpthrus )
