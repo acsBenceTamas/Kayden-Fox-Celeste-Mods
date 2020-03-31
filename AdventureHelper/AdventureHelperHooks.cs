@@ -10,17 +10,17 @@ namespace Celeste.Mod.AdventureHelper
     {
         public static void Load()
         {
-            On.Celeste.DreamBlock.Added += DreamBlockAdded;
-            On.Monocle.Entity.Removed += EntityRemoved;
-            On.Celeste.DreamBlock.Render += DreamBlockRender;
-            On.Celeste.DreamBlock.ctor_EntityData_Vector2 += DreamBlockConstructor;
+            // On.Celeste.DreamBlock.Added += DreamBlockAdded;
+            //On.Monocle.Entity.Removed += EntityRemoved;
+            //On.Celeste.DreamBlock.Render += DreamBlockRender;
+            //On.Celeste.DreamBlock.ctor_EntityData_Vector2 += DreamBlockConstructor;
         }
 
         public static void Unload()
         {
-            On.Celeste.DreamBlock.Added -= DreamBlockAdded;
-            On.Monocle.Entity.Removed -= EntityRemoved;
-            On.Celeste.DreamBlock.Render -= DreamBlockRender;
+            //On.Celeste.DreamBlock.Added -= DreamBlockAdded;
+            //On.Monocle.Entity.Removed -= EntityRemoved;
+            //On.Celeste.DreamBlock.Render -= DreamBlockRender;
         }
 
         private static void DreamBlockConstructor(On.Celeste.DreamBlock.orig_ctor_EntityData_Vector2 orig, DreamBlock self, EntityData data, Vector2 offset)
