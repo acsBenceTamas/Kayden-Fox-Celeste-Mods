@@ -101,6 +101,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
 			if (MasterOfGroup)
 			{
 				Add( new Coroutine( Sequence() ) );
+				Group.Sort( ( block, otherBlock ) => { return otherBlock.Bottom.CompareTo( block.Bottom ); } );
 			}
 		}
 
@@ -310,19 +311,29 @@ namespace Celeste.Mod.AdventureHelper.Entities
 				}
 				if ( collideSolidTiles ) break;
 
-				bool collidePlatforms = false;
-				while ( collidePlatforms )
+				bool collidePlatforms;
+				do
 				{
+					collidePlatforms = false;
 					foreach ( GroupedFallingBlock block in Group )
 					{
-						if ( block.CollideCheck<Platform>( block.Position + new Vector2( 0f, 1f ) ) )
+						foreach ( Platform platform	in Scene.Tracker.GetEntities<Platform>() )
 						{
-							collidePlatforms = true;
-							break;
+							if ( platform is GroupedFallingBlock && Group.Contains(platform as GroupedFallingBlock ) )
+							{
+								continue;
+							}
+							if ( block.CollideCheck( platform, block.Position + new Vector2( 0f, 1f ) ) )
+							{
+								collidePlatforms = true;
+								break;
+							}
 						}
+						if ( collidePlatforms ) break;
 					}
 					if ( collidePlatforms ) yield return 0.1f;
 				}
+				while ( collidePlatforms );
 			}
 			Safe = true;
 		}
@@ -407,7 +418,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
 
 		private void ShakeSfx()
 		{
-			Vector2 center = GetCenter();
+			Vector2 center = GetGroupCenter();
 			if ( _tileType == '3' )
 			{
 				Audio.Play( "event:/game/01_forsaken_city/fallblock_ice_shake", center );
@@ -428,7 +439,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
 
 		private void ImpactSfx()
 		{
-			Vector2 bottomCenter = GetBottomCenter();
+			Vector2 bottomCenter = GetGroupBottomCenter();
 			if ( _tileType == '3' )
 			{
 				Audio.Play( "event:/game/01_forsaken_city/fallblock_ice_impact", bottomCenter );
@@ -447,15 +458,40 @@ namespace Celeste.Mod.AdventureHelper.Entities
 			}
 		}
 
-		private Vector2 GetCenter()
+		private Vector2 GetGroupCenter()
 		{
-			Vector2 halfWay = new Vector2( GroupBoundsMax.X - GroupBoundsMin.X , GroupBoundsMax.Y - GroupBoundsMin.Y ) / 2;
-			return new Vector2( GroupBoundsMin.X, GroupBoundsMin.Y ) + halfWay;
+			float area = 0;
+			float sumX = 0;
+			float sumY = 0;
+			foreach ( GroupedFallingBlock block in Group )
+			{
+				float blockArea = block.Width * block.Height;
+				float distX = block.CenterX - CenterX;
+				float distY = block.CenterY - CenterY;
+				area += blockArea;
+				sumX += distX * blockArea;
+				sumY += distY * blockArea;
+			}
+			return Center + new Vector2( sumX / area, sumY / area );
 		}
 
-		private Vector2 GetBottomCenter()
+		private Vector2 GetGroupBottomCenter()
 		{
-			return new Vector2( ( GroupBoundsMax.X - GroupBoundsMin.X ) / 2, GroupBoundsMax.Y );
+			float area = 0;
+			float sumX = 0;
+			float maxY = float.MinValue;
+			foreach ( GroupedFallingBlock block in Group )
+			{
+				float blockArea = block.Width * block.Height;
+				float distX = block.CenterX - CenterX;
+				area += blockArea;
+				sumX += distX * blockArea;
+				if ( block.Bottom > maxY )
+				{
+					maxY = block.Bottom;
+				}
+			}
+			return new Vector2( CenterX + sumX / area, maxY );
 		}
 	}
 }
