@@ -105,6 +105,18 @@ namespace Celeste.Mod.AdventureHelper.Entities
 			}
 		}
 
+		public void Trigger()
+		{
+			if ( MasterOfGroup )
+			{
+				Triggered = true;
+			}
+			else
+			{
+				_master.Triggered = true;
+			}
+		}
+
 		private void AddToGroupAndFindChildren( GroupedFallingBlock from )
 		{
 			if ( from.X < (float)GroupBoundsMin.X )
