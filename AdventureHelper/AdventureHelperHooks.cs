@@ -13,19 +13,12 @@ namespace Celeste.Mod.AdventureHelper
     {
         public static void Load()
         {
-            // On.Celeste.DreamBlock.Added += DreamBlockAdded;
-            //On.Monocle.Entity.Removed += EntityRemoved;
-            //On.Celeste.DreamBlock.Render += DreamBlockRender;
-            //On.Celeste.DreamBlock.ctor_EntityData_Vector2 += DreamBlockConstructor;
             On.Celeste.CrushBlock.MoveHCheck += OnCrushBlockMoveHCheck;
             On.Celeste.CrushBlock.MoveVCheck += OnCrushBlockMoveVCheck;
         }
 
         public static void Unload()
         {
-            //On.Celeste.DreamBlock.Added -= DreamBlockAdded;
-            //On.Monocle.Entity.Removed -= EntityRemoved;
-            //On.Celeste.DreamBlock.Render -= DreamBlockRender;
             On.Celeste.CrushBlock.MoveHCheck -= OnCrushBlockMoveHCheck;
             On.Celeste.CrushBlock.MoveVCheck -= OnCrushBlockMoveVCheck;
         }
@@ -44,7 +37,6 @@ namespace Celeste.Mod.AdventureHelper
 
         private static void CrushBlockCollideCheckGroupedFallingBlock( CrushBlock self, Vector2 amount )
         {
-            Console.WriteLine( $"Tryina check {self.Position + amount}" );
             GroupedFallingBlock fallingBlock = self.CollideFirst<GroupedFallingBlock>( self.Position + amount );
             if ( fallingBlock != null )
             {
