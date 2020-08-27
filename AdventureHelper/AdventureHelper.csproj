@@ -58,6 +58,9 @@
     <Reference Include="MMHOOK_Celeste">
       <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
     </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MonoMod.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
