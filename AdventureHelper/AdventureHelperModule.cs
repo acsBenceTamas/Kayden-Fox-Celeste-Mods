@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Celeste.Mod.AdventureHelper.Entities;
+using Monocle;
 
 namespace Celeste.Mod.AdventureHelper
 {
@@ -19,6 +20,8 @@ namespace Celeste.Mod.AdventureHelper
         public override Type SessionType => typeof(AdventureHelperSession);
         public static AdventureHelperSession Session => (AdventureHelperSession)Instance._Session;
 
+        public static SpriteBank SpriteBank { get; private set; }
+
         public override void Load()
         {
             Everest.Events.Level.OnLoadEntity += LevelOnLoadEntity;
@@ -29,6 +32,11 @@ namespace Celeste.Mod.AdventureHelper
         {
             Everest.Events.Level.OnLoadEntity -= LevelOnLoadEntity;
             AdventureHelperHooks.Unload();
+        }
+
+        public override void LoadContent(bool firstLoad)
+        {
+            SpriteBank = new SpriteBank(GFX.Game, "Graphics/KaydenFox/AdventureHelperSprites.xml");
         }
 
         private bool LevelOnLoadEntity(Level level, LevelData levelData, Vector2 offset, EntityData entityData)
