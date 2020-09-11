@@ -57,6 +57,9 @@ namespace Celeste.Mod.AdventureHelper.Entities
                         color = Calc.HexToColor("dad8cc");
                         baseData["shineParticle"] = P_FakeShine;
                         break;
+                    default:
+                        baseData[ "shineParticle" ] = new ParticleType( P_BlueShine ) { Color = color };
+                        break;
                 }
             }
             else
