@@ -4,7 +4,6 @@ using Monocle;
 using FactoryHelper.Components;
 using System.Collections;
 using Celeste.Mod.Entities;
-using System;
 
 namespace FactoryHelper.Entities
 {

@@ -78,6 +78,7 @@
     <Compile Include="Entities\DashNegatorBeam.cs" />
     <Compile Include="Entities\DoorRusty.cs" />
     <Compile Include="Entities\ElectrifiedWall.cs" />
+    <Compile Include="Entities\FactoryActivatorDashBlock.cs" />
     <Compile Include="Entities\FactorySpike.cs" />
     <Compile Include="Entities\Fan.cs" />
     <Compile Include="Entities\KillerDebris.cs" />

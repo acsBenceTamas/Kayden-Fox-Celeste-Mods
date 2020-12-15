@@ -4,7 +4,6 @@ using FactoryHelper.Components;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System.Collections;
-using System;
 
 namespace FactoryHelper.Entities
 {

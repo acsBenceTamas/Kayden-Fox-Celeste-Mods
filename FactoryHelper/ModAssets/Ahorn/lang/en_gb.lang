@@ -160,3 +160,11 @@ placements.triggers.FactoryHelper/PermanentActivationTrigger.tooltips.activation
 # Factory Event Trigger
 
 placements.triggers.FactoryHelper/EventTrigger.tooltips.event=String Id of the event to be triggered.
+
+# Factory Activator Dash Block
+
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.canDash=Whether the player can break the block by dashing into it.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.blendin=Blends the block with the walls it touches, making it less apparent.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.tiletype=Determines the visual appearance of the wall.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.permanent=Once broken, the block will remain that way, even if the player dies. Also makes the factory activation permanent.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.activationIds=A comma separated set of string Ids for all the Activation Ids this dash blcok should activate when broken.

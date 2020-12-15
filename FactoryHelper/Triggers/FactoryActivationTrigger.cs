@@ -1,6 +1,5 @@
 ﻿using Celeste;
 using Microsoft.Xna.Framework;
-using System;
 using Monocle;
 using System.Collections.Generic;
 using FactoryHelper.Components;

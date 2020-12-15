@@ -1,13 +1,8 @@
 ﻿using Celeste;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using FactoryHelper.Components;
 using Monocle;
-using System.Collections;
 using Celeste.Mod.Entities;
 
 namespace FactoryHelper.Entities
