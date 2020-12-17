@@ -213,6 +213,10 @@ Just like spinners they can be attached to solids.
 A special collectible that is not counted towards the total number of berries on the level's OUI card. It functionally serves the same purpose
 as the Moon Berry, except it does not give the WOW achievement.
 
+#### __Factory Activator Dash Block__
+Acts like a regular dash block, with all its settings. Also counts as a dash block for all intents and purposes on your map. When broken in any way, it sends out factory activation signals. Permanent versions have their activators also permanent.
+- **activationIds**: A comma separated set of string Ids for all the Activation Ids this dash block should activate when broken.
+
 #### __Factory Activator Trigger__
 This trigger lets you activate Activation Ids on entry. Can reset on exit and be permanent. Can also depend on an Id already being set.
 
