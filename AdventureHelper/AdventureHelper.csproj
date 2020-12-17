@@ -86,6 +86,7 @@
     <Compile Include="Entities\LinkedZipMover.cs" />
     <Compile Include="Entities\MultipleNodeTrackSpinner.cs" />
     <Compile Include="Entities\LinkedZipMoverNoReturn.cs" />
+    <Compile Include="Entities\OutroCar.cs" />
     <Compile Include="Entities\ZipMoverNoReturn.cs" />
     <Compile Include="Entities\ZipMoverSoundController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
