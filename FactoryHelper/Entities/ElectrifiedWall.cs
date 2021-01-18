@@ -221,18 +221,47 @@ namespace FactoryHelper.Entities
                 Vector2 dir;
                 switch (Direction)
                 {
+                    default:
                     case Directions.Up:
                     case Directions.Down:
                         dir = player.Center.Y < Center.Y ? -Vector2.UnitY : Vector2.UnitY;
-                        player.Die(dir);
                         break;
                     case Directions.Left:
                     case Directions.Right:
                         dir = player.Center.X < Center.X ? -Vector2.UnitX : Vector2.UnitX;
-                        player.Die(dir);
                         break;
                 }
+                player.Die( dir );
             }
+        }
+
+        protected override bool IsRiding( Solid solid )
+        {
+            bool collision = false;
+            switch ( Direction )
+            {
+                case Directions.Up:
+                    Collider.Position -= Vector2.UnitY * 3;
+                    collision = CollideCheckOutside( solid, Position + Vector2.UnitY );
+                    Collider.Position += Vector2.UnitY * 3;
+                    break;
+                case Directions.Down:
+                    Collider.Position += Vector2.UnitY * 3;
+                    collision = CollideCheckOutside( solid, Position - Vector2.UnitY );
+                    Collider.Position -= Vector2.UnitY * 3;
+                    break;
+                case Directions.Left:
+                    Collider.Position -= Vector2.UnitX * 3;
+                    collision = CollideCheckOutside( solid, Position + Vector2.UnitX );
+                    Collider.Position += Vector2.UnitX * 3;
+                    break;
+                case Directions.Right:
+                    Collider.Position += Vector2.UnitX * 3;
+                    collision = CollideCheckOutside( solid, Position - Vector2.UnitX );
+                    Collider.Position -= Vector2.UnitX * 3;
+                    break;
+            }
+            return collision;
         }
 
         private void Sparkle(int count)

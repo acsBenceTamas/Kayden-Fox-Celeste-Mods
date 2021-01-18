@@ -123,7 +123,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private bool IsRiding(Solid solid)
+        protected virtual bool IsRiding(Solid solid)
         {
             switch (Direction)
             {
@@ -140,7 +140,7 @@ namespace FactoryHelper.Entities
             }
         }
 
-        private bool IsRiding(JumpThru jumpThru)
+        protected virtual bool IsRiding(JumpThru jumpThru)
         {
             if (Direction != 0)
             {
