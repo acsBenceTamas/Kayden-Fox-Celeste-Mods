@@ -52,8 +52,9 @@
     <Reference Include="Celeste">
       <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\Celeste.exe</HintPath>
     </Reference>
-    <Reference Include="FNA">
-      <HintPath>R:\Steam\steamapps\common\Celeste\FNA.dll</HintPath>
+    <Reference Include="FNA, Version=19.9.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\FNA.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Celeste">
       <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
@@ -79,6 +80,7 @@
     <Compile Include="AdventureHelperSession.cs" />
     <Compile Include="Entities\BladeTrackSpinnerMultinode.cs" />
     <Compile Include="Entities\CustomCrystalHeart.cs" />
+    <Compile Include="Entities\DashPushBlock.cs" />
     <Compile Include="Entities\DustTrackSpinnerMultinode.cs" />
     <Compile Include="Entities\GroupedFallingBlock.cs" />
     <Compile Include="Entities\LinkedZipMover.cs" />
