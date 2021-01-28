@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrollLand", "TrollLand\Trol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KaydenSpriteMod", "KaydenSpriteMod\KaydenSpriteMod.csproj", "{7F73ACF9-623F-4F3C-9C1C-30F3C35A8F65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionHelper", "ConnectionHelper\ConnectionHelper.csproj", "{5607D1F5-0D05-46CA-9101-21A54C96BF5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,14 @@ Global
 		{7F73ACF9-623F-4F3C-9C1C-30F3C35A8F65}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F73ACF9-623F-4F3C-9C1C-30F3C35A8F65}.Release|x86.ActiveCfg = Release|Any CPU
 		{7F73ACF9-623F-4F3C-9C1C-30F3C35A8F65}.Release|x86.Build.0 = Release|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Debug|x86.Build.0 = Debug|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Release|x86.ActiveCfg = Release|Any CPU
+		{5607D1F5-0D05-46CA-9101-21A54C96BF5D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
