@@ -9,6 +9,7 @@ namespace ConnectionHelper
 {
     class ConnectionHelperModule : EverestModule
     {
+        public static SpriteBank SpriteBank { get; private set; }
 
         public static ConnectionHelperModule Instance;
 
@@ -19,6 +20,16 @@ namespace ConnectionHelper
         public ConnectionHelperModule()
         {
             Instance = this;
+        }
+
+        public override void LoadContent( bool firstLoad )
+        {
+            base.LoadContent( firstLoad );
+
+            if ( firstLoad )
+            {
+                SpriteBank = new SpriteBank( GFX.Game, "Graphics/XML/KaydenFox/ConnectionHelper/Sprites.xml" );
+            }
         }
 
         public override void Load()
@@ -56,6 +67,26 @@ namespace ConnectionHelper
                 RotationMode = ParticleType.RotationModes.SameAsDirection
             };
             CompanionSphere.P_BurstNoDash = new ParticleType( CompanionSphere.P_Burst )
+            {
+                Color = Color.LightBlue,
+                Color2 = Color.LightSkyBlue
+            };
+            CompanionSphere.P_Idle = new ParticleType( HeartGem.P_RedShine )
+            {
+                Color = Color.Pink,
+                Color2 = Color.HotPink
+            };
+            CompanionSphere.P_IdleNoDash = new ParticleType( CompanionSphere.P_Idle )
+            {
+                Color = Color.LightBlue,
+                Color2 = Color.LightSkyBlue
+            };
+            CompanionSphere.P_Fire = new ParticleType( TouchSwitch.P_Fire)
+            {
+                Color = Color.Pink,
+                Color2 = Color.HotPink
+            };
+            CompanionSphere.P_FireNoDash = new ParticleType( CompanionSphere.P_Fire )
             {
                 Color = Color.LightBlue,
                 Color2 = Color.LightSkyBlue

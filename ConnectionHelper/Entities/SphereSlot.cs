@@ -12,6 +12,7 @@ namespace ConnectionHelper.Entities
         public bool Finished => switchComponent.Finished;
         protected Switch switchComponent;
         protected bool turnOnSequenceActive = false;
+        protected CompanionSphere.Companion slottedCompanion = null;
 
         public SphereSlot( EntityData data, Vector2 offset ) : base( data.Position + offset )
         {
@@ -45,6 +46,7 @@ namespace ConnectionHelper.Entities
         public void Deactivate()
         {
             turnOnSequenceActive = false;
+            slottedCompanion = null;
             switchComponent.Deactivate();
         }
 
@@ -72,6 +74,7 @@ namespace ConnectionHelper.Entities
             if ( !switchComponent.Activated && companion.Activated )
             {
                 companion.Slot = this;
+                slottedCompanion = companion;
                 Add( new SoundSource( "event:/game/general/touchswitch_any" ) );
                 if ( Activate() )
                 {
