@@ -34,6 +34,7 @@ namespace ConnectionHelper
 
         public override void Load()
         {
+            Everest.Events.CustomBirdTutorial.OnParseCommand += CustomBirdTutorial_OnParseCommand;
         }
 
         public override void Initialize()
@@ -44,6 +45,7 @@ namespace ConnectionHelper
 
         public override void Unload()
         {
+            Everest.Events.CustomBirdTutorial.OnParseCommand -= CustomBirdTutorial_OnParseCommand;
         }
 
         private static void LoadParticleTypes()
@@ -91,6 +93,15 @@ namespace ConnectionHelper
                 Color = Color.LightBlue,
                 Color2 = Color.LightSkyBlue
             };
+        }
+
+        private object CustomBirdTutorial_OnParseCommand( string command )
+        {
+            if ( command == "ConnectionHelperReleaseCompanionButton" )
+            {
+                return Settings.ReleaseCompanionButton.Button;
+            }
+            return null;
         }
     }
 }

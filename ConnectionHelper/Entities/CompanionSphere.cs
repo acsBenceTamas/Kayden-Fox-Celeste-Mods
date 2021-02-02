@@ -71,6 +71,7 @@ namespace ConnectionHelper.Entities
             if ( manager == null )
             {
                 Scene.Add( manager = new CompanionSphereManager() );
+                manager.AddTag( Tags.Persistent );
             }
         }
 
@@ -369,6 +370,7 @@ namespace ConnectionHelper.Entities
             public void AttachToPlayer( Player player )
             {
                 this.player = player;
+                Activated = false;
                 ActiveCompanion = this;
                 reachedLastPosition = false;
                 ParentCollection.manager.Interacted();
@@ -393,6 +395,12 @@ namespace ConnectionHelper.Entities
                 if ( useCoroutine != null && useCoroutine.Active )
                 {
                     useCoroutine.Cancel();
+                }
+
+                if ( tween != null )
+                {
+                    tween.Stop();
+                    tween = null;
                 }
                 Add( new Coroutine( ResetCoroutine() ) );
             }
