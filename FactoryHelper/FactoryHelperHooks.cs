@@ -61,7 +61,12 @@ namespace FactoryHelper
             {
                 steamWall.Halted = true;
             }
-            yield return orig(self, player);
+
+            IEnumerator enumerator = orig(self, player);
+            while (enumerator.MoveNext()) {
+                yield return enumerator.Current;
+            }
+
             if (steamWall != null)
             {
                 steamWall.Halted = false;
@@ -90,7 +95,10 @@ namespace FactoryHelper
             }
             else
             {
-                yield return orig(self);
+                IEnumerator enumerator = orig(self);
+                while (enumerator.MoveNext()) {
+                    yield return enumerator.Current;
+                }
             }
         }
 
