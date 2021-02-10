@@ -11,16 +11,23 @@ const placements = Ahorn.PlacementDict(
     "Fan (Horizontal, Inactive) (FactoryHelper)" => Ahorn.EntityPlacement(
         FanHorizontal,
         "rectangle",
+        Dict{String, Any}(
+			"height" => 16,
+        )
     ),
     "Fan (Vertical, Inactive) (FactoryHelper)" => Ahorn.EntityPlacement(
         FanVertical,
         "rectangle",
+        Dict{String, Any}(
+			"width" => 16,
+        )
     ),
     "Fan (Horizontal, Active) (FactoryHelper)" => Ahorn.EntityPlacement(
         FanHorizontal,
         "rectangle",
         Dict{String, Any}(
 			"startActive" => true,
+			"height" => 16,
         )
     ),
     "Fan (Vertical, Active) (FactoryHelper)" => Ahorn.EntityPlacement(
@@ -28,6 +35,7 @@ const placements = Ahorn.PlacementDict(
         "rectangle",
         Dict{String, Any}(
 			"startActive" => true,
+			"width" => 16,
         )
     ),
 )
