@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionHelper", "Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchtowerTax", "WatchtowerTax\WatchtowerTax.csproj", "{52FA552F-3D39-4604-942E-CF29D63EBC00}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveryTime", "EveryTime\EveryTime.csproj", "{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,12 +98,17 @@ Global
 		{52FA552F-3D39-4604-942E-CF29D63EBC00}.Release|Any CPU.Build.0 = Release|Any CPU
 		{52FA552F-3D39-4604-942E-CF29D63EBC00}.Release|x86.ActiveCfg = Release|Any CPU
 		{52FA552F-3D39-4604-942E-CF29D63EBC00}.Release|x86.Build.0 = Release|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Debug|x86.Build.0 = Debug|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Release|x86.ActiveCfg = Release|Any CPU
+		{EE8ACE92-7DE4-47A3-B2C9-8C172CC205CD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{52FA552F-3D39-4604-942E-CF29D63EBC00} = {ECCA3B19-8B2D-492A-B63C-D67B125432C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B2BA03C1-DF95-458A-9191-9506053910EE}
