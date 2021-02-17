@@ -38,12 +38,13 @@ namespace Celeste.Mod.AdventureHelper.Entities
             try
             {
                 base.Add(this.streetlight = new Sprite(GFX.Game, spritePath + "/light"));
+                this.streetlight.Add( "frames", "", 1f );
             }
             catch
             {
                 base.Add(this.streetlight = new Sprite(GFX.Game, "objects/zipmover/light"));
+                this.streetlight.Add( "frames", "", 1f );
             }
-            this.streetlight.Add( "frames", "", 1f );
             this.streetlight.Play("frames", false, false);
             this.streetlight.Active = false;
             this.streetlight.SetAnimationFrame(1);
