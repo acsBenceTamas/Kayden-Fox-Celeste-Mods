@@ -17,7 +17,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
             this.speedMultiplier = speedMultiplier;
             this.edges = new MTexture[3, 3];
             string path;
-            if (GFX.Game.Has(spritePath + "/block"))
+            if (GFX.Game.Has(spritePath + "/innercog" ) )
             {
                 path = spritePath;
             }
@@ -38,13 +38,12 @@ namespace Celeste.Mod.AdventureHelper.Entities
             try
             {
                 base.Add(this.streetlight = new Sprite(GFX.Game, spritePath + "/light"));
-                this.streetlight.Add("frames", "", 1f);
             }
             catch
             {
                 base.Add(this.streetlight = new Sprite(GFX.Game, "objects/zipmover/light"));
-                this.streetlight.Add("frames", "", 1f);
             }
+            this.streetlight.Add( "frames", "", 1f );
             this.streetlight.Play("frames", false, false);
             this.streetlight.Active = false;
             this.streetlight.SetAnimationFrame(1);
@@ -380,13 +379,13 @@ namespace Celeste.Mod.AdventureHelper.Entities
         {
             public ZipMoverPathRenderer(ZipMoverNoReturn zipMover, string spritePath) : base()
             {
-                try
+                if ( GFX.Game.Has( spritePath + "/cog" ) )
                 {
-                    this.cog = GFX.Game[spritePath + "/cog"];
+                    this.cog = GFX.Game[ spritePath + "/cog" ];
                 }
-                catch
+                else
                 {
-                    this.cog = GFX.Game[defaultPath + "/cog"];
+                    this.cog = GFX.Game[ defaultPath + "/cog" ];
                 }
                 base.Depth = 5000;
                 this.ZipMover = zipMover;
