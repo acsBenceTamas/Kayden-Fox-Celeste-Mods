@@ -1,9 +1,6 @@
-﻿using Celeste.Mod;
-using System;
+﻿using Celeste;
+using Celeste.Mod;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EveryTime
 {
@@ -15,5 +12,21 @@ namespace EveryTime
         public int OshiroCount = 0;
         public float AnxietyBonus = 0;
         public float AnxietyStutter = 0;
+
+        public List<AngryOshiro> SpawnedOshiros = new List<AngryOshiro>();
+        public List<EveryTimeCustomChaser> SpawnedBadelineChasers = new List<EveryTimeCustomChaser>();
+
+        public void Reset()
+        {
+            TimeDilation = 1.0f;
+            ExtraHair = 0;
+            ChaserCount = 0;
+            OshiroCount = 0;
+            AnxietyBonus = 0;
+            AnxietyStutter = 0;
+
+            SpawnedOshiros.Clear();
+            SpawnedBadelineChasers.Clear();
+        }
     }
 }

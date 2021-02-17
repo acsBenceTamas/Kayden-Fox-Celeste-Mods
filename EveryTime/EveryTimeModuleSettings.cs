@@ -7,6 +7,6 @@ namespace EveryTime
     {
         [SettingInGame( false )]
         public bool Enabled { get; set; } = false;
-        public List<EveryTimeRule> Rules { get; set; } = new List<EveryTimeRule>();
+        public List<EveryTimeRule> Rules { get; set; }
     }
 }

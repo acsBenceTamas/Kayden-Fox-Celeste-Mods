@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EveryTimeCustomChaser.cs" />
     <Compile Include="EveryTimeModule.cs" />
     <Compile Include="EveryTimeModuleSession.cs" />
     <Compile Include="EveryTimeModuleSettings.cs" />
