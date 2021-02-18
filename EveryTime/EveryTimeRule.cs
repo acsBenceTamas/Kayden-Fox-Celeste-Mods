@@ -58,6 +58,9 @@ namespace EveryTime
                 }
                 EveryTimeModule.Session.TimeDilation *= 1 - Math.Max( 0, value );
             } },
+            { "SpeedReset", (scene,args) =>{
+                EveryTimeModule.Session.TimeDilation = 1f;
+            } },
             { "ExtraHair", (scene,args) =>{
                 if ( !int.TryParse( args, out int count ) )
                 {
@@ -105,7 +108,6 @@ namespace EveryTime
                     value = 1;
                     LogParseError( "Could not parse arguments for BadelineChaser. Using default value instead" );
                 }
-                EveryTimeModule.Session.ChaserCount = Math.Max( value + EveryTimeModule.Session.ChaserCount, 0 ); ;
                 if ( player != null )
                 {
                     if ( value > 0 )
@@ -126,8 +128,11 @@ namespace EveryTime
                     }
                     else if ( value < 0 && EveryTimeModule.Session.ChaserCount > 0 )
                     {
-                        int highestIndex = scene.Tracker.CountEntities<BadelineOldsite>() + scene.Tracker.CountEntities<EveryTimeCustomChaser>() - 1;
-                        for (int i = value; i <= 0; i++)
+                        int extraChasers = scene.Tracker.CountEntities<EveryTimeCustomChaser>();
+                        int highestIndex = scene.Tracker.CountEntities<BadelineOldsite>() + extraChasers - 1;
+                        int removed = 0;
+                        int toRemove = -value;
+                        while ( removed < toRemove && removed < extraChasers && EveryTimeModule.Session.SpawnedBadelineChasers.Count > 0 )
                         {
                             foreach ( EveryTimeCustomChaser chaser in EveryTimeModule.Session.SpawnedBadelineChasers )
                             {
@@ -139,10 +144,12 @@ namespace EveryTime
                                     break;
                                 }
                             }
+                            removed++;
                             highestIndex--;
                         }
                     }
                 }
+                EveryTimeModule.Session.ChaserCount = Math.Max( value + EveryTimeModule.Session.ChaserCount, 0 ); ;
             } },
             { "Oshiro", (scene,args) =>{
                 if ( !int.TryParse( args, out int value ) )

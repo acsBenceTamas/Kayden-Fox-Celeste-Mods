@@ -40,19 +40,15 @@ namespace EveryTime
             {
                 Logger.Log( "EveryTimeRule", "Rules field empty. Creating default rule set." );
                 EveryTimeRule exampleRule = new EveryTimeRule();
-                exampleRule.Causes.Add( "Land" );
-                exampleRule.Effects.Add( "Oshiro", "1" );
+                exampleRule.Causes.Add( "CollectBerry" );
+                exampleRule.Effects.Add( "ExtraHair", "5" );
+                exampleRule.Effects.Add( "Anxiety", "-10000" );
                 Settings.Rules.Add( exampleRule );
                 EveryTimeRule exampleRule2 = new EveryTimeRule();
-                exampleRule2.Causes.Add( "ScreenChange" );
                 exampleRule2.Causes.Add( "Die" );
-                exampleRule2.Effects.Add( "Oshiro", "-10000" );
-                exampleRule2.Effects.Add( "Anxiety", "-10000" );
+                exampleRule2.Effects.Add( "ExtraHair", "-1" );
+                exampleRule2.Effects.Add( "Anxiety", "0.05" );
                 Settings.Rules.Add( exampleRule2 );
-                EveryTimeRule exampleRule3 = new EveryTimeRule();
-                exampleRule3.Causes.Add( "Die" );
-                exampleRule3.Effects.Add( "Anxiety", "0.05" );
-                Settings.Rules.Add( exampleRule3 );
                 SaveSettings();
             }
             else
@@ -137,11 +133,12 @@ namespace EveryTime
 
         private Celeste.PlayerDeadBody OnPlayerDie( On.Celeste.Player.orig_Die orig, Celeste.Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats )
         {
-            if ( Settings.Enabled )
+            PlayerDeadBody result = orig( self, direction, evenIfInvincible, registerDeathInStats );
+            if ( Settings.Enabled && result != null )
             {
                 ApplyRules( self.Scene, "Die" );
             }
-            return orig( self, direction, evenIfInvincible, registerDeathInStats );
+            return result;
         }
 
         private void OnPlayerSprite_ctor( On.Celeste.PlayerSprite.orig_ctor orig, Celeste.PlayerSprite self, PlayerSpriteMode mode )
