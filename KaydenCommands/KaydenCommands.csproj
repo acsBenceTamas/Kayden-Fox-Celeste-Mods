@@ -30,25 +30,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Celeste">
-      <HintPath>R:\Steam\steamapps\common\Celeste\Celeste.exe</HintPath>
+    <Reference Include="Celeste, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\Celeste.exe</HintPath>
     </Reference>
-    <Reference Include="FNA">
-      <HintPath>R:\Steam\steamapps\common\Celeste\FNA.dll</HintPath>
+    <Reference Include="FNA, Version=19.9.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\FNA.dll</HintPath>
     </Reference>
-    <Reference Include="MMHOOK_Celeste">
-      <HintPath>R:\Steam\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
+    <Reference Include="MMHOOK_Celeste, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="YamlDotNet">
-      <HintPath>R:\Steam\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
+    <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
 ﻿using Celeste;
 using Celeste.Mod;
 using Monocle;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -27,7 +26,11 @@ namespace KaydenCommands.Entities
             base.Update();
             if (_isRecording && _player != null && !_player.Dead)
             {
-                _states.Add(new Player.ChaserState(_player));
+                Player.ChaserState state = new Player.ChaserState( _player )
+                {
+                    TimeStamp = Scene.RawTimeActive
+                };
+                _states.Add( state );
             }
         }
 
