@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClockWipe.cs" />
+    <Compile Include="CompressedImageSequence.cs" />
     <Compile Include="ImageSequenceWipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WipePackModule.cs" />
