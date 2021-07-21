@@ -18,7 +18,7 @@ section of the official Celeste Discord server!
 
 ### <a name=features>Features
 #### Multi-node track spinners
-Comes in both Dust Sprite and Blade Spinner forms. For the most part they act like regular track spinners, 
+Comes in Dust Sprite,Blade Spinner, and Star forms. For the most part they act like regular track spinners, 
 except they can have multiple waypoints. When reaching the final node they return to their origin. Backtracking
 can be achieved by placing an additional node along the path the opposite way. Instead of the preset 3 speeds
 of slow, normal and fast these spinners come with customizable `moveTime` and `pauseTime` fields.

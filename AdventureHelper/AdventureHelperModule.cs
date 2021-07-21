@@ -50,6 +50,9 @@ namespace Celeste.Mod.AdventureHelper
                     case "AdventureHelper/DustTrackSpinnerMultinode":
                         level.Add(new DustTrackSpinnerMultinode(entityData, offset));
                         return true;
+                    case "AdventureHelper/StarTrackSpinnerMultinode":
+                        level.Add(new StarTrackSpinnerMultinode(entityData, offset));
+                        return true;
                     case "AdventureHelper/ZipMoverNoReturn":
                         level.Add(new ZipMoverNoReturn(entityData, offset));
                         return true;
