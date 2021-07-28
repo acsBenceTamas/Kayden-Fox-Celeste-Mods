@@ -43,8 +43,27 @@ namespace Celeste.Mod.AdventureHelper.Entities
         /// </summary>
         public float Angle { get; private set; }
 
+        /// <summary>
+        /// The text representing the Pause Flag. When the Pause Flag is active, the spinner will stop moving.
+        /// </summary>
+        public String PauseFlag { get; private set; }
+
+        /// <summary>
+        /// The text representing the Pause Flag. When the Pause Flag is active, the spinner will stop moving.
+        /// </summary>
+        public bool HasPauseFlag { get; private set; }
+
+        /// <summary>
+        /// If true the entity's movement is currently paused.
+        /// </summary>
+        public bool Paused { get; private set; }
+
         public MultipleNodeTrackSpinner(EntityData data, Vector2 offset)
-        {
+        { 
+            this.PauseFlag = data.Attr("pauseFlag");
+            this.HasPauseFlag = !PauseFlag.Equals("");
+            this.Paused = false;
+
             this.Moving = true;
             base.Collider = new ColliderList(new Collider[]
             {
@@ -68,7 +87,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
         {
             bool flag = player.Die((player.Position - this.Position).SafeNormalize(), false, true) != null;
             if (flag)
-            {
+            { 
                 this.Moving = false;
             }
         }
@@ -88,7 +107,11 @@ namespace Celeste.Mod.AdventureHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (this.Moving)
+
+            this.Paused = false;
+            if (this.HasPauseFlag) { Paused = SceneAs<Level>().Session.GetFlag(PauseFlag); }
+           
+            if (this.Moving && !Paused)
             {
                 bool stillPaused = this.PauseTimer > 0f;
                 if (stillPaused)

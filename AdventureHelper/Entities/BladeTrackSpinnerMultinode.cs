@@ -25,5 +25,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
             }
             this.hasStarted = true;
         }
+
+       
     }
 }

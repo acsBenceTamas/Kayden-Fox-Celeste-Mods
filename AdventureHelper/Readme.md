@@ -24,6 +24,9 @@ can be achieved by placing an additional node along the path the opposite way. I
 of slow, normal and fast these spinners come with customizable `moveTime` and `pauseTime` fields.
 - **moveTime**: How many seconds it takes for the spinner to go from one node to the next.
 - **pauseTime**: How many seconds the spinner waits at each node before moving onto the next.
+- **pauseFlag**: When this flag is active, the spinner will pause in place. This lasts until the player dies, leaves the room, or the flag is deactivated.
+- **pauseOnCutscene**: When checked, the spinner will pause in place during cutscenes.
+
 
 #### Non-returning zip movers
 These work like regular zip movers for the most part, except upon reaching their end point they do not 

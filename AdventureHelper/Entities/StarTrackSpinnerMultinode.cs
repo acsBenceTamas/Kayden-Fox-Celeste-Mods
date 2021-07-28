@@ -22,7 +22,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
         {
             this.colorID++;
             this.colorID %= 3;
-            this.Sprite.Play("spin" + this.colorID, false, false);
+            this.Sprite.Play("spin" + this.colorID % 3, false, false);
             if (this.hasStarted)
             {
                 Audio.Play("event:/game/05_mirror_temple/bladespinner_spin", this.Position);
@@ -37,11 +37,24 @@ namespace Celeste.Mod.AdventureHelper.Entities
         }
         public override void Update()
         {
+            bool reachedDestination = PauseTimer > 0f;
+            bool wasPaused = base.Paused;
             base.Update();
-            if (this.trail && base.Scene.OnInterval(0.03f))
+            if (!base.Paused && this.trail && base.Scene.OnInterval(0.03f))
             {
                 base.SceneAs<Level>().ParticlesBG.Emit(StarTrackSpinner.P_Trail[this.colorID], 1, this.Position, Vector2.One * 3f);
             }
+           if (wasPaused && !base.Paused && !reachedDestination)
+            {
+                if (this.hasStarted)
+                {
+                    this.colorID++;
+                    this.colorID %= 3;
+                    this.Sprite.Play("spin" + this.colorID % 3, false, false);
+                    Audio.Play("event:/game/05_mirror_temple/bladespinner_spin", this.Position);
+                }
+            }
         }
+   
     }
 }
