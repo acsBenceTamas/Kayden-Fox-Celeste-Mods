@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Monocle;
 
@@ -43,8 +44,33 @@ namespace Celeste.Mod.AdventureHelper.Entities
         /// </summary>
         public float Angle { get; private set; }
 
+        /// <summary>
+        /// The text representing the Pause Flag. When the Pause Flag is active, the spinner will stop moving.
+        /// </summary>
+        public String PauseFlag { get; private set; }
+
+        /// <summary>
+        /// The text representing the Pause Flag. When the Pause Flag is active, the spinner will stop moving.
+        /// </summary>
+        public bool HasPauseFlag { get; private set; }
+
+        /// <summary>
+        /// Tracks if the player has died to this entity.
+        /// </summary>
+        public bool playerDead { get; private set; }
+
+        /// <summary>
+        /// If set to true, this will cause the entity to halt its movement during a cutscene.
+        /// </summary>
+        public bool PauseOnCutscene { get; private set; }
+
         public MultipleNodeTrackSpinner(EntityData data, Vector2 offset)
-        {
+        { 
+            this.PauseOnCutscene = data.Bool("pauseOnCutscene"); 
+            this.PauseFlag = data.Attr("pauseFlag");
+            this.HasPauseFlag = !PauseFlag.Equals("");
+
+            this.playerDead = false;
             this.Moving = true;
             base.Collider = new ColliderList(new Collider[]
             {
@@ -66,10 +92,20 @@ namespace Celeste.Mod.AdventureHelper.Entities
         }
         public virtual void OnPlayer(Player player)
         {
-            bool flag = player.Die((player.Position - this.Position).SafeNormalize(), false, true) != null;
-            if (flag)
-            {
+  
+            playerDead = player.Die((player.Position - this.Position).SafeNormalize(), false, true) != null;
+            if (playerDead)
+            { 
                 this.Moving = false;
+            }
+        }
+
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            if (this.HasPauseFlag)
+            {
+                SceneAs<Level>().Session.SetFlag(PauseFlag, false);
             }
         }
         public override void Awake(Scene scene)
@@ -88,7 +124,29 @@ namespace Celeste.Mod.AdventureHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (this.Moving)
+
+            bool cutsceneRunning = false;
+            if (this.PauseOnCutscene) {
+                List<CutsceneEntity> cutScene = SceneAs<Level>().Entities.FindAll<CutsceneEntity>();
+                foreach (CutsceneEntity element in cutScene)
+                {
+                    if (element.Running) { cutsceneRunning = true; }
+                }
+            }
+
+            bool pauseFlag = false;
+            if (this.HasPauseFlag)
+            {
+                pauseFlag = SceneAs<Level>().Session.GetFlag(PauseFlag);
+            }
+
+            if (!cutsceneRunning && !pauseFlag) { this.Moving = true; }
+            else
+            {
+                this.Moving = false;
+            }
+
+            if (this.Moving && !playerDead)
             {
                 bool stillPaused = this.PauseTimer > 0f;
                 if (stillPaused)

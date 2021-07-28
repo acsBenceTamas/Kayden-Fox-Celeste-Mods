@@ -25,5 +25,20 @@ namespace Celeste.Mod.AdventureHelper.Entities
             }
             this.hasStarted = true;
         }
+
+        public override void Update()
+        {
+            bool reachedDestination = PauseTimer > 0f;
+            bool wasPaused = !base.Moving;
+            base.Update();
+            if (wasPaused && base.Moving && !reachedDestination)
+            {
+                if (this.hasStarted)
+                {
+                    this.Sprite.Play("spin", false, false);
+                    Audio.Play("event:/game/05_mirror_temple/bladespinner_spin", this.Position);
+                }
+            }
+        }
     }
 }

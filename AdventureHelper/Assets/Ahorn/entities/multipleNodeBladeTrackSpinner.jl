@@ -2,7 +2,9 @@ module AdventureHelperBladeTrackSpinnerMultinode
 
 using ..Ahorn, Maple
 
-@mapdef Entity "AdventureHelper/BladeTrackSpinnerMultinode" BladeTrackSpinnerMultinode(x::Integer, y::Integer, nodes::Array{Tuple{Integer, Integer}, 1}=Tuple{Integer, Integer}[], moveTime::Real=0.4, pauseTime::Real=0.2)
+@mapdef Entity "AdventureHelper/BladeTrackSpinnerMultinode" BladeTrackSpinnerMultinode(x::Integer, y::Integer, nodes::Array{Tuple{Integer, Integer}, 1}=Tuple{Integer, Integer}[], moveTime::Real=0.4, pauseTime::Real=0.2, pauseFlag::String="", pauseOnCutscene::Bool=false)
+
+Ahorn.editingOrder(entity::Maple.Entity) = String["x", "y", "moveTime", "pauseTime", "pauseFlag", "pauseOnCutscene", "nodes"]
 
 function MultinodeBladeSpinnerFinalizer(entity::BladeTrackSpinnerMultinode)
     x, y = Int(entity.data["x"]), Int(entity.data["y"])

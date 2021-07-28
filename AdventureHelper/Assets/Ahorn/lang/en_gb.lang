@@ -7,10 +7,20 @@
 # Multinode Track Blade Spinner
 placements.entities.AdventureHelper/BladeTrackSpinnerMultinode.tooltips.moveTime=The number of seconds it takes for the spinner to get from node to node.
 placements.entities.AdventureHelper/BladeTrackSpinnerMultinode.tooltips.pauseTime=The number of seconds the spinner waits at each node.
+placements.entities.AdventureHelper/BladeTrackSpinnerMultinode.tooltips.pauseFlag=When this flag is active, the spinner will pause in place. This lasts until the player dies, leaves the room, or the flag is deactivated.
+placements.entities.AdventureHelper/BladeTrackSpinnerMultinode.tooltips.pauseOnCutscene=When checked, the spinner will pause in place during cutscenes.
 
 # Multinode Track Dust Sprite
 placements.entities.AdventureHelper/DustTrackSpinnerMultinode.tooltips.moveTime=The number of seconds it takes for the dust sprite to get from node to node.
 placements.entities.AdventureHelper/DustTrackSpinnerMultinode.tooltips.pauseTime=The number of seconds the dust sprite waits at each node.
+placements.entities.AdventureHelper/DustTrackSpinnerMultinode.tooltips.pauseFlag=When this flag is active, the dust sprite will pause in place. This lasts until the player dies, leaves the room, or the flag is deactivated.
+placements.entities.AdventureHelper/DustTrackSpinnerMultinode.tooltips.pauseOnCutscene=When checked, the dust sprite will pause in place during cutscenes.
+
+# Multinode Track Star Sprite
+placements.entities.AdventureHelper/StarTrackSpinnerMultinode.tooltips.moveTime=The number of seconds it takes for the star to get from node to node.
+placements.entities.AdventureHelper/StarTrackSpinnerMultinode.tooltips.pauseTime=The number of seconds the star waits at each node.
+placements.entities.AdventureHelper/StarTrackSpinnerMultinode.tooltips.pauseFlag=When this flag is active, the star will pause in place. This lasts until the player dies, leaves the room, or the flag is deactivated.
+placements.entities.AdventureHelper/StarTrackSpinnerMultinode.tooltips.pauseOnCutscene=When checked, the star will pause in place during cutscenes.
 
 # Linked Zip Mover (both)
 placements.entities.AdventureHelper/LinkedZipMover.tooltips.colorCode=The base color of the zip line between the end cogs of the zip mover in RGB hex code (example: 000000 is black, ff0000 is red).

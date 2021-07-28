@@ -1,6 +1,11 @@
+1.5.3
+
+- Added a Pause Flag property to all multiple node track spinners. When the flag is active, the spinner will stop in place.
+- Added a Pause On Cutscene checkbox to all multiple node track spinners. When checked, the spinner will pause in place during cutscenes and resume when they are over.
+
 1.5.2
 
-- Added support for the Star version of multiple node track spinners. (Spekio)
+- Added support for the Star version of multiple node track spinners.
 
 1.5.1
 
