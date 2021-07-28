@@ -38,13 +38,13 @@ namespace Celeste.Mod.AdventureHelper.Entities
         public override void Update()
         {
             bool reachedDestination = PauseTimer > 0f;
-            bool wasPaused = base.Paused;
+            bool wasPaused = !base.Moving;
             base.Update();
-            if (!base.Paused && this.trail && base.Scene.OnInterval(0.03f))
+            if (base.Moving && this.trail && base.Scene.OnInterval(0.03f))
             {
                 base.SceneAs<Level>().ParticlesBG.Emit(StarTrackSpinner.P_Trail[this.colorID], 1, this.Position, Vector2.One * 3f);
             }
-           if (wasPaused && !base.Paused && !reachedDestination)
+           if (wasPaused && base.Moving && !reachedDestination)
             {
                 if (this.hasStarted)
                 {
