@@ -62,6 +62,12 @@ namespace Celeste.Mod.AdventureHelper
                     case "AdventureHelper/LinkedZipMoverNoReturn":
                         level.Add(new LinkedZipMoverNoReturn(entityData, offset));
                         return true;
+                    case "AdventureHelper/CustomCrystalHeart":
+                        if ( !level.Session.HeartGem )
+                        {
+                            level.Add( new CustomCrystalHeart( entityData, offset ) );
+                        }
+                        return true;
                     default:
                         return false;
                 }

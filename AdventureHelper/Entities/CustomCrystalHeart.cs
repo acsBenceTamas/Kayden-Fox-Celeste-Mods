@@ -5,7 +5,6 @@ using MonoMod.Utils;
 
 namespace Celeste.Mod.AdventureHelper.Entities
 {
-    [CustomEntity("AdventureHelper/CustomCrystalHeart")]
     [TrackedAs(typeof(HeartGem))]
     public class CustomCrystalHeart : HeartGem
     {
@@ -24,6 +23,11 @@ namespace Celeste.Mod.AdventureHelper.Entities
             entityID = new EntityID(data.Level.Name, data.ID);
             color = Calc.HexToColor(data.Attr("color", "00a81f"));
             spriteId = data.Attr("path", "");
+        }
+
+        public override void Added( Scene scene )
+        {
+            base.Added( scene );
         }
 
         public override void Awake(Scene scene)
