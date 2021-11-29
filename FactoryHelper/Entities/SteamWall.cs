@@ -51,6 +51,8 @@ namespace FactoryHelper.Entities
         private TransitionListener _transitionListener;
         private List<SteamPoof> _steamPoofs = new List<SteamPoof>();
 
+        public Color color = new Color(1f, 1f, 1f);
+
         public SteamWall(float startPosition)
         {
             Add(new PlayerCollider(OnPlayer));
@@ -212,8 +214,8 @@ namespace FactoryHelper.Entities
         public override void Render()
         {
             base.Render();
-            DrawGradient(Left, (int)Right - 32, new Color(1f, 1f, 1f) * 1f, new Color(1f, 1f, 1f) * 0.8f);
-            DrawGradient((int)Right - 32, (int)Right + 16, new Color(1f, 1f, 1f) * 0.8f, new Color(1f, 1f, 1f) * 0.0f);
+            DrawGradient(Left, (int)Right - 32, color * 1f, color * 0.8f);
+            DrawGradient((int)Right - 32, (int)Right + 16, color * 0.8f, color * 0.0f);
         }
 
         private void FadeOutOnTransition(float transition)
