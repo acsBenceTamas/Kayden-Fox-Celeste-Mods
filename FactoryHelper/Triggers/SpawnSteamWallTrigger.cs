@@ -1,4 +1,5 @@
-﻿using Celeste;
+﻿using System;
+using Celeste;
 using Celeste.Mod.Entities;
 using FactoryHelper.Entities;
 using Microsoft.Xna.Framework;
@@ -17,6 +18,7 @@ namespace FactoryHelper.Triggers
         {
             speed = data.Float("speed", defaultValue: 1f);
             overrideColor = Calc.HexToColor(data.Attr("color", defaultValue: "000000"));
+            Console.WriteLine(data.Attr("color", defaultValue: "000000"));
         }
 
         public override void OnEnter(Player player)
