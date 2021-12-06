@@ -102,6 +102,7 @@
     <Compile Include="Triggers\PremanentActivationTrigger.cs" />
     <Compile Include="Triggers\SpawnSteamWallTrigger.cs" />
     <Compile Include="Triggers\SpecialBoxDeactivationTrigger.cs" />
+    <Compile Include="Triggers\SteamWallColorTrigger.cs" />
     <Compile Include="Triggers\SteamWallSpeedTrigger.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,8 @@ namespace FactoryHelper.Triggers
                 SteamWall steamWall = level.Tracker.GetEntity<SteamWall>();
                 if (steamWall != null)
                 {
-                steamWall.Speed = speed;
+                steamWall.Speed = 22f * speed;
+                //sorry for the magic number it makes my life easier :p
                 }
 
 

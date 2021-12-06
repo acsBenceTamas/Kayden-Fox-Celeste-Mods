@@ -17,8 +17,7 @@ namespace FactoryHelper.Triggers
         public SpawnSteamWallTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
             speed = data.Float("speed", defaultValue: 1f);
-            overrideColor = Calc.HexToColor(data.Attr("color", defaultValue: "000000"));
-            Console.WriteLine(data.Attr("color", defaultValue: "000000"));
+            overrideColor = Calc.HexToColor(data.Attr("color", defaultValue: "ffffff"));
         }
 
         public override void OnEnter(Player player)
@@ -30,11 +29,7 @@ namespace FactoryHelper.Triggers
                 SteamWall steamWall = level.Tracker.GetEntity<SteamWall>();
                 if (steamWall == null)
                 {
-                    SteamWall s = new SteamWall(level.Camera.Left - level.Bounds.Left);
-                    s.Speed *= speed;
-                    s.color = overrideColor;
-                    
-                    level.Add(new SteamWall(level.Camera.Left - level.Bounds.Left));
+                    level.Add(new SteamWall(level.Camera.Left - level.Bounds.Left, overrideColor, speed));
                 }
                 else
                 {

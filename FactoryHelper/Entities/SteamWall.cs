@@ -38,6 +38,7 @@ namespace FactoryHelper.Entities
         public bool Halted = false;
         public float Speed = 22f;
         public float Fade = 1f;
+        public Color color = new Color(1f, 1f, 1f);
 
         private float _delay;
         private bool _canMoveNormally = true;
@@ -50,8 +51,8 @@ namespace FactoryHelper.Entities
         private float _transitionFade = 1f;
         private TransitionListener _transitionListener;
         private List<SteamPoof> _steamPoofs = new List<SteamPoof>();
-
-        public Color color = new Color(1f, 1f, 1f);
+        private float timer = -1;
+        private float duration;
 
         public SteamWall(float startPosition)
         {
@@ -65,6 +66,14 @@ namespace FactoryHelper.Entities
             Add(new DisplacementRenderHook(RenderDisplacement));
             Add(_transitionListener = new TransitionListener());
             _transitionListener.OnOut += FadeOutOnTransition;
+        }
+
+        public SteamWall(float startPosition, Color c, float speed) : this(startPosition)
+        {
+            Speed *= speed;
+            color = c;
+            P_SteamDebris.Color = c;
+            P_SteamDebris.Color2 = c;
         }
 
         public void AdvanceToCamera()
@@ -125,7 +134,7 @@ namespace FactoryHelper.Entities
             }
             foreach (int y in _steamPoofPoints)
             {
-                SteamPoof.Create(Scene, new Vector2(Right - 4, y), new Vector2(6, 6), 2);
+                SteamPoof.Create(Scene, new Vector2(Right - 4, y), new Vector2(6, 6), color, 2);
             }
 
             _baseParticleEmittionPeriod = 150 / Height;
@@ -153,7 +162,7 @@ namespace FactoryHelper.Entities
             while (true)
             {
                 yield return 0.3f / Height + Calc.Random.NextFloat(0.01f / Height);
-                _steamPoofs.AddRange(SteamPoof.Create(Scene, new Vector2(Right - 8, _steamPoofPoints[index]), new Vector2(16, 6), 1, Fade, RemovePoof));
+                _steamPoofs.AddRange(SteamPoof.Create(Scene, new Vector2(Right - 8, _steamPoofPoints[index]), new Vector2(16, 6), color, 1, Fade, RemovePoof));
                 index = (index + 1) % _steamPoofPoints.Length;
             }
         }
@@ -191,6 +200,14 @@ namespace FactoryHelper.Entities
                 }
             }
             _loopSfx.Position.X = Width;
+
+            P_SteamDebris.Color = color;
+            P_SteamDebris.Color2 = color;
+            if(timer > 0)
+            {
+                timer -= Engine.DeltaTime;
+                colorShift(start, end, duration);
+            }
         }
 
         private void AdvanceWall(float to)
@@ -232,6 +249,21 @@ namespace FactoryHelper.Entities
                 Color columnColor = Color.Lerp(colorFrom, colorTo, Ease.CubeIn(percent)) * _transitionFade * Fade;
                 Draw.Line(x, level.Camera.Top, x, level.Camera.Bottom, columnColor);
             }
+        }
+
+        public Color start;
+        public Color end;
+
+        public void colorShift(Color start, Color goal, float duration)
+        {
+            this.start = start;
+            this.end = goal;
+            this.duration = duration;
+            if(timer < 0 && color == start)
+            {
+                timer = duration;
+            }
+            color = Color.Lerp(goal, start, timer / duration);
         }
     }
 }
