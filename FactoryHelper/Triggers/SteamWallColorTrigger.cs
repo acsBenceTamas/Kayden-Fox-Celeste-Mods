@@ -25,7 +25,7 @@ namespace FactoryHelper.Triggers
             SteamWall steamWall = level.Tracker.GetEntity<SteamWall>();
             if (steamWall != null)
             {
-                steamWall.colorShift(steamWall.color, overrideColor, duration);
+                steamWall.ColorShift(steamWall.color, overrideColor, duration);
             }
         }
     }

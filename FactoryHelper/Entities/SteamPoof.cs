@@ -9,23 +9,23 @@ namespace FactoryHelper.Entities
     public class SteamPoof : Entity
     {
         public Action<SteamPoof> OnRemoved;
-        public Sprite sprite;
-        public Color _color = Color.White;
+        protected Sprite _sprite;
+        protected Color _color = Color.White;
 
         public SteamPoof(Vector2 position, float fade, Color color) : base(position)
         {
             _color = color;
             Depth = -100001;
             string type = Calc.Random.Chance(0.1f) ? "b" : "a";
-            sprite = new Sprite(GFX.Game, "danger/FactoryHelper/steamWall/");
-            sprite.Add("poof", "poof_" + type, 0.07f);
-            sprite.Play("poof");
+            _sprite = new Sprite(GFX.Game, "danger/FactoryHelper/steamWall/");
+            _sprite.Add("poof", "poof_" + type, 0.07f);
+            _sprite.Play("poof");
             float scale = Calc.Random.NextFloat(0.4f) + 0.4f;
-            sprite.Scale = new Vector2(scale, scale);
-            sprite.Rotation = Calc.Random.NextAngle();
-            sprite.Color = Color.Lerp(Color.Lerp(_color, Color.Black, 0.3f) * 0.8f, Color.Lerp(_color, Color.Black, 0.5f) * 0.5f, Calc.Random.NextFloat()) * fade;
-            sprite.CenterOrigin();
-            Add(sprite);
+            _sprite.Scale = new Vector2(scale, scale);
+            _sprite.Rotation = Calc.Random.NextAngle();
+            _sprite.Color = Color.Lerp(Color.Lerp(_color, Color.Black, 0.3f) * 0.8f, Color.Lerp(_color, Color.Black, 0.5f) * 0.5f, Calc.Random.NextFloat()) * fade;
+            _sprite.CenterOrigin();
+            Add(_sprite);
         }
 
 
@@ -46,7 +46,7 @@ namespace FactoryHelper.Entities
         public override void Update()
         {
             base.Update();
-            if (!sprite.Animating)
+            if (!_sprite.Animating)
             {
                 RemoveSelf();
             }

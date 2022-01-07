@@ -206,7 +206,7 @@ namespace FactoryHelper.Entities
             if(timer > 0)
             {
                 timer -= Engine.DeltaTime;
-                colorShift(start, end, duration);
+                ColorShift(start, end, duration);
             }
         }
 
@@ -254,7 +254,7 @@ namespace FactoryHelper.Entities
         public Color start;
         public Color end;
 
-        public void colorShift(Color start, Color goal, float duration)
+        public void ColorShift(Color start, Color goal, float duration)
         {
             this.start = start;
             this.end = goal;
