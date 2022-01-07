@@ -32,13 +32,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Celeste">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\Celeste.exe</HintPath>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\Celeste.exe</HintPath>
     </Reference>
     <Reference Include="FNA">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\FNA.dll</HintPath>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\FNA.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Celeste">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,7 +51,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="YamlDotNet">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
