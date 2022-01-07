@@ -32,13 +32,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Celeste">
-      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\Celeste.exe</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\Celeste.exe</HintPath>
     </Reference>
     <Reference Include="FNA">
-      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\FNA.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\FNA.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Celeste">
-      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,7 +51,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="YamlDotNet">
-      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -100,8 +100,10 @@
     <Compile Include="Triggers\FactoryActivationTrigger.cs" />
     <Compile Include="Triggers\FactoryEventTrigger.cs" />
     <Compile Include="Triggers\PremanentActivationTrigger.cs" />
-    <Compile Include="Triggers\SpawnSteamWall.cs" />
+    <Compile Include="Triggers\SpawnSteamWallTrigger.cs" />
     <Compile Include="Triggers\SpecialBoxDeactivationTrigger.cs" />
+    <Compile Include="Triggers\SteamWallColorTrigger.cs" />
+    <Compile Include="Triggers\SteamWallSpeedTrigger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ModAssets\" />
