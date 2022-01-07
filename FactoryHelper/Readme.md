@@ -215,6 +215,11 @@ as the Moon Berry, except it does not give the WOW achievement.
 
 #### __Factory Activator Dash Block__
 Acts like a regular dash block, with all its settings. Also counts as a dash block for all intents and purposes on your map. When broken in any way, it sends out factory activation signals. Permanent versions have their activators also permanent.
+
+- **canDash**: Whether the player can break the block by dashing into it.
+- **blendin**: Blends the block with the walls it touches, making it less apparent.
+- **tiletype**: Determines the visual appearance of the wall.
+- **permanent**: Once broken, the block will remain that way, even if the player dies. Also makes the factory activation permanent.
 - **activationIds**: A comma separated set of string Ids for all the Activation Ids this dash block should activate when broken.
 
 #### __Factory Activator Trigger__
@@ -241,6 +246,24 @@ Cutscenes are specific to their in-level locations so they may result in unexpec
 
 #### __Special Box Deactivation Trigger__
 Removes the Special property from Crates that enter the trigger, either on their own or in the player's hand.
+
+#### __Spawn Steam Wall Trigger__
+Spawns a Steam Wall at the left edge of the screen that moves at 22 pixels per second by default.
+
+- **speed**: A speed multiplier for the wall's movement speed.
+- **color**: Hex color code (example: ff0000 is red) of the spawned steam wall. Default is white.
+
+#### __Steam Wall Speed Trigger__
+Changes the speed multiplier of the currently spawned steam wall. If there is no steam wall spawned currently it has no effect.
+
+- **speed**: A speed multiplier for the wall's movement speed.
+
+#### __Steam Wall Color Trigger__
+Changes the color of the currently spawned steam wall. If there is no steam wall spawned currently it has no effect.
+
+- **color**: Hex color code (example: ff0000 is red) of the new color. Default is white.
+- **duration**: The amount of time it will take for the color change to occur in seconds.
+
 
 #### __Other__
 
