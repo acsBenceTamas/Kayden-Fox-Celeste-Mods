@@ -144,6 +144,14 @@ placements.entities.FactoryHelper/RustyLamp.tooltips.startActive=If `true` the e
 placements.entities.FactoryHelper/PowerLine.tooltips.initialDelay=The time it takes for the lamp to switch states after it is activated.
 placements.entities.FactoryHelper/RustyLamp.tooltips.strobePattern=The strobe pattern the lamp will use. The possible values are:\n	* None - the lamp will turn on and off immediately. No additional effects.\n	* FlickerOn - the lamp will flicker on and off. No additional effects.\n	* LightFlicker - the lamp will flicker on and off. Periodically it lightly flickers for a short while at random.\n	* TurnOffFlickerOn - the lamp will flicker on and off. Periodically it will flicker off for a short duration then flicker back on at random.
 
+# Factory Activator Dash Block
+
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.canDash=Whether the player can break the block by dashing into it.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.blendin=Blends the block with the walls it touches, making it less apparent.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.tiletype=Determines the visual appearance of the wall.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.permanent=Once broken, the block will remain that way, even if the player dies. Also makes the factory activation permanent.
+placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.activationIds=A comma separated set of string Ids for all the Activation Ids this dash blcok should activate when broken.
+
 # --- Triggers ---
 
 # Factory Activation Trigger
@@ -161,10 +169,16 @@ placements.triggers.FactoryHelper/PermanentActivationTrigger.tooltips.activation
 
 placements.triggers.FactoryHelper/EventTrigger.tooltips.event=String Id of the event to be triggered.
 
-# Factory Activator Dash Block
+# Spawn Steam Wall Trigger
 
-placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.canDash=Whether the player can break the block by dashing into it.
-placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.blendin=Blends the block with the walls it touches, making it less apparent.
-placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.tiletype=Determines the visual appearance of the wall.
-placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.permanent=Once broken, the block will remain that way, even if the player dies. Also makes the factory activation permanent.
-placements.entities.FactoryHelper/FactoryActivatorDashBlock.tooltips.activationIds=A comma separated set of string Ids for all the Activation Ids this dash blcok should activate when broken.
+placements.triggers.FactoryHelper/SpawnSteamWallTrigger.tooltips.color=Hex color code (example: ff0000 is red) of the spawned steam wall. Default is white.
+placements.triggers.FactoryHelper/SpawnSteamWallTrigger.tooltips.speed=Speed multiplier for the spawned wall's movement. Default speed is 22 pixels per second. A tile is 8 pixels wide.
+
+# Steam Wall Speed Trigger
+
+placements.triggers.FactoryHelper/SteamWallSpeedTrigger.tooltips.speed=Changes the speed multiplier a spawned wall movement. Has no effect if there is no steam wall currently spawned. Default speed is 22 pixels per second. A tile is 8 pixels wide.
+
+# Steam Wall Color Trigger
+
+placements.triggers.FactoryHelper/SteamWallColorTrigger.tooltips.color=Hex color code (example: ff0000 is red) to change the color of the spawned steam wall. Has no effect if there is no steam wall currently spawned. Default is white.
+placements.triggers.FactoryHelper/SteamWallColorTrigger.tooltips.duration=The amount of time it will take for the color change to occur in seconds.
