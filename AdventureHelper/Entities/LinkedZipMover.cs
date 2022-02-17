@@ -17,16 +17,15 @@ namespace Celeste.Mod.AdventureHelper.Entities
             if (spritePath == string.Empty) spritePath = defaultPath;
             this.speedMultiplier = speedMultiplier;
             this.edges = new MTexture[3, 3];
-            string path;
-            if (GFX.Game.Has(spritePath + "/innercog" ) )
+            List<MTexture> tempInnerCogs = GFX.Game.GetAtlasSubtextures( spritePath + "/innercog" );
+            if ( tempInnerCogs.Count > 0 )
             {
-                path = spritePath;
+                this.innerCogs = tempInnerCogs;
             }
             else
             {
-                path = defaultPath;
+                this.innerCogs = GFX.Game.GetAtlasSubtextures( defaultPath + "/innercog" );
             }
-            this.innerCogs = GFX.Game.GetAtlasSubtextures(path + "/innercog");
             this.temp = new MTexture();
             this.percent = 0f;
             base.Depth = -9999;
@@ -54,6 +53,7 @@ namespace Celeste.Mod.AdventureHelper.Entities
             this.streetlight.Position = new Vector2(base.Width / 2f - this.streetlight.Width / 2f, 0f);
             base.Add(this.bloom = new BloomPoint(1f, 6f));
             this.bloom.Position = new Vector2(base.Width / 2f, 4f);
+            string path;
             if (GFX.Game.Has(spritePath + "/block"))
             {
                 path = spritePath;

@@ -7,8 +7,8 @@
     <ProjectGuid>{CE0E33F0-6A74-465F-948E-7D9D5E4781D0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConnectionHelper</RootNamespace>
-    <AssemblyName>ConnectionHelper</AssemblyName>
+    <RootNamespace>AdventureHelper</RootNamespace>
+    <AssemblyName>AdventureHelper</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -31,14 +31,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Celeste">
+    <Reference Include="Celeste, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\Celeste.exe</HintPath>
     </Reference>
-    <Reference Include="FNA">
+    <Reference Include="FNA, Version=21.3.5.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\FNA.dll</HintPath>
     </Reference>
-    <Reference Include="MMHOOK_Celeste">
+    <Reference Include="MMHOOK_Celeste, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MMHOOK_Celeste.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils, Version=21.3.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\MonoMod.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,15 +55,27 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="YamlDotNet">
+    <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>N:\Games\SteamLibrary\steamapps\common\Celeste\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConnectionHelperModule.cs" />
-    <Compile Include="ConnectionHelperSettings.cs" />
-    <Compile Include="Entities\CompanionSphere.cs" />
-    <Compile Include="Entities\SphereSlot.cs" />
+    <Compile Include="AdventureHelperHooks.cs" />
+    <Compile Include="AdventureHelperModule.cs" />
+    <Compile Include="AdventureHelperSession.cs" />
+    <Compile Include="Entities\BladeTrackSpinnerMultinode.cs" />
+    <Compile Include="Entities\CustomCrystalHeart.cs" />
+    <Compile Include="Entities\DashPushBlock.cs" />
+    <Compile Include="Entities\DustTrackSpinnerMultinode.cs" />
+    <Compile Include="Entities\GroupedFallingBlock.cs" />
+    <Compile Include="Entities\LinkedZipMover.cs" />
+    <Compile Include="Entities\MultipleNodeTrackSpinner.cs" />
+    <Compile Include="Entities\LinkedZipMoverNoReturn.cs" />
+    <Compile Include="Entities\OutroCar.cs" />
+    <Compile Include="Entities\StarTrackSpinnerMultinode.cs" />
+    <Compile Include="Entities\ZipMoverNoReturn.cs" />
+    <Compile Include="Entities\ZipMoverSoundController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
