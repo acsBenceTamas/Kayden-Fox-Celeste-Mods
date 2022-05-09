@@ -8,7 +8,7 @@ using Monocle;
 namespace FactoryHelper.Triggers
 {
     [CustomEntity("FactoryHelper/SpawnSteamWallTrigger")]
-    class SpawnSteamWallTrigger : Trigger
+    public class SpawnSteamWallTrigger : Trigger
     {
         private bool _spawned = false;
 

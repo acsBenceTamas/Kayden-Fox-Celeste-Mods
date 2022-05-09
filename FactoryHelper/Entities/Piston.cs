@@ -12,7 +12,7 @@ namespace FactoryHelper.Entities
         "FactoryHelper/PistonDown = LoadDown",
         "FactoryHelper/PistonLeft = LoadLeft",
         "FactoryHelper/PistonRight = LoadRight")]
-    class Piston : Entity
+    public class Piston : Entity
     {
         public static Entity LoadUp(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Piston(data, offset, Directions.Up);
         public static Entity LoadDown(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Piston(data, offset, Directions.Down);

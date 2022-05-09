@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/BatteryBox")]
-    class BatteryBox : Entity
+    public class BatteryBox : Entity
     {
         private readonly EntityID _id;
         private readonly Sprite _boxSprite;

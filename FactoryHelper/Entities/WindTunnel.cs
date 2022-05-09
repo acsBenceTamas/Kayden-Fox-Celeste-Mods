@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/WindTunnel")]
-    class WindTunnel : Entity
+    public class WindTunnel : Entity
     {
         public FactoryActivator Activator { get; }
 

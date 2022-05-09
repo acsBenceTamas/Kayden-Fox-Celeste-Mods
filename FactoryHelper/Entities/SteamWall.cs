@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace FactoryHelper.Entities
 {
     [Tracked(false)]
-    class SteamWall : Entity
+    public class SteamWall : Entity
     {
         public static ParticleType P_FlyingDebris = new ParticleType
         {

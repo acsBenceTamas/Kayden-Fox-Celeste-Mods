@@ -8,7 +8,7 @@ using Monocle;
 namespace FactoryHelper.Triggers
 {
     [CustomEntity("FactoryHelper/EventTrigger")]
-    class FactoryEventTrigger : Trigger
+    public class FactoryEventTrigger : Trigger
     {
         private readonly string _eventName;
 

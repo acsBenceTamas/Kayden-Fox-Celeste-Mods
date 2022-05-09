@@ -8,7 +8,7 @@ using Celeste.Mod.Entities;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/PressurePlate")]
-    class PressurePlate : Solid
+    public class PressurePlate : Solid
     {
         public Image CaseImage { get; private set; }
 

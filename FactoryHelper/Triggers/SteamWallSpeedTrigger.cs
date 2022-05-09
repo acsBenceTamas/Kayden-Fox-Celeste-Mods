@@ -7,7 +7,7 @@ using Monocle;
 namespace FactoryHelper.Triggers
 {
     [CustomEntity("FactoryHelper/SteamWallSpeedTrigger")]
-    class SteamWallSpeedTrigger : Trigger
+    public class SteamWallSpeedTrigger : Trigger
     {
         private float speed = 1f;
         public SteamWallSpeedTrigger(EntityData data, Vector2 offset) : base(data, offset)

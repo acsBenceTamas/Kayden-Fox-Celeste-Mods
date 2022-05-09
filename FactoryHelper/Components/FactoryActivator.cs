@@ -5,7 +5,7 @@ using System;
 namespace FactoryHelper.Components
 {
     [Tracked]
-    class FactoryActivator : Component
+    public class FactoryActivator : Component
     {
         public bool Activated => ActivationCount > 0;
         public int ActivationCount { get; private set; } = 0;

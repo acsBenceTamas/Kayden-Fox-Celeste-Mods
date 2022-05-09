@@ -7,7 +7,7 @@ using Monocle;
 namespace FactoryHelper.Triggers
 {
     [CustomEntity("FactoryHelper/SpecialBoxDeactivationTrigger")]
-    class SpecialBoxDeactivationTrigger : Trigger
+    public class SpecialBoxDeactivationTrigger : Trigger
     {
         public SpecialBoxDeactivationTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {

@@ -11,7 +11,7 @@ using FactoryHelper.Cutscenes;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/DashFuseBox")]
-    class DashFuseBox : Solid
+    public class DashFuseBox : Solid
     {
         public enum Direction
         {

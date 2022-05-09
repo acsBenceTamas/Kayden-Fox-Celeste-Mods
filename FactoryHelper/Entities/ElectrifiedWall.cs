@@ -14,7 +14,7 @@ namespace FactoryHelper.Entities
         "FactoryHelper/ElectrifiedWallDown = LoadDown",
         "FactoryHelper/ElectrifiedWallLeft = LoadLeft",
         "FactoryHelper/ElectrifiedWallRight = LoadRight")]
-    class ElectrifiedWall : FactorySpike
+    public class ElectrifiedWall : FactorySpike
     {
         public static Entity LoadUp(Level level, LevelData levelData, Vector2 offset, EntityData data) => new ElectrifiedWall(data, offset, Directions.Up);
         public static Entity LoadDown(Level level, LevelData levelData, Vector2 offset, EntityData data) => new ElectrifiedWall(data, offset, Directions.Down);

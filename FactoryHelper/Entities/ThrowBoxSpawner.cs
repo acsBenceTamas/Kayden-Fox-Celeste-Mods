@@ -10,7 +10,7 @@ using FactoryHelper.Components;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/ThrowBoxSpawner")]
-    class ThrowBoxSpawner : Entity
+    public class ThrowBoxSpawner : Entity
     {
         public FactoryActivator Activator;
 
