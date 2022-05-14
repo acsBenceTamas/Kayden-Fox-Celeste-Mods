@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace FactoryHelper.Components
 {
     [Tracked]
-    class ConveyorMover : Component
+    public class ConveyorMover : Component
     {
         public Action<float> OnMove;
         public bool IsOnConveyor = false;

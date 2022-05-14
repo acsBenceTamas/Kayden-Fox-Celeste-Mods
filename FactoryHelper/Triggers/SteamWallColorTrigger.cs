@@ -8,7 +8,7 @@ using Monocle;
 namespace FactoryHelper.Triggers
 {
     [CustomEntity("FactoryHelper/SteamWallColorTrigger")]
-    class SteamWallColorTrigger : Trigger
+    public class SteamWallColorTrigger : Trigger
     {
         private Color overrideColor = Color.White;
         public float duration;

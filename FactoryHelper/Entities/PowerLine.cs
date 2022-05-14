@@ -10,7 +10,7 @@ namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/PowerLine")]
     [Tracked]
-    class PowerLine : Entity
+    public class PowerLine : Entity
     {
         public FactoryActivator Activator;
 

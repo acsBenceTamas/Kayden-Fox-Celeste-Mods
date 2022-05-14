@@ -8,7 +8,7 @@ using Celeste.Mod.Entities;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/BoomBox")]
-    class BoomBox : Solid
+    public class BoomBox : Solid
     {
         public ParticleType P_Steam = ParticleTypes.Steam;
         public ParticleType P_SteamAngry = new ParticleType(ParticleTypes.Steam)

@@ -8,7 +8,7 @@ using Celeste.Mod.Entities;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/DashNegator")]
-    class DashNegator : Entity
+    public class DashNegator : Entity
     {
         public FactoryActivator Activator;
 

@@ -8,7 +8,7 @@ namespace FactoryHelper.Entities
 {
     [Tracked(false)]
     [CustomEntity("FactoryHelper/MachineHeart")]
-    class MachineHeart : Solid
+    public class MachineHeart : Solid
     {
         private Sprite _frontSprite;
         private Sprite _backSprite;

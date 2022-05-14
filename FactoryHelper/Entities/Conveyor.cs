@@ -10,7 +10,7 @@ namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/Conveyor")]
     [Tracked]
-    class Conveyor : Solid
+    public class Conveyor : Solid
     {
         public const float ConveyorMoveSpeed = 40.0f;
 

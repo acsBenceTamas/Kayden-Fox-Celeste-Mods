@@ -9,7 +9,7 @@ namespace FactoryHelper.Entities
 {
     [Tracked(false)]
     [CustomEntity("FactoryHelper/RustyLamp")]
-    class RustyLamp : Entity
+    public class RustyLamp : Entity
     {
         public static readonly Color Color = Color.Lerp(Color.White, Color.Orange, 0.5f);
 

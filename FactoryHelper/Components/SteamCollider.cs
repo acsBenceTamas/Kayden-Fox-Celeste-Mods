@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FactoryHelper.Components
 {
     [Tracked(false)]
-    class SteamCollider : Component
+    public class SteamCollider : Component
     {
         public Action<SteamWall> OnCollide;
         public Collider Collider;

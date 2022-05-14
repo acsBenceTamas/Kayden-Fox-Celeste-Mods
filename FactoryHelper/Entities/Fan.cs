@@ -11,7 +11,7 @@ namespace FactoryHelper.Entities
         "FactoryHelper/FanHorizontal = LoadHorizontal",
         "FactoryHelper/FanVertical = LoadVertical"
         )]
-    class Fan : Solid
+    public class Fan : Solid
     {
         public static Entity LoadHorizontal(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Fan(data, offset, Directions.Horizontal);
         public static Entity LoadVertical(Level level, LevelData levelData, Vector2 offset, EntityData data) => new Fan(data, offset, Directions.Vertical);

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace FactoryHelper.ScreenWipes
 {
-    class GearWipe : ScreenWipe
+    public class GearWipe : ScreenWipe
     {
         private struct Gear
         {

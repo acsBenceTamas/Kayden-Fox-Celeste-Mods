@@ -8,7 +8,7 @@ using FactoryHelper.Components;
 namespace FactoryHelper.Triggers
 {
     [CustomEntity("FactoryHelper/PermanentActivationTrigger")]
-    class PremanentActivationTrigger : Trigger
+    public class PremanentActivationTrigger : Trigger
     {
         private readonly FactoryActivator[] _activators;
         private readonly HashSet<string> _shouldStayPermanent = new HashSet<string>();

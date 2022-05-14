@@ -8,7 +8,7 @@ using Celeste.Mod.Entities;
 namespace FactoryHelper.Triggers
 {
     [CustomEntity("FactoryHelper/FactoryActivationTrigger")]
-    class FactoryActivationTrigger : Trigger
+    public class FactoryActivationTrigger : Trigger
     {
         public FactoryActivator Activator { get; }
 

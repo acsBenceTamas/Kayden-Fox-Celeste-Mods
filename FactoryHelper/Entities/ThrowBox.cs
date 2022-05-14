@@ -8,7 +8,7 @@ using System;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/ThrowBox")]
-    class ThrowBox : Actor
+    public class ThrowBox : Actor
     {
         public Vector2 Speed;
         public Holdable Hold;

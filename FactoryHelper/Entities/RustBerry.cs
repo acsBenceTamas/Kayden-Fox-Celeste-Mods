@@ -8,7 +8,7 @@ using System.Collections;
 namespace FactoryHelper.Entities
 {
     [CustomEntity("FactoryHelper/RustBerry")]
-    class RustBerry : Entity
+    public class RustBerry : Entity
     {
         public static ParticleType P_Glow = new ParticleType(Strawberry.P_Glow) { Color = Calc.HexToColor("fc5a03"), Color2 = Calc.HexToColor("9e4210") };
         public static ParticleType P_GhostGlow = Strawberry.P_GhostGlow;
