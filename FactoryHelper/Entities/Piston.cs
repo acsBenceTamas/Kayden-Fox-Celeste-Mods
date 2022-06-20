@@ -563,7 +563,10 @@ namespace FactoryHelper.Entities
                         if (player != null)
                         {
                             float newY = _base.Y + _grabPositionModifier + (player.Y - (_base.Y + _grabPositionModifier)) * heightAfter / heightBefore;
-                            player.LiftSpeed = new Vector2(player.LiftSpeed.X, (newY - player.Y) * Engine.DeltaTime);
+                            if (Engine.DeltaTime != 0f)
+                            {
+                                player.LiftSpeed = new Vector2(player.LiftSpeed.X, (newY - player.Y) / Engine.DeltaTime);
+                            }
                             player.MoveV(newY - player.Y);
                         }
                     }
@@ -588,7 +591,10 @@ namespace FactoryHelper.Entities
                         if (player != null)
                         {
                             float newX = _base.X + _grabPositionModifier + (player.X - (_base.X + _grabPositionModifier)) * widthAfter / widthBefore;
-                            player.LiftSpeed = new Vector2((newX - player.X) * Engine.DeltaTime, player.LiftSpeed.Y);
+                            if (Engine.DeltaTime != 0f)
+                            {
+                                player.LiftSpeed = new Vector2((newX - player.X) / Engine.DeltaTime, player.LiftSpeed.Y);
+                            }
                             player.MoveH(newX - player.X);
                         }
                     }
